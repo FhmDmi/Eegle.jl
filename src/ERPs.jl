@@ -448,6 +448,7 @@ trials( X::Matrix{R}, stim::Vector{S}, wl::S;
             return _linComb([X[stim[j]+offset:stim[j]+offset+wl-1, :]*weights[j] for j∈eachindex(stim) if stim[j]≠0], linComb)
         end
     end
+    
 
 trials( X::Matrix{R}, mark::Vector{Vector{S}}, wl::S;
         weights::Union{Vector{Vector{R}}, Nothing} = nothing,
