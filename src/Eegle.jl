@@ -25,6 +25,9 @@ const greyFont      = "\x1b[90m"
 # Example data
 const EXAMPLE_P300_1 = joinpath(@__DIR__, "..", "data_examples", "P300", "subject_01_session_01.npz")
 const EXAMPLE_MI_1 = joinpath(@__DIR__, "..", "data_examples", "MI", "subject_01_session_01.npz")
+const EXAMPLE_Epilepsy_1 = joinpath(@__DIR__, "..", "data_examples", "Clinical", "Epilepsy_19_128.txt")
+const EXAMPLE_Epilepsy_1_sensors = joinpath(@__DIR__, "..", "data_examples", "Clinical", "Epilepsy_19_128_sensors.txt")
+
 
 export  Eegle,
         EXAMPLE_P300_1,
