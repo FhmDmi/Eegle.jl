@@ -76,8 +76,8 @@ deploydocs(
    push_preview = true,
    # osname = "linux",
    # deps = Deps.pip("pygments", "mkdocs"),
-   devbranch = "master",
-   devurl = "dev",
+   # devbranch = "master", # RESTORE
+   # devurl = "dev", # RESTORE
    # versions = ["stable" => "v^", "v#.#", devurl => devurl],
 )
 
