@@ -22,7 +22,12 @@ using Eegle, FourierAnalysis, GLMakie, Colors
 
 Load the example file and the associated sensor labels file.
 
-This is a 80s recording on a 20yo woman. The sampling rate and number of electrodes are 128 and 19, respectively. Data have been previously high-passed at 1.5 Hz. The following functions are in **Eegle** module [InOut.jl](@ref).
+This is a 80s recording on a 20yo woman:
+- sampling rate : 128 
+- number of electrodes: 19
+- High-pass filter at 1.5 Hz. 
+
+The following functions are in **Eegle** module [InOut.jl](@ref).
 
 ```julia
 X = readASCII(EXAMPLE_Normative_1)
