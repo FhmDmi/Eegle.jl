@@ -5,24 +5,35 @@ This format is read by fucntion [`readNY`](@ref), which creates an [`EEG`](@ref)
 The complete path to the file is is accessible anywhere as Eegle.{CONSTANT},
 where {CONSTANT} is one of the heading here below. See the [tutorials](@ref "Tutorials").
 
+---
 ## `EXAMPLE_MI_1`
 
-This is the file corresponding to the first [session](@ref) of the first [subject](@ref) 
-of motor-imagery Brain-Computer Interface database [Alex MI](@ref "Database Summary for MI Paradigm")
+This is the file corresponding to the first [session](@ref) of [subject](@ref) 3
+of motor-imagery Brain-Computer Interface database [Alex MI](@ref "Database Summary for MI Paradigm"):
+- amplifier: *g.USBamp* (g.tec medical engineering GmbH, Graz, Austria)
+- channels: 16 standard Ag/AgCl electrodes
+- sampling rate: 256 samples per second
+- pre-processing: Notch filter at 50Hz and band-pass filter 1Hz-83Hz
+- duration: 63020 samples
+- MI classes: 1="right_hand", 1="feet", 3="rest"
+- number of trials per class: 1=20, 2=20, 3=20.
 
+---
 ## `EXAMPLE_P300_1`
 
 This is the file corresponding to the first [session](@ref) of the first [subject](@ref) 
 of P300 Brain-Computer Interface database [bi2012-T](@ref "bi2012")
 
-
+---
 ## `EXAMPLE_Normative_1`
 
 Eyes-close resting-state continuous EEG recording acquired on a 20yo healthy woman:
 - amplifier: *Mitsar-EEG-201* (Mitsar Co. Ltd., St. Petersburg, Russia)
 - channels: 19 standard Ag/AgCl electrodes (10-20 international system)
 - sampling rate: 128 samples per second
-- pre-processing: high-pass filter at 1.5 Hz and manually de-artefaction using the Eureka3! software (Nova Tech EEG, Inc., Mesa, AZ, USA)
+- pre-processing: Notch filter at 50Hz, band-pass (1.5-32Hz) filter and manual de-artefaction using the *Eureka3!* software (Nova Tech EEG, Inc., Mesa, AZ, USA)
 - duration: 80s.
 
 This file is accompanied by file `EXAMPLE_Normative_1_sensors.txt` holding the sensor labels.
+
+---
