@@ -106,13 +106,15 @@ Plot the spectra using GLMakie.jl. The figure will open in a new window. It is r
 
 ![Figure 1](../assets/Fig1_Tutorial_Spectral_Analysis_1.jpg)
 
-For using Slepian multi-tapering instead:
+For using Slepian multi-tapering, you would use instead
 
 ```julia
     S = spectra(X, sr, sr*fr; 
                 tapering = slepians(sr, sr*fr, 1.5),
                 func = √)
 ```
+
+and the spectra would be
 
 ![Figure 2](../assets/Fig1_Tutorial_Spectral_Analysis_2.jpg)
 
