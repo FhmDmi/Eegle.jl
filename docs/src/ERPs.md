@@ -30,13 +30,15 @@ a natural number (1, 2, ...), each one coding a stimulus **class**. We name thes
 
 ### marker vectors
 
-Equivalently, we can cosider a vector holding ``z`` vectors, each one listing the serial numbers
+Equivalently, we can consider a vector holding ``z`` vectors, each one listing the serial numbers
 of the samples belonging to each of the possible ``z`` classes.
 
 ```
 # Representation of the above stimulation vector as markers vector
 [[13, 18], [6]]
 ```
+
+Even if one class of stimuli only is present, the marker vectors will still be a vector of vectors (one in this case).
 
 ### offset
 
@@ -47,8 +49,9 @@ The offset is always to be given in samples. It can be
 - positive: the stimulations and markers are shifted forth.
 
 ```
-# Example with `offet=-3`; the above stimulation vector and marker vectors becomes
+# Example with `offet=-3`; the above stimulation vector becomes
 [0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+# and the corresponding marker vectors becomes
 [[10, 15], [3]]
 ```
 
