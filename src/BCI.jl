@@ -341,6 +341,7 @@ end
             weights = :a,
             pcadim      :: Int = 8,
             standardize :: Bool = false,
+            lags        :: Int = 0,
             tikh        :: Union{Real, Int} = 0,
             useBLAS     :: Bool = true,
             reg         :: Symbol = :rmt,
@@ -390,6 +391,7 @@ A reminder only is given here. For details, see the function each [kwarg](@ref "
     - `weights`: adaptive weighted mean *target* ERP estimation (ERP and P300 only)
     - `pcadim`: dimensionality reduction of the prototype by [PCA](@ref "Acronyms") (ERP and P300 only)
     - `standardize`: standardization the trials before estimating the covariance matrices
+    - `lags`: lags embedding
     - `tikh`: Tikhonov regularization of the covariance matrices
     - `useBLAS`: use BLAS for computing the [SCM](@ref "Acronyms") covariance estimator
     - `reg`: , `tol`, `maxiter`, `verbose`: options for covariance M-Estimators.
@@ -525,6 +527,7 @@ function crval( filename    :: AbstractString,
                 weights,
                 pcadim,
                 standardize,
+                lags,
                 tikh,
                 useBLAS,
                 reg,
