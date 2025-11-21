@@ -581,6 +581,7 @@ where:
 All trials in which at least one sample of the log-FRMS exceeds ``h`` (there are samples with over-threshold amplitude) 
 or in which ``l`` exceeds the log-FRMS all over the trial (almost zero everywhere) are rejected.
 
+
 **Return**
 - if `returnDetails` is false (default), a 5-tuple holding the following objects:
     - the [stimulation vector](@ref) `stim` with the tags corresponding to rejected trials set to zero (accepted trials),
