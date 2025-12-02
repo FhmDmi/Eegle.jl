@@ -9,7 +9,7 @@ where {CONSTANT} is one of the heading here below. See the [tutorials](@ref "Tut
 ## `EXAMPLE_MI_1`
 
 This is the file corresponding to the first [session](@ref) of [subject](@ref) 3
-of motor-imagery Brain-Computer Interface database [Alex MI](@ref "Database Summary for MI Paradigm"):
+of motor-imagery Brain-Computer Interface database [Alex MI](@ref "Summary of MI Databases"):
 - amplifier: *g.USBamp* (g.tec medical engineering GmbH, Graz, Austria)
 - channels: 16 standard Ag/AgCl electrodes
 - electrical reference: right ear lobe

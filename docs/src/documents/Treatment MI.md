@@ -1,6 +1,6 @@
-# Data Treatment for Motor Imagery Databases
+# Treatment MI
 
-This document describes all the changes applied to downloaded Motor Imagery databases from MOABB to achieve standardization in the [CSV format](@ref).
+This document describes all the changes applied to downloaded Motor Imagery databases from MOABB.
 
 ## AlexMI
 
