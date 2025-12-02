@@ -9,6 +9,7 @@ using NPZ, YAML, HDF5, EzXML, DataFrames
 
 using Eegle.FileSystem
 
+# code for the GUI to download the FII BCI Corpus (called by `DownloadDB`)
 include(joinpath("GUIs", "downloadDB", "DB_download_interface.jl"))
 
 #=
@@ -28,7 +29,6 @@ const titleFont     = "\x1b[95m"
 const separatorFont = "\x1b[35m"
 const defaultFont   = "\x1b[0m"
 const greyFont      = "\x1b[90m"
-
 
 import Eegle
 
@@ -685,11 +685,14 @@ end
 """
 ```julia
 
-(1) function downloadDB()
+(1) 
+function downloadDB()
 
-(2) downloadDB(url::String, dest::String = DEFAULT_DOWNLOAD_DIR)
+(2) 
+function downloadDB(url::String, dest::String = DEFAULT_DOWNLOAD_DIR)
 
-(3) downloadDB(urls::Vector{String}, dest::String = DEFAULT_DOWNLOAD_DIR)
+(3) 
+function downloadDB(urls::Vector{String}, dest::String = DEFAULT_DOWNLOAD_DIR)
 ```
 (1) Interactive GUI mode
 
