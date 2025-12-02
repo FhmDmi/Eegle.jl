@@ -1,4 +1,4 @@
-# Database Summary for MI Paradigm
+# Summary of MI Databases
 
 | Database | Condition | Subjects | Sessions (min,max) | Sensors | Sensor Type | Classes | Class Labels | Trials/Class (min,max) | Sampling Rate | Window Length | Offset |
 |----------|-----------|----------|--------------------|---------|-------------|---------|--------------|------------------------|---------------|---------------|--------|

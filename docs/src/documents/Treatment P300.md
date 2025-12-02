@@ -1,6 +1,6 @@
-# Data Treatment for P300 Databases
+# Treatment P300
 
-This document describes all the changes applied to downloaded P300 databases from MOABB or the base repository to achieve standardization in the CSV format.
+This document describes all the changes applied to downloaded P300 databases from MOABB.
 
 ## BNCI2014009
 
