@@ -79,10 +79,16 @@ In this case, however, you must install DSP.jl as well.
 | [ZipFile](https://github.com/fhs/ZipFile.jl)| support for reading and writing ZIP archives in Julia |
 | [Test](https://github.com/JuliaLang/julia/tree/master/stdlib/Test)| for development: Julia standard library for integrating package testing |
 
-### Other resources
+## Other Resources
+
+### related to Eegle
+
+[Eegle-Tools](https://github.com/FhmDmi/Eegle-Tools): a collection of useful scripts.
+
+### similar packages
 
 There are many other Julia's packages that can be useful for EEG data analysis and classification.
-Here is a non-exhaustive list of links to find resources and useful packages:
+Here is a non-exhaustive list:
 
 |  Package | Scope |
 |:-----------------------|:-----------------------|
