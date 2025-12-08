@@ -1,4 +1,4 @@
-# Database Summary for P300 Paradigm
+# Summary of P300 Databases
 
 **Total databases:** 24
 
