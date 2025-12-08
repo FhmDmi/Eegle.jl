@@ -1,4 +1,4 @@
-# Database Summary for MI Paradigm
+# Summary of MI Databases
 
 **Total databases:** 17
 
