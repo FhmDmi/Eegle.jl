@@ -113,12 +113,14 @@ function _downloadDB()
                         if isdir(floder_to_remove)
                             println("Removing existing folder: $(floder_to_remove)")
                             rm(floder_to_remove; force=true, recursive=true)
-                        else
-                            println("No existing data for $(db.name)")
                         end
                     end
                 else
                     @info "Overwrite disabled — keeping existing data."
+                end
+
+                for (d, db) in enumerate(dbs)
+                    println("Added to queue for downloading: $d, $(db.name)")
                 end
 
                 _download(dbs, path_chosen_by_user[], true, true)
@@ -199,7 +201,7 @@ function _downloadDB(url::String, dest::String = DEFAULT_DOWNLOAD_DIR)
         zippath = joinpath(dest, filename)
         outdir  = joinpath(dest, replace(filename, r"\.zip$" => ""))
 
-        download( file["links"]["self"], zippath)
+        download( file["links"]["self"], zippath; timeout = 10800) # 3h timeout
 
         # Extraction
         mkpath(outdir)

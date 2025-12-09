@@ -214,14 +214,14 @@ function _adaptiveEpochs(X::AbstractMatrix{T}, sr, minsamples::S, lowPass::Union
     gfrms=globalFieldRMS(X)
     # plot(gfrms[range])
     # if low-pass limit is the Nyquist frequency do not filter
-    gfrmsFilt = lowPass≈sr/2 ? gfrms : 
-            filtfilt(digitalfilter(Lowpass(lowPass; fs=sr), Butterworth(4)), gfrms)
+    gfrmsFilt = lowPass≥sr/2 ? gfrms : filtfilt(gfrms, sr, Lowpass(lowPass))
     # plot!(gfrmsFilt[range])
 
     mina, value=Eegle.Miscellaneous.minima(gfrmsFilt)
     #d=[(mina[i]-mina[i-1])/sr for i=2:length(mina)]
     #histogram(d)
 
+    # ensure minimum window length
     i=1
     while i<length(mina)
         for j=1:length(mina)-1
@@ -259,12 +259,12 @@ use [`Eegle.ERPs.trials`](@ref) instead.
 Two segmentation methods are possible, the *standard* fixed-length epoching and the *adaptive* epoching based on the
 local minima of the low-pass filtered [global field root mean square](@ref globalFieldRMS) (GFRMS).
 
-- *Standard:* `wl` must be set to a positive integer (by default is 0), which determines the length in samples of the epochs.
+- *Standard (default):* `wl` is set to a positive integer (by default is `sr`*1.5), which determines the length in samples of the epochs.
     A positive value of `slide` (default=0) determines the number of overlapping 
     samples. By default there will be no overlapping. 
-- *Adaptive:* if `wl`=0 (default), the GFRMS is computed, low-pass filtered 
+- *Adaptive:* if `wl`= 0, the GFRMS is computed, low-pass filtered 
     using `lowPass` (in Hz) as the cut-off (default = 14 Hz) and segmented ensuring that the minimum epoch size (in samples) is `minSize`, 
-    which default is the nuber of samples covering 1.5s.
+    which default is the nuber of samples covering 1.5s. Set `LowPass` to `sr`/2 (Nyquist frequency) for no low-pass filtering of the GFRMS.
 
 **Return**
 
