@@ -166,14 +166,20 @@ end
 function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
 
     n = length(dbs)
-    print("\rProgress: [", "#"^0, " "^n, "] 0/$(n)")
+    print("\rDownload progress: [", "#"^0, " "^n, "] 0/$(n)…")
     flush(stdout)
 
     # download, unzip and delete zip
     for (i, db) in enumerate(dbs)
+        basepath = joinpath(basepath_root, "BCI_FII_Corpus", string(db.paradigm))
+        mkpath(basepath)
+
+        dbexists = isdir(joinpath(basepath, db.name))
+
+        dbexists && println(" Database ", db.name, "exists. Download skipped")
+        dbexists && continue
+
         try
-            basepath = joinpath(basepath_root, "BCI_FII_Corpus", string(db.paradigm))
-            mkpath(basepath)
 
             zippath = joinpath(basepath, string(db.name * ".zip"))
             #outdir  = joinpath(basepath, string(db.name))
@@ -183,7 +189,7 @@ function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
             if !isurl(db.url)
                 error("downloadDB: Invalid URL format: $(db.url)")
             end
-            download(db.url, zippath)
+            download(db.url, zippath; timeout = 10800)
 
             # --- Extraction ---
             #mkpath(outdir)
@@ -206,10 +212,10 @@ function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
 
             delete_zip && rm(zippath; force=true)
 
-            print("\rProgress: [", "#"^i, " "^(n-i), "] $(i)/$(n)")
+            print("\rDownload progress: [", "#"^i, " "^(n-i), "] $(i)/$(n)…")
             flush(stdout)
         catch e
-            @error "Error for $(db.name): $e"
+            @error "Error downloading $(db.name): $e"
         end
     end
 
@@ -240,7 +246,7 @@ function write_in_Eegle_package(download_path, overwrite)
     if isdir(EegleDir)
         path = writeASCII([download_path], FII_BCI_CORPUS_PATHFILE; overwrite = overwrite)
     else
-        @error "Eegle package not found"
+        @error "Eegle package not found."
     end
 end
 

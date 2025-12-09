@@ -735,10 +735,13 @@ Once a BCI paradigm is selected (MI or P300), the following inclusion criteria c
 
 The table on the right lists the available databases given the current inclusion criteria.
 
-The **Choose path** button allows to select the folder where the selected databases are to be downloaded (default: homedir()).
-Notice that, once you click, the folder selection window may open minimized (check the task bar).
+The **Choose path** button allows to select the folder where the selected databases are to be downloaded (default: *homedir*).
 
-If the **Overwrite existing data** check box is checked (default), existing files in the download directory are deleted (suggested, as a new version of the the FII BCI corpus may be available).
+!!! warning "Folder selection window"
+    The folder selection window may open minimized (check the task bar).
+
+If the **Overwrite existing data** check box is checked (default), existing versions of the databases to be downloaded (folders with the same name) 
+are deleted before starting the download. Make sure you have partially downloaded the latest version of the *FII BCI Corpus* if you uncheck this option.
 
 The GUI automatically downloads the databases, extracts their contents, and removes the ZIP archives, as soon as the **Download Now** button is pressed.
 
@@ -756,7 +759,7 @@ is printed when the download has ended. You can keep using Julia in the meanwhil
 
 Argument `url` must point to a Zenodo record page (e.g. "https://zenodo.org/records/17670014").
 
-All files associated with the record are downloaded into folder `dest` (the homedir by default).
+All files associated with the record are downloaded into folder `dest` (the *homedir* by default).
 
 A progress indicator is displayed in the REPL throughout the download and extraction process.
 
@@ -764,10 +767,13 @@ A progress indicator is displayed in the REPL throughout the download and extrac
 
 This is the same as (2), but for a vector of Zenodo record URLs.
 
+!!! warning "Time out"
+    A time out of three hours is enforced for the download of each database. If your connection requires more than that
+    for a large database, consider downloading and unzipping it manually from Zenodo.
 
 **Examples**
 ```julia
-downloadDB()
+downloadDB() # run the GUI
 
 downloadDB("https://zenodo.org/records/17670014")
 
