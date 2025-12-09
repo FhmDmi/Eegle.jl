@@ -4,6 +4,7 @@ using NativeFileDialog
 using IsURL 
 using JSON
 using HTTP
+using Downloads
 import Bonito.TailwindDashboard as D
 
 # Default folder where downloaded databases are stored if none is specified.
@@ -109,7 +110,7 @@ function _downloadDB()
                 if overwrite_existing_data
                     @info "Overwrite enabled — removing existing folders first..."
                     for db in dbs
-                        floder_to_remove = joinpath(path_chosen_by_user[], "BCI_FII_Corpus", string(db.paradigm))
+                        floder_to_remove = joinpath(path_chosen_by_user[], CORPUS_DIR, string(db.paradigm))
                         if isdir(floder_to_remove)
                             println("Removing existing folder: $(floder_to_remove)")
                             rm(floder_to_remove; force=true, recursive=true)
@@ -120,7 +121,7 @@ function _downloadDB()
                 end
 
                 for (d, db) in enumerate(dbs)
-                    println("Added to queue for downloading: $d, $(db.name)")
+                    println("Added to queue for downloading: $d - $(db.name)")
                 end
 
                 _download(dbs, path_chosen_by_user[], true, true)
@@ -192,7 +193,7 @@ function _downloadDB(url::String, dest::String = DEFAULT_DOWNLOAD_DIR)
 
     n = length(meta["files"])
     @info "Starting the download of the FII BCI Corpus"
-    print("\rDownload progress: [", "#"^0, " "^n, "] 0/$(n)…")
+    print("\rDownload progress: [", "#"^0, " "^n, "] 0 of $(n)…")
     flush(stdout)
 
     for (i, file) in enumerate(meta["files"])
@@ -201,7 +202,7 @@ function _downloadDB(url::String, dest::String = DEFAULT_DOWNLOAD_DIR)
         zippath = joinpath(dest, filename)
         outdir  = joinpath(dest, replace(filename, r"\.zip$" => ""))
 
-        download( file["links"]["self"], zippath; timeout = 10800) # 3h timeout
+        Downloads.download( file["links"]["self"], zippath; timeout = 10800) # 3h timeout
 
         # Extraction
         mkpath(outdir)
