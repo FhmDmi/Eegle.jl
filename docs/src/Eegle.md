@@ -64,6 +64,7 @@ In this case, however, you must install DSP.jl as well.
 | [CSV](https://github.com/JuliaData/CSV.jl) | support for the *CSV* format |
 | [DataFrames](https://github.com/JuliaData/DataFrames.jl) | manipulation of tables|
 | [Dates](https://github.com/JuliaStdlibs/Dates.jl)| standard Julia support for dates and time manipulation |
+| [Downloads](https://github.com/JuliaLang/Downloads.jl) | standard Julia download functionality |
 | [EzXML](https://github.com/JuliaIO/EzXML.jl)| support for the *XML*/*HTML* data formats |
 | [Folds](https://github.com/JuliaFolds/Folds.jl)| multi-threaded basic functions |
 | [HDF5](https://github.com/JuliaIO/HDF5.jl)| Support for the *HDF5* data format |

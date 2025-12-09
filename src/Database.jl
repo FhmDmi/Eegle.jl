@@ -402,11 +402,9 @@ function selectDB(<corpusDir    :: String,>
         summarize   :: Bool = true,
         verbose     :: Bool = false)
 ```
-Select BCI databases pertaining to the given BCI paradigm. Optionally, each [session](@ref) of the selected databases 
-is scrutinized to meet the provided inclusion criteria. 
+Select BCI databases pertaining to the given BCI `paradigm` and all [sessions](@ref "session") therein meeting the provided inclusion criteria. 
 
-Return the selected databases as a list of [`infoDB`](@ref) structures, wherein, if inclusion criteria are provided, 
-the `infoDB.files` field lists the included sessions only.
+Return the selected databases as a list of [`infoDB`](@ref) structures, wherein the `infoDB.files` field lists the included sessions only.
 
 **Arguments**
 - `corpusDir`: the directory on the local computer where to start the search. Any folder in this directory is a candidate [database](@ref) to be selected.
@@ -416,10 +414,10 @@ the `infoDB.files` field lists the included sessions only.
     and not in `corpusDir`. This way you can use the same `corpusDir` for all paradigms.
 
     !!! note "Point to the FII BCI Corpus"
-    If you have downloaded the FII BCI Corpus using the provided GUI — see [`downloadDB`](@ref) —, you can simply
+    If you have downloaded the [FII BCI corpus](@ref "FII BCI Corpus Overview") using the provided GUI — see [`downloadDB`](@ref) —, you can simply
     omit this argument; **Eegle** will automatically search within the FII BCI Corpus directory.
 
-- `paradigm`: the BCI paradigm to be used. Supported paradigms at this time are: `:P300`, `:ERP` or `:MI`.
+- `paradigm`: the BCI paradigm to be used. Supported paradigms at this time are `:P300` and `:MI`.
 
 **Optional Keyword Arguments**
 - `classes`: the labels of the classes the databases must include:
@@ -432,21 +430,26 @@ the `infoDB.files` field lists the included sessions only.
 
 - `minTrials`: the minimum number of trials for all classes in the sessions to be included. 
 - `summarize`: if true (default) a summary table of the selected databases is printed in the REPL.
+
+!!! tip "Nice printing" 
+    End the `SelectDB` line with a semicolon to easily visualize the summary table (see the examples).
+
 - `verbose` : if true print some feedback (in addition to the summary table)
+
 
 **Examples**
 ```julia
 
 # To point automatically to the FII BCI Corpus
-DB_P300 = selectDB(:P300)
+DB_P300 = selectDB(:P300);
 
-DB_MI = selectDB(:MI; classes = ["left_hand", "right_hand"])
+DB_MI = selectDB(:MI; classes = ["left_hand", "right_hand"]);
 
 # To point to any corpus in any directory
-selectedDB = selectDB(.../directory_to_start_searching/, :P300)
+selectedDB = selectDB(.../directory_to_start_searching/, :P300);
 
 selectedDB = selectDB(.../directory_to_start_searching/, :MI;
-                      classes = ["left_hand", "right_hand"])
+                      classes = ["left_hand", "right_hand"]);
 
 selectedDB = selectDB(.../directory_to_start_searching/, :MI;
                       classes = ["rest", "both_hands", "feet"],
@@ -475,7 +478,7 @@ function selectDB(corpusDir     :: String,
     # Check paradigm and classes requirements - no error for MI/ERP without classes
     if (paradigm == :MI || paradigm == :ERP) && isnothing(classes)
         println("Eegle.Database, function `selectDB`: No class filter specified for $paradigm paradigm. All databases will be returned.")
-        @warn "If you plan to perform classification with these databases, it is recommended to specify the 'classes' argument to ensure consistent class selection across databases."
+        @info "If you plan to train machine learning models, specify the `classes` argument to ensure consistent class selection across databases."
     end
 
     selectedDB = infoDB[]  # List of infoDB structures
@@ -593,7 +596,7 @@ function selectDB(corpusDir     :: String,
         println("\n$(repeat("═", 150))")
         println("\n💡 For detailed trial counts per class, please inspect individual database structures")
     end
-    return selectedDB  # selectedDB is a list of infoDB struct respecting the conditions
+    return selectedDB;  # selectedDB is a list of infoDB struct respecting the conditions
 end
 
 function selectDB(paradigm      :: Symbol;
@@ -604,7 +607,7 @@ function selectDB(paradigm      :: Symbol;
 
     corpusDir = _dirFII() # see GUIs\downloadDB\db_catalog.jl
     if isnothing(corpusDir)
-        throw(ArgumentError("Eegle.Database.selectDB: the default directory of the FII BCI Corpus has not been found. Please install the corpus running `downloadDB()`"))
+        throw(ArgumentError("Eegle.Database.selectDB: the default directory of the FII BCI Corpus has not been found. Please install the corpus running `downloadDB()`. Looking into $corpusDir"))
     else
         selectDB(corpusDir, paradigm; classes, minTrials, summarize, verbose)
     end

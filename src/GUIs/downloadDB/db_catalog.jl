@@ -1,4 +1,5 @@
 using Eegle
+using Downloads
 
 # Metadata describing each database in the corpus (type, classes, URL, etc.).
 struct DBMeta
@@ -14,6 +15,8 @@ end
 #const EegleDir = joinpath(homedir(), ".julia", "packages", "Eegle")
 const EegleDir = joinpath(DEPOT_PATH[1], "packages", "Eegle")
 const FII_BCI_CORPUS_PATHFILE = joinpath(EegleDir, "FII_BCI_Corpus.txt")
+const CORPUS_DIR = "FII_BCI_Corpus"
+
 
 # Zenodo API URLs for MI and P300 files.
 const MIpath = "https://zenodo.org/api/records/17801878/files/" 
@@ -51,7 +54,7 @@ const DB_CATALOG = [
     DBMeta("Cho2017", :MI, ["lefthand", "righthand"], 100,
         string(MIpath, "Cho2017.zip/content")),
     
-    DBMeta("GrossWentrup2009", :MI, ["lefthand", "righthand"], 150,
+    DBMeta("GrosseWentrup2009", :MI, ["lefthand", "righthand"], 150,
         string(MIpath, "GrosseWentrup2009.zip/content")),
     
     DBMeta("Lee2019MI", :MI, ["lefthand", "righthand"], 50,
@@ -76,10 +79,10 @@ const DB_CATALOG = [
         string(MIpath, "Zhou2016.zip/content")),
 
     # ==== P300 DATABASES ====
-    DBMeta("bi2012-Training", :P300, ["target", "nontarget"], 126,
+    DBMeta("bi2012-T", :P300, ["target", "nontarget"], 126,
         string(P300path, "bi2012-T.zip/content")),
     
-    DBMeta("bi2012-Online", :P300, ["target", "nontarget"], 49,
+    DBMeta("bi2012-O", :P300, ["target", "nontarget"], 49,
         string(P300path, "bi2012-O.zip/content")),
     
     DBMeta("bi2013a-NAT", :P300, ["target", "nontarget"], 80,
@@ -118,10 +121,10 @@ const DB_CATALOG = [
     DBMeta("BNCI2015003-Test", :P300, ["target", "nontarget"], 75,
         string(P300path, "BNCI2015003-Test.zip/content")),
     
-    DBMeta("Cattan2019-PC", :P300, ["target", "nontarget"], 120,
+    DBMeta("Cattan-PC", :P300, ["target", "nontarget"], 120,
         string(P300path, "Cattan-PC.zip/content")),
     
-    DBMeta("Cattan2019-VR", :P300, ["target", "nontarget"], 120,
+    DBMeta("Cattan-VR", :P300, ["target", "nontarget"], 120,
         string(P300path, "Cattan-VR.zip/content")),
     
     DBMeta("EPFLP300-1", :P300, ["target", "nontarget"], 20,
@@ -142,10 +145,10 @@ const DB_CATALOG = [
     DBMeta("EPFLP300-6", :P300, ["target", "nontarget"], 20,
         string(P300path, "EPFLP300-6.zip/content")),
     
-    DBMeta("Lee2019ERP-Train", :P300, ["target", "nontarget"], 330,
+    DBMeta("Lee2019_ERP-Train", :P300, ["target", "nontarget"], 330,
         string(P300path, "Lee2019_ERP-Train.zip/content")),
     
-    DBMeta("Lee2019ERP-Test", :P300, ["target", "nontarget"], 360,
+    DBMeta("Lee2019_ERP-Test", :P300, ["target", "nontarget"], 360,
         string(P300path, "Lee2019_ERP-Test.zip/content")),
 ]
 
@@ -162,23 +165,35 @@ function filterDB(
     end
 end
 
+
+#=
+function safe_download(url, localpath)
+    open(localpath, "w") do io
+        download(url, io)
+    end
+end
+=#
+
 # Downloads, extracts and organizes a list of databases into a local folder, with a progress bar.
 function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
 
     n = length(dbs)
-    print("\rDownload progress: [", "#"^0, " "^n, "] 0/$(n)…")
+    print("\rDownload progress: [", "#"^0, " "^n, "] 0 of $(n)…")
     flush(stdout)
+
+    allExists = true
 
     # download, unzip and delete zip
     for (i, db) in enumerate(dbs)
-        basepath = joinpath(basepath_root, "BCI_FII_Corpus", string(db.paradigm))
+        basepath = joinpath(basepath_root, CORPUS_DIR, string(db.paradigm))
         mkpath(basepath)
 
         dbexists = isdir(joinpath(basepath, db.name))
 
-        dbexists && println(" Database ", db.name, "exists. Download skipped")
+        dbexists && println(" Database ", db.name, " exists. Download skipped")
         dbexists && continue
 
+        allExists=false
         try
 
             zippath = joinpath(basepath, string(db.name * ".zip"))
@@ -189,7 +204,10 @@ function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
             if !isurl(db.url)
                 error("downloadDB: Invalid URL format: $(db.url)")
             end
-            download(db.url, zippath; timeout = 10800)
+
+            #safe_download(db.url, zippath; timeout = 10800)
+
+            Downloads.download(db.url, zippath; timeout = 10800)
 
             # --- Extraction ---
             #mkpath(outdir)
@@ -212,31 +230,38 @@ function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
 
             delete_zip && rm(zippath; force=true)
 
-            print("\rDownload progress: [", "#"^i, " "^(n-i), "] $(i)/$(n)…")
+            # write the path where the DBs are downloaded in the Eegle package .julia folder
+            # if at least one database is downloaded
+            i==1 && write_path_in_Eegle && write_in_Eegle_package(basepath_root, true)
+
+            println()
+            print("\rDownload progress: [", "#"^i, " "^(n-i), "] $(i) of $(n)…")
             flush(stdout)
         catch e
             @error "Error downloading $(db.name): $e"
         end
     end
 
-    # write the path where the DBs are downloaded in the Eegle package .julia folder
-    write_path_in_Eegle && write_in_Eegle_package(basepath_root, true)
-
     found = 0
 
     for db in dbs
-        outdir = joinpath(basepath_root, "BCI_FII_Corpus", string(db.paradigm), db.name)
+        outdir = joinpath(basepath_root, CORPUS_DIR, string(db.paradigm), db.name)
         if isdir(outdir) && !isempty(readdir(outdir))
             found += 1
         end
     end
+    
     println()
-    if found == n
-        println("Download completed successfully ($found / $n databases).")
-    elseif found == 0
-        println("Download failed: no database was downloaded.")
+    if allExists
+        println("No need to download databases ($found found out of $n selected).")
     else
-        println("Download terminated with errors ($found / $n databases downloaded).")
+        if found == n
+            println("Download completed successfully ($found / $n databases).")
+        elseif found == 0
+            println("Download failed: no database was downloaded.")
+        else
+            println("Download terminated with errors ($found of $n databases downloaded).")
+        end
     end
 end
 
@@ -244,7 +269,9 @@ end
 function write_in_Eegle_package(download_path, overwrite)
     
     if isdir(EegleDir)
-        path = writeASCII([download_path], FII_BCI_CORPUS_PATHFILE; overwrite = overwrite)
+        path = joinpath(download_path, CORPUS_DIR)
+        path = replace(s, '\\' => '/')
+        writeASCII([path], FII_BCI_CORPUS_PATHFILE; overwrite = overwrite)
     else
         @error "Eegle package not found."
     end
@@ -254,7 +281,7 @@ end
 function _dirFII() 
     file = FII_BCI_CORPUS_PATHFILE
     isfile(file) || (return nothing)
-    path = readlines(FII_BCI_CORPUS_PATHFILE)[1]
+    path = normpath(readlines(FII_BCI_CORPUS_PATHFILE)[1])
     isdir(path) || (return nothing)
     return path
 end
