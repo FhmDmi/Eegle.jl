@@ -89,6 +89,7 @@ function _downloadDB()
                 folder = pick_folder()
                 if folder !== nothing
                     path_chosen_by_user[] = folder
+                    println()
                     @info "The corpus will be downloaded in $(folder)"
                 else
                     @info "The corpus will be downloaded in the homedir"
