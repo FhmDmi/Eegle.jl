@@ -48,11 +48,11 @@ For most spatial filters
 - ``C`` is the covariance matrix of ``X`` and 
 - ``S`` is a covariance matrix which definition yields the specificity of each spatial filter.
 
-Let us see now how to construct two new spatial filters:
-- **SFA** (Slow Feature Analysis: [Wiskott2002SFA](@cite)), which sort components data by *slowness*,
-- **MoSc** ([Molgedey1994TDSEP](@cite)), which sort components by *autocorrelation*.
+**Let us see now how to construct two new spatial filters:**
+- **SFA**, which stands for Slow Feature Analysis [Wiskott2002SFA](@cite): sort components data by *slowness*,
+- **MoSc** [Molgedey1994TDSEP](@cite): sort components by *autocorrelation*.
 
-As we will show, these two filters can give similar results, since slowness and autocorrelation at early lags are closely related characteristics of time-series.
+As we will show, these two filters tends in general to give similar results, since slowness and autocorrelation at early lags are closely related characteristics of time-series.
 
 Note that, in practice we do not compute the filters by GEVD, but by a two-step procedures, which is numerically more stable:
 
@@ -65,7 +65,6 @@ Note that, in practice we do not compute the filters by GEVD, but by a two-step 
 2) do ``\hspace{0.1cm}\textrm{EVD}(W^TSW)=UΛU^{T}``
 
 Finally, we obtain ``B=WU`` and ``A=U^TW^+`
-
 
 As a data example we use the [`EXAMPLE_P300_1`](@ref) example P300 BCI example file provided with **Eegle**, selecting 12s from second 70 to second 82. Figure 1 shows the time series of the data.
 
