@@ -24,6 +24,8 @@ Tutorials are organized by theme; start with those that most closely resemble yo
 | [Spatial Filters](@ref) | ubiquitously used for de-noising |
 | [Machine Learning](@ref) | typically used in the field of brain-Computer interface |
 
+---------------------------------------------------------------------------------------------------------------
+
 ### Spectral Analysis
 |Tutorial  | Description|
 |:----|:----|
