@@ -731,35 +731,35 @@ Open an interactive GUI to select and download databases from the FII BCI Corpus
     The size of the corpus on disk is **36.6 GB** for MI and **14.2 GB** for P300.
     
 The GUI will open in the primary HTML display found in the Julia display stack, which typically
-is VS Code if you use it or the default web-browser, like this:
+is VS Code if you use it or the default web-browser. It looks like this:
 
 ![Figure GUI_downloadDB](assets/GUI_downloadDB.png)
 
-Once a BCI paradigm is selected (MI or P300), the following inclusion criteria can be selected:
+Once a BCI paradigm is chosen (MI or P300), the following inclusion criteria can be enforced:
 - the minimum number of trials per class
 - the motor imagery classes (for MI paradigm only) 
 
 The table on the right lists the available databases given the current inclusion criteria.
 
-The **Choose path** button allows to select the folder where the selected databases are to be downloaded (default: *homedir*).
+The **Choose path** button invokes a folder selection window to choose the folder where the corpus is to be downloaded (default: *homedir*).
 
 !!! warning "Folder selection window"
-    The folder selection window may open minimized (check the task bar).
+    The folder selection window may open minimized. Check the task bar if you don't see it.
 
-If the **Overwrite existing data** check box is checked (default), existing versions of the databases to be downloaded (folders with the same name) 
-are deleted before starting the download. Make sure you have partially downloaded the latest version of the *FII BCI Corpus* if you uncheck this option.
+If the **Overwrite existing data** check box is not checked (default), the databases will be downloaded only if a folder with the same name
+does not exist already. If you have previously downloaded the corpus and you you want to update to a new version, check this box.
 
-The GUI automatically downloads the databases, extracts their contents, and removes the ZIP archives, as soon as the **Download Now** button is pressed.
+As soon as the **Download Now** button is pressed, the GUI automatically downloads the databases, extracts their contents, and removes the ZIP archives.
 
 A progress indicator is displayed in the REPL throughout the download and extraction process and a notification
-is printed when the download has ended. You can keep using Julia in the meanwhile.
+is printed when the download has ended. 
 
 !!! warning "Paradigms"
     The databases pertaining to the MI and P300 paradigm must be downloaded separately.
 
 !!! tip "Using the FII BCI Corpus"
     Once the corpus is downloaded, **Eegle** knows automatically where to find it. Therefore, omitting the argument `corpusDir` while using function [`Eegle.Database.selectDB`](@ref)
-    will automatically point to the FII BCI corpus.
+    will automatically point to the FII BCI corpus. 
 
 (2) **Direct download of a single [Zenodo](https://zenodo.org/) record**
 
@@ -775,7 +775,7 @@ This is the same as (2), but for a vector of Zenodo record URLs.
 
 !!! warning "Time out"
     A time out of three hours is enforced for the download of each database. If your connection requires more than that
-    for a large database, consider downloading and unzipping it manually from Zenodo.
+    for a large database, consider downloading and unzipping such a database from Zenodo.
 
 **Examples**
 ```julia
