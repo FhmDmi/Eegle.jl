@@ -21,6 +21,7 @@ Tutorials are organized by theme; start with those that most closely resemble yo
 |Theme| Uses|
 |:----|:----|
 | [Spectral Analysis](@ref) | traditional spectral analysis of EEG based on FFT |
+| [Spatial Filters](@ref) | ubiquitously used for de-noising |
 | [Machine Learning](@ref) | typically used in the field of brain-Computer interface |
 
 ### Spectral Analysis
@@ -29,6 +30,10 @@ Tutorials are organized by theme; start with those that most closely resemble yo
 |[Tutorial SA 1](@ref) | compute and plot power spectra on continuous EEG recording |
 |[Tutorial SA 2](@ref) | compute and plot power spectra on particular EEG epochs (e.g., experimental trials) |
 
+### Spatial Filters
+|Tutorial  | Description|
+|:----|:----|
+|[Tutorial SF 1](@ref) | construct new filters based on joint diagonalization (GEVD) |
 
 ### Machine Learning
 |Tutorial  | Description|
