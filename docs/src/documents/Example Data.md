@@ -19,7 +19,7 @@ of motor-imagery Brain-Computer Interface database [Alex MI](@ref "Summary of MI
 - MI classes: 1="right_hand", 2="feet", 3="rest"
 - number of trials per class: 1=20, 2=20, 3=20.
 
-See [Tutorial ML 2](@ref).
+See [Tutorial ML 1](@ref).
 
 ---
 ## `EXAMPLE_P300_1`
