@@ -20,7 +20,7 @@ Execute the following command in julia's REPL:
 
 ---
 
-The package is self-contained, as it re-exports several packages and all its submodules. The Eegle's sub-modules are:
+The package is self-contained, as it re-exports several packages and all its submodules. 
 
 ## Quick Start
 
@@ -29,7 +29,7 @@ A large collection of tutorials (to come) will get you on track.
 ---
 ## Disclaimer
 
-This version is a **pre-release** for testing purpose.
+This version is a **pre-release** for testing purposes.
 
 ---
 ## About the authors
