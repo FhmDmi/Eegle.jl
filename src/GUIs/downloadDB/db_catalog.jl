@@ -263,8 +263,6 @@ function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
                 close(reader)
             end
 
-            #@info "Done $(db.name)"
-
             delete_zip && rm(zippath; force=true)
 
             println()
