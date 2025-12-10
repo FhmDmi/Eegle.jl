@@ -6,7 +6,7 @@
 
 ---
 
-**Eegle** (EEG general library) is a pure-[**julia**](https://julialang.org/) package for human EEG (Electroencephalography) data analysis and classification.
+**Eegle** (EEG general library) is a pure-[**julia**](https://julialang.org/) 90%-human package for human EEG (Electroencephalography) data analysis and classification.
 It is the fundamental brick allowing the integration of several packages dedicated to human EEG.
 
 <img src="docs/src/assets/Fig1_index.png" width="780" style="display: block; margin: auto;">
@@ -24,12 +24,12 @@ The package is self-contained, as it re-exports several packages and all its sub
 
 ## Quick Start
 
-A large collection of tutorials (to come) will get you on track.
+A large collection of tutorials (mostly to come) will get you on track.
 
 ---
 ## Disclaimer
 
-This version is a **pre-release** for testing purposes.
+**Eegle** is currently under development. This version is a **pre-release** for testing purposes.
 
 ---
 ## About the authors

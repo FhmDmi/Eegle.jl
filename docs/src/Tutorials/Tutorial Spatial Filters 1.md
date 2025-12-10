@@ -1,32 +1,38 @@
 # Tutorial SF 1
 
-Gievn an EEG data matrix ``X`` of dimension ``t⋅n``, a spatial filter ``Bₛ`` is a matrix of dimension ``n⋅p``, with ``p<n``,
-having a left-inverse ``Aₛ`` of dimension ``p⋅n`` verifying ``AₛBₛ=I``, where ``I`` is the identity matrix.
+Gievn an EEG data matrix ``X`` of dimension ``t⋅n``, a spatial filter ``Bₛ`` is a matrix of dimension ``n⋅p``, with ``p<n``.
+
+The spatial filter has a left-inverse ``Aₛ`` of dimension ``p⋅n`` verifying ``AₛBₛ=I``, where ``I`` is the identity matrix.
 
 The goal of spatial filters is to filter out ``n-p`` undesired components, thus they are very useful
-for removing noise, where each spatial filter defines the 'noise' in a specific manner. They work by sorting
-the components according to a measurable criterion. Then, the components within a desired range of the criterion are eliminated.
+for removing noise. 
+
+They work by sorting the components according to a measurable criterion. Then, the components within a desired range of the criterion are eliminated.
 
 In fact, ``Bₛ`` is formed by a subset of ``p`` columns  of ``B`` and ``Aₛ`` is formed by the same subset of ``p`` rows of ``A``. 
 
-All filtered components are given by ``Y=XB`` [Eq.1].
+All filtered components are given by 
+
+``Y=XB`` [Eq.1].
 
 ``Y`` has the same dimension as ``X``. Each component is a spatial combination of the sensors. The subset of interest is given by ``Yₛ=XBₛ``.
 
-The filtered data in the sensor space retaining only the components of interest is given by ``Z=YₛAₛ=XBₛAₛ`` [Eq.2].
+The filtered data in the sensor space retaining only the components of interest is given by 
+
+``Z=YₛAₛ=XBₛAₛ`` [Eq.2].
 
 ## Constructing Spatial Filters
 
-The package (Diagonalizations.jl)[https://github.com/Marco-Congedo/Diagonalizations.jl], which is re-exported by **Eegle**,
+The package [Diagonalizations.jl](https://github.com/Marco-Congedo/Diagonalizations.jl), which is re-exported by **Eegle**,
 features several useful spatial filters for EEG, such as:
 
-- (PCA)[https://marco-congedo.github.io/Diagonalizations.jl/stable/pca/], which sort components by variance
-- (Whitening)[https://marco-congedo.github.io/Diagonalizations.jl/stable/whitening/], as PCA, but also standardizing the variance
-- (CSP)[https://marco-congedo.github.io/Diagonalizations.jl/stable/csp/], which can sort component either 
+- [PCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/pca/), which sort components by variance
+- [Whitening](https://marco-congedo.github.io/Diagonalizations.jl/stable/whitening/), as PCA, but also standardizing the variance
+- [CSP](https://marco-congedo.github.io/Diagonalizations.jl/stable/csp/), which can sort component either 
     - by variance ratio between one class with respect to another
     - by signal-to-noise ratio of ERPs (X-DAWN)
-- (MCA)[https://marco-congedo.github.io/Diagonalizations.jl/stable/mca/], which sort components by cross-covariance between two EEG epochs
-- (CCA)[https://marco-congedo.github.io/Diagonalizations.jl/stable/cca/], which sort components by cross-correlation between two EEG epochs.
+- [MCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/mca/), which sort components by cross-covariance between two EEG epochs
+- [CCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/cca/), which sort components by cross-correlation between two EEG epochs.
 
 In this tutorial, we will see how to construct spatial filters based on the generalized eigenvalue-eigenvector decomposition (*GEVD*), that is, using one of the most useful and powerful technic in signal processing.
 
@@ -174,7 +180,6 @@ As one can see the artifacts have been, once gain, removed. The result is very c
 
 Using joint diagonalization a very large number of filters can be obtained.
 
-    !!! tip "Blind Source Separation"
-    In general, better results are obtained extending procedures based on the joint diagonalization of two matrices to
-    the approximate joint diagonalization of several matrices ([congedo2008bss](@cite), [Congedo2013HDR](@cite), [GouyPailler2010](@cite)). 
+In general, better results are obtained extending procedures based on the joint diagonalization of two matrices to
+the approximate joint diagonalization of several matrices ([congedo2008bss](@cite), [Congedo2013HDR](@cite), [GouyPailler2010](@cite)). 
 
