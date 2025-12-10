@@ -47,7 +47,7 @@ export  covmat,
 
 """
 ```julia
-(1) function covmat(X::AbstractMatrix{T};
+(1) function covmat(X::AbstractMatrix{T}, τ::Int = 0;
         covtype = LShrLW,
         prototype::Union{AbstractMatrix, Nothing} = nothing,
         standardize::Bool = false,
@@ -71,9 +71,14 @@ Covariance matrix estimation(s) of:
 - (1) `X`: ``N×T`` real data matrix, where ``N`` and ``T`` denotes the number of samples and channels, respectively
 - (2) `𝐗`: a vector holding ``k`` such matrices.
 
+** Arguments **
+If `τ` is a positive number, the non-centered lagged (auto)covariance is computed. 
+In this case only the `prototype`, `standardize` and `threaded` keyword arguments here below apply.
+The default `τ` is 0. 
+
 **Optional Keyword Arguments**
 - `covtype`: covariance estimator (default = `LShrLW`):
-    - `SCM` : sample covariance matrix (maximum likelihood)
+    - `SCM` : non-centered sample covariance matrix (maximum likelihood)
     - `LShrLW` : linear shrinkage estimator of [LedoitWolf2004](@cite)
     - `NShrLW` : non-linear shrinkage estimator of [LedoitWolf2020](@cite)
     - `:Tyler`: Tyler's M-estimator [tyler1987](@cite)
@@ -93,6 +98,11 @@ Covariance matrix estimation(s) of:
 
 **Return**
 
+If `τ` > 0:
+- (1): The covariance matrix estimation as a generic Julia `Matrix` object.
+- (2): A vector of ``K`` covariance matrix estimations as a vector of generic Julia `Matrix` objects.
+
+If `τ` = 0 (default):
 - (1): The covariance matrix estimation as a Julia [Hermitian](https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.Hermitian) matrix
 - (2): A vector of ``K`` covariance matrix estimations as an [HermitianVector](https://marco-congedo.github.io/PosDefManifold.jl/stable/MainModule/#%E2%84%8DVector-type) type.
 
@@ -108,6 +118,17 @@ C = covmat(randn(128, 19); covtype=SCM)
 
 C = covmat(randn(128, 19); covtype=:Tyler)
 
+C = covmat(randn(128, 19), 1) # lagged autocovariance matrix
+
+# not to be confused with the covariance matrix of lag-embedded data:
+C = covmat(randn(128, 19); covtype=SCM, lags = 1) 
+
+# Suppose you want the SCM of the forward first-order differences.
+# We can then use the standard `diff` Julia function:
+C = covmat(diff(randn(128, 19); dims=1); covtype=SCM) 
+
+# et cetera.
+
 # Method (2)
 
 𝐗 = [randn(128, 19) for k=1:10]
@@ -118,13 +139,14 @@ C = covmat(𝐗; covtype=SCM)
 
 C = covmat(𝐗; covtype=:Tyler)
 
-## using an example file provided with Eegle:
+## using an example file in NY format provided with Eegle:
 ## read a P300 BCI session, extract the trials and
-## compute the covariance matrices using default settings
+## compute the covariance matrices of all using 
+## standard settings for P300 BCI data.
 C = covmat(readNY(EXAMPLE_P300_1; bandPass=(1, 24), upperLimit=1.2).trials)
 ```    
 """
-function covmat(X::AbstractMatrix{T};
+function covmat(X::AbstractMatrix{T}, τ::Int = 0;
                 covtype = LShrLW,
                 prototype::Union{AbstractMatrix, Nothing} = nothing,
                 standardize::Bool = false,
@@ -137,29 +159,35 @@ function covmat(X::AbstractMatrix{T};
                 verbose::Bool = false) where T<:Union{Real, Complex}
 
     T<:Complex && covtype≠SCM && throw(ArgumentError("Eegle.BCI, function `covmat`: for complex data only `covtype=SCM` is supported"))
+    0≤τ<(size(X, 1) ÷ 2) || throw(ArgumentError("Eegle.BCI, function `covmat`: argument τ must respect 0 ≤ τ < (size(X, 1) ÷ 2)"))
 
     transform = standardize ? Eegle.Preprocessing.standardize : identity
 
-    if (covtype==SCM && useBLAS) # fast computations of the sample covariance matrix
-        Y = isnothing(prototype) ? transform(embedLags(X, lags)) : [transform(embedLags(X, lags)) prototype]
-        den = 1.0/size(Y, 1)
-        if BLAS.get_num_threads()==1
-            return size(Y, 2) < 64 ? ℍ(BLAS.gemm('T', 'N', Y, Y)*den) : ℍ((Y'*Y)*den)
-        else # if BLAS is multithreded always use BLAS
-            return ℍ(BLAS.gemm('T', 'N', Y, Y)*den)
+    if τ > 0
+        Y = isnothing(prototype) ? transform(X) : [transform(X) prototype]
+        return (X[1+τ:end, :]' * X[1:end-τ, :]) / (size(X,1) - τ)
+    else
+        if (covtype==SCM && useBLAS) # fast computations of the sample covariance matrix
+            Y = isnothing(prototype) ? transform(embedLags(X, lags)) : [transform(embedLags(X, lags)) prototype]
+            den = 1.0/size(Y, 1)
+            if BLAS.get_num_threads()==1
+                return size(Y, 2) < 64 ? ℍ(BLAS.gemm('T', 'N', Y, Y)*den) : ℍ((Y'*Y)*den)
+            else # if BLAS is multithreded always use BLAS
+                return ℍ(BLAS.gemm('T', 'N', Y, Y)*den)
+            end
+        elseif covtype == :Tyler
+            return tme(embedLags(X, lags)'; tol, maxiter, verbose) # tme takes a wide matrix
+        elseif covtype == :nrTyler
+            return nrtme(embedLags(X, lags)'; reg, tol, maxiter, verbose) # nrtme takes a wide matrix
+        else # any other estimator
+            return ℍ(CovarianceEstimation.cov(covtype, isnothing(prototype) ? transform(embedLags(X, lags)) : 
+                                                                            [transform(embedLags(X, lags)) prototype]))
         end
-    elseif covtype == :Tyler
-        return tme(embedLags(X, lags)'; tol, maxiter, verbose) # tme takes a wide matrix
-    elseif covtype == :nrTyler
-        return nrtme(embedLags(X, lags)'; reg, tol, maxiter, verbose) # nrtme takes a wide matrix
-    else # any other estimator
-        return ℍ(CovarianceEstimation.cov(covtype, isnothing(prototype) ? transform(embedLags(X, lags)) : 
-                                                                        [transform(embedLags(X, lags)) prototype]))
     end
 end
 
 
-function covmat(𝐗::AbstractVector{<:AbstractArray{T}}; 
+function covmat(𝐗::AbstractVector{<:AbstractArray{T}}, τ::Int = 0; 
                 covtype = LShrLW, 
                 prototype::Union{AbstractMatrix, Nothing}=nothing, 
                 standardize::Bool = false, 
@@ -172,16 +200,18 @@ function covmat(𝐗::AbstractVector{<:AbstractArray{T}};
                 verbose::Bool = false) where T<:Union{Real, Complex}
 
     T<:Complex && covtype≠SCM && throw(ArgumentError("Eegle.BCI, function `covmat`: for complex data only `covtype=SCM` is supported"))
+    minhs = minimum(size(X, 1) ÷ 2 for X ∈ 𝐗) 
+    0≤τ<minhs || throw(ArgumentError("Eegle.BCI, function `covmat`: argument τ must be non-negative and inferior to half the number of samples of the smallest of the matrices in `𝐗`"))
 
     𝐂 = PosDefManifold.HermitianVector(undef, length(𝐗))
 
     if threaded 
         @threads for i ∈ eachindex(𝐗) 
-            𝐂[i] = covmat(𝐗[i]; covtype, prototype, standardize, lags, useBLAS, reg, tol, maxiter, verbose)
+            𝐂[i] = covmat(𝐗[i], τ; covtype, prototype, standardize, lags, useBLAS, reg, tol, maxiter, verbose)
         end
     else
         @simd for i ∈ eachindex(𝐗) 
-            @inbounds 𝐂[i] = covmat(𝐗[i]; covtype, prototype, standardize, lags, useBLAS, reg, tol, maxiter, verbose)
+            @inbounds 𝐂[i] = covmat(𝐗[i], τ; covtype, prototype, standardize, lags, useBLAS, reg, tol, maxiter, verbose)
         end
     end
 

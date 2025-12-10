@@ -208,19 +208,18 @@ function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
         # println()
     end
 
-    allExists = (n == length(dbs))
     ndl = length(dbs) - n # number of downloads to be done
 
     println()
     sleep(0.5)
     if ndl>0
-        println(titleFont, "\nEegle is downloading the FIi BCI corpus", defaultFont)
+        println(titleFont, "\nEegle is downloading the FII BCI corpus", defaultFont)
         println(greyFont, "You can keep using julia in the meanwhile,", defaultFont)
         println(greyFont, "while killing the REPL will interrupt the process.", defaultFont)
         print("\rDownload progress: [", "#"^0, " "^ndl, "] terminated 0 of $(ndl)…")
         flush(stdout)
     else
-        @info "Folders for all selected databases already exists in destination directory. No database has been downloaded."
+        println(titleFont, "No database has been downloaded.", defaultFont)
         return nothing
     end
 
@@ -289,14 +288,7 @@ function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
         end
     end
 
-
-    println(titleFont)
-    if allExists
-        @info "No need to download databases ($found databses in the destination directory)."
-    else
-        println("Download terminated.")
-    end
-    println(defaultFont)
+    println(titleFont, "Download process terminated.", defaultFont)
 end
 
 # Saves in Eegle’s folder the path where the corpus was downloaded.
