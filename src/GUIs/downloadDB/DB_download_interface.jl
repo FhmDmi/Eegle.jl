@@ -101,7 +101,7 @@ function _downloadDB()
                         style = download_button_style)
 
         # Handles deletion of existing downloaded folders when enabled.
-        overwrite_checkbox = D.Checkbox("Overwrite existing data ", true)
+        overwrite_checkbox = D.Checkbox("Overwrite existing data ", false)
 
         on(download_button.value) do click::Bool
             if click
@@ -120,9 +120,13 @@ function _downloadDB()
                     @info "Overwrite disabled — keeping existing data."
                 end
 
+                sleep(0.5)
+                println()
+                println(titleFont, "Selected databases:", defaultFont)
                 for (d, db) in enumerate(dbs)
-                    println("Added to queue for downloading: $d - $(db.name)")
+                    print(greyFont, d, defaultFont, " - ", db.name, "; ")
                 end
+                #println()
 
                 _download(dbs, path_chosen_by_user[], true, true)
             end
@@ -222,7 +226,6 @@ function _downloadDB(url::String, dest::String = DEFAULT_DOWNLOAD_DIR)
         else
             print("\rDownload progress: [", "#"^i, " "^(n-i), "] $(i) databases of $(n)…")
         end
-
         flush(stdout)
     end
     @info "\nAll databases downloaded successfully."
