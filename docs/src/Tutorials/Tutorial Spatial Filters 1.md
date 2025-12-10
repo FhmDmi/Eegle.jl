@@ -13,40 +13,44 @@ In fact, ``Bₛ`` is formed by a subset of ``p`` columns  of ``B`` and ``Aₛ`` 
 
 All filtered components are given by 
 
-``Y=XB`` [Eq.1].
+``Y=XB`` ``\hspace{1cm}`` [Eq.1].
 
 ``Y`` has the same dimension as ``X``. Each component is a spatial combination of the sensors. The subset of interest is given by ``Yₛ=XBₛ``.
 
 The filtered data in the sensor space retaining only the components of interest is given by 
 
-``Z=YₛAₛ=XBₛAₛ`` [Eq.2].
+``Z=YₛAₛ=XBₛAₛ`` ``\hspace{1cm}`` [Eq.2].
 
 ## Constructing Spatial Filters
 
 The package [Diagonalizations.jl](https://github.com/Marco-Congedo/Diagonalizations.jl), which is re-exported by **Eegle**,
 features several useful spatial filters for EEG, such as:
 
-- [PCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/pca/), which sort components by variance
-- [Whitening](https://marco-congedo.github.io/Diagonalizations.jl/stable/whitening/), as PCA, but also standardizing the variance
-- [CSP](https://marco-congedo.github.io/Diagonalizations.jl/stable/csp/), which can sort component either 
+- [PCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/pca/): sort components by variance
+- [Whitening](https://marco-congedo.github.io/Diagonalizations.jl/stable/whitening/): as PCA, but also standardizing the variance
+- [CSP](https://marco-congedo.github.io/Diagonalizations.jl/stable/csp/): sort component either 
     - by variance ratio between one class with respect to another
     - by signal-to-noise ratio of ERPs (X-DAWN)
-- [MCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/mca/), which sort components by cross-covariance between two EEG epochs
-- [CCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/cca/), which sort components by cross-correlation between two EEG epochs.
+- [MCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/mca/): sort components by cross-covariance between two EEG epochs
+- [CCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/cca/): sort components by cross-correlation between two EEG epochs.
 
-In this tutorial, we will see how to construct spatial filters based on the generalized eigenvalue-eigenvector decomposition (*GEVD*), that is, using one of the most useful and powerful technic in signal processing.
+In this tutorial, we will see how to construct spatial filters based on the generalized eigenvalue-eigenvector decomposition (*GEVD*), which is one of the most useful and powerful technic in signal processing.
 
 In linear algebra, GEVD is synonymous of *joint diagonalization*, in that such spatial filters verify
 
 ``\left \{ \begin{array}{rl}B^TCB=I\\B^TSB=Λ \end{array} \right.``, ``\hspace{1cm}`` [Eq.3]
 
-where ``Λ`` is a diagonal matrix holding the generalized eigenvalues, which are sorted according to the specified criterion, and ``B`` is the matrix holding in the columns the corresponding generalized eigenvectors providing the filters.
+where 
+- ``Λ`` is a diagonal matrix holding the generalized eigenvalues, which are sorted according to the specified criterion, and 
+- ``B`` is the matrix holding in the columns the corresponding generalized eigenvectors providing the filters.
 
-For most spatial filters, ``C`` is the covariance matrix of ``X`` and ``S`` is a covariance matrix which definition yields the specificity of each spatial filter.
+For most spatial filters 
+- ``C`` is the covariance matrix of ``X`` and 
+- ``S`` is a covariance matrix which definition yields the specificity of each spatial filter.
 
 Let us see now how to construct two new spatial filters:
-- Slow Feature Analysis (SFA: [Wiskott2002SFA](@cite)), which sort components data by *slowness*,
-- MoSc ([Molgedey1994TDSEP](@cite)), which sort components by *autocorrelation*,
+- **SFA** (Slow Feature Analysis: [Wiskott2002SFA](@cite)), which sort components data by *slowness*,
+- **MoSc** ([Molgedey1994TDSEP](@cite)), which sort components by *autocorrelation*.
 
 As we will show, these two filters can give similar results, since slowness and autocorrelation at early lags are closely related characteristics of time-series.
 
@@ -88,6 +92,9 @@ function sfa(X::AbstractMatrix{T};
     return white.F*U, U'*white.iF
 end
 ```
+
+The `eVar` argument allows to determine dimensionality reduction during the first step (whitening) in the two-step procedure above. For details on how to use it, see [here](https://marco-congedo.github.io/Diagonalizations.jl/stable/Diagonalizations/#subspace-dimension).
+
 The SFA is obtained as
 
 ```julia
