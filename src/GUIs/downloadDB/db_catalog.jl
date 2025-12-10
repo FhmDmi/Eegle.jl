@@ -177,25 +177,64 @@ end
 # Downloads, extracts and organizes a list of databases into a local folder, with a progress bar.
 function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
 
-    n = length(dbs)
-    print("\rDownload progress: [", "#"^0, " "^n, "] 0 of $(n)…")
-    flush(stdout)
+    write_path = true # will be set to false once the path for the corpus has been written in Eegle's directory
 
-    allExists = true
+    # delete zip files with the same name as databases (possible incomplete downloads)
+    for db in dbs
+        basepath = joinpath(basepath_root, CORPUS_DIR, string(db.paradigm))
+        zipfile = joinpath(basepath, ".zip")
+        isfile(zipfile) && rm(zipfile)
+    end
+
+    # check if a folder with the same same as the database exists in destination directory.
+    # notify the user about the databased for which the download is to be skipped
+    n = 0
+    skipped = String[]
+    for db in dbs
+        basepath = joinpath(basepath_root, CORPUS_DIR, string(db.paradigm))
+        dbexists = isdir(joinpath(basepath, db.name))
+        dbexists && push!(skipped, db.name)
+        n += Int(dbexists)
+        n == 1 && println() 
+    end
+    if length(skipped)>0
+        sleep(0.5)
+        println()
+        println(titleFont, "The download of the following databases has been skipped as a folder with the same name exists already in the destination directory: ", defaultFont)
+        for d in eachindex(skipped)
+            print(greyFont, d,  defaultFont)
+            d < length(skipped) && print(", ")
+        end
+        # println()
+    end
+
+    allExists = (n == length(dbs))
+    ndl = length(dbs) - n # number of downloads to be done
+
+    println()
+    sleep(0.5)
+    if ndl>0
+        println(titleFont, "\nEegle is downloading the FIi BCI corpus", defaultFont)
+        println(greyFont, "You can keep using julia in the meanwhile,", defaultFont)
+        println(greyFont, "while killing the REPL will interrupt the process.", defaultFont)
+        print("\rDownload progress: [", "#"^0, " "^ndl, "] terminated 0 of $(ndl)…")
+        flush(stdout)
+    else
+        @info "Folders for all selected databases already exists in destination directory. No database has been downloaded."
+        return nothing
+    end
 
     # download, unzip and delete zip
-    for (i, db) in enumerate(dbs)
+    j = 0 # make the index globally visible, otherwise it catches an UndefVarError.
+    for db in dbs
         basepath = joinpath(basepath_root, CORPUS_DIR, string(db.paradigm))
-        mkpath(basepath)
+        isdir(joinpath(basepath, db.name)) && continue # skip download
 
-        dbexists = isdir(joinpath(basepath, db.name))
+        # Actual downloading
+        j += 1
+        mkpath(basepath) 
 
-        dbexists && println(" Database ", db.name, " exists. Download skipped")
-        dbexists && continue
-
-        allExists=false
         try
-
             zippath = joinpath(basepath, string(db.name * ".zip"))
             #outdir  = joinpath(basepath, string(db.name))
 
@@ -205,12 +244,12 @@ function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
                 error("downloadDB: Invalid URL format: $(db.url)")
             end
 
-            #safe_download(db.url, zippath; timeout = 10800)
-
             Downloads.download(db.url, zippath; timeout = 10800)
 
-            # --- Extraction ---
-            #mkpath(outdir)
+            print("\rExtracting $(j) of $(ndl)…                                                  ")
+            flush(stdout)
+
+            # --- ZIP Extraction ---
             reader = ZipFile.Reader(zippath)
             try
                 for f in reader.files
@@ -226,43 +265,38 @@ function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
                 close(reader)
             end
 
-            #@info "Done $(db.name)"
-
             delete_zip && rm(zippath; force=true)
 
-            # write the path where the DBs are downloaded in the Eegle package .julia folder
-            # if at least one database is downloaded
-            i==1 && write_path_in_Eegle && write_in_Eegle_package(basepath_root, true)
-
-            println()
-            print("\rDownload progress: [", "#"^i, " "^(n-i), "] $(i) of $(n)…")
+            print("\rDownload progress: [", "#"^j, " "^(ndl-j), "] terminated $(j) of $(ndl)…")
             flush(stdout)
+
+            # write the path where the DBs are downloaded in the Eegle package .julia folder
+            # if at least one DB has been downloaded
+            if write_path && write_path_in_Eegle 
+                write_in_Eegle_package(basepath_root, true)
+                write_path = false
+            end
         catch e
+            println(" \n ")
             @error "Error downloading $(db.name): $e"
+            if j<ndl 
+                println();
+                println("Trying to download next database…")
+                print("\rDownload progress: [", "#"^j, " "^(ndl-j), "] terminated $(j) of $(ndl)…")
+                flush(stdout)
+                continue
+            end
         end
     end
 
-    found = 0
 
-    for db in dbs
-        outdir = joinpath(basepath_root, CORPUS_DIR, string(db.paradigm), db.name)
-        if isdir(outdir) && !isempty(readdir(outdir))
-            found += 1
-        end
-    end
-    
-    println()
+    println(titleFont)
     if allExists
-        println("No need to download databases ($found found out of $n selected).")
+        @info "No need to download databases ($found databses in the destination directory)."
     else
-        if found == n
-            println("Download completed successfully ($found / $n databases).")
-        elseif found == 0
-            println("Download failed: no database was downloaded.")
-        else
-            println("Download terminated with errors ($found of $n databases downloaded).")
-        end
+        println("Download terminated.")
     end
+    println(defaultFont)
 end
 
 # Saves in Eegle’s folder the path where the corpus was downloaded.
@@ -270,8 +304,10 @@ function write_in_Eegle_package(download_path, overwrite)
     
     if isdir(EegleDir)
         path = joinpath(download_path, CORPUS_DIR)
-        path = replace(s, '\\' => '/')
+        path = replace(path, '\\' => '/')
         writeASCII([path], FII_BCI_CORPUS_PATHFILE; overwrite = overwrite)
+        #println()
+        # @info "The path to the FII BCI Corpus has been written in the Eegle installation directory. You can now call function `Eegle.Database.selectDB` without providing a directory for the databases" path
     else
         @error "Eegle package not found."
     end

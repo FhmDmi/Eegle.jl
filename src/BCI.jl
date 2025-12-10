@@ -8,6 +8,13 @@ Estimation of covariance matrices for EEG trials, including regularized and prot
 
 module BCI
 
+#=
+# ? ¤ CONTENT ¤ ? #
+covmat      | covariance matrix estimtions
+encode      | encoding of BCI trials as covariance matrices
+crval       | cross-validation accuracy of BCI data using PosDefManifold.jl
+=#
+
 using Base.Threads: @threads
 using LinearAlgebra: eigvecs, BLAS
 using PosDefManifold
@@ -54,7 +61,7 @@ export  covmat,
     where T<:Union{Real, Complex}
 
 (2)  function covmat(𝐗::AbstractVector{<:AbstractArray{T}};
-        < same arguments as method (1) > ...
+        < same arguments as method (1) > ...)
 ```
 Covariance matrix estimation(s) of: 
 - (1): a single data matrix (e.g., a trial) `X`

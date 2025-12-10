@@ -5,13 +5,6 @@
 
 module Database
 
-using NPZ, YAML, HDF5, EzXML, DataFrames
-
-using Eegle.FileSystem
-
-# code for the GUI to download the FII BCI Corpus (called by `DownloadDB`)
-include(joinpath("GUIs", "downloadDB", "DB_download_interface.jl"))
-
 #=
 # ? ¤ CONTENT ¤ ? #
 
@@ -21,8 +14,14 @@ infoNYdb        | print and return information about a database (infoDB structur
 selectDB        | select database folders based on paradigm and class requirements
 weightsdb       | get weights for each session of a database for statistical analysis
 downloadDB      | run a GUI to download the FII BCI corpus
-
 =#
+
+using NPZ, YAML, HDF5, EzXML, DataFrames
+
+using Eegle.FileSystem
+
+# code for the GUI to download the FII BCI Corpus (called by `DownloadDB`)
+include(joinpath("GUIs", "downloadDB", "DB_download_interface.jl"))
 
 # Module REPL text colors
 const titleFont     = "\x1b[95m"
@@ -727,8 +726,12 @@ function downloadDB(urls::Vector{String}, dest::String = homedir())
 (1) **Interactive GUI mode**
 
 Open an interactive GUI to select and download databases from the FII BCI Corpus.
+
+!!! warning "Make sure you have enough space of disk"
+    The size of the corpus on disk is **36.6 GB** for MI and **14.2 GB** for P300.
+    
 The GUI will open in the primary HTML display found in the Julia display stack, which typically
-is VS Code if you use it or the default web-browser.
+is VS Code if you use it or the default web-browser, like this:
 
 ![Figure GUI_downloadDB](assets/GUI_downloadDB.png)
 

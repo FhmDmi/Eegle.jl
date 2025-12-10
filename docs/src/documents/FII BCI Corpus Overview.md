@@ -3,6 +3,7 @@
 This document outlines the rationale and content of the **FII BCI Corpus** Zenodo repositories for [Motor Imagery (MI)](https://doi.org/10.5281/zenodo.17801878) and [P300](https://doi.org/10.5281/zenodo.17250465) BCI paradigm. Those are selections of BCI databases, annotated and curated for research purposes in a collaborative project carried out at *University Federico II of Naples* and *University Grenoble Alpes of Grenoble*.
 
 The corpus can be easily installed using **Eegle**'s download GUI — see [`Eegle.Database.downloadDB`](@ref).
+The size of the corpus on disk is **36.6 GB** for MI and **14.2 GB** for P300.
 
 Along with EEG data and class labels, the corpus provides comprehensive metadata that allow to select the data for the study at hand and extract relevant information. This makes it particularly easy to carry out machine learning research on BCI data — see for example [Tutorial ML 2](@ref). For comparing results, a [benchmark](@ref "BCI FII Corpus Benchmark") is provided.
 
