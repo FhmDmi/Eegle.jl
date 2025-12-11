@@ -288,7 +288,7 @@ function _download(dbs, basepath_root, delete_zip, write_path_in_Eegle)
         end
     end
 
-    println(titleFont, "Download process terminated.", defaultFont)
+    println(titleFont, "\rDownload process terminated.                                               ", defaultFont)
 end
 
 # Saves in Eegle’s folder the path where the corpus was downloaded.

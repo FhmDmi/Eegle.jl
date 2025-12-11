@@ -102,7 +102,7 @@ While conceived specifically for BCI sessions, the structure can be used also fo
 - `mark`: the [marker vectors](@ref) 
 - `X`: the ``T×N`` EEG data, with ``T`` and ``N`` the number of samples and channels (sensors), respectively
 - `trials`: a vector of trials, each of size ``N×wl``, extracted in the order of tags given in `stim` (optional)
-- `y`: the non-zero tags of `stim` as a vector. Each tag is the class label of the corresponding trial.
+- `y`: the non-zero tags of `stim` as a vector. Each tag is the class label of the corresponding trial
 - dictionaries `id`, `acquisition`, and `documentation` — see [NY Metadata (YAML)](@ref)). Their keys are:
 
 | id          | acquisition   |documentation  |
@@ -117,7 +117,7 @@ While conceived specifically for BCI sessions, the structure can be used also fo
 |             | "hardware"    ||
 
 !!! note "tags"
-    regardless the class labels (tags) in the file, the `.stim` and `.y` fields are always populated using the first `o.nc`
+    Regardless the class labels (tags) in the file, the `.stim` and `.y` fields are always populated using the first `o.nc`
     natural numbers (1,2, ...) when the structure is created by the [`readNY`](@ref) function. 
 
 In Julia, a structure has a default constructor taking all fields as arguments.
