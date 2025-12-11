@@ -22,12 +22,23 @@ const separatorFont = "\x1b[35m"
 const defaultFont   = "\x1b[0m"
 const greyFont      = "\x1b[90m"
 
-# Example data
+# Artifacts 
+using Artifacts, ArtifactUtils
+
+# Artifacts : Example data
+const EXAMPLE_DATA_DIR = joinpath(Eegle.artifact"data_examples", "data_examples") # not exported
+
+# These are all exported
+const EXAMPLE_P300_1 = joinpath(EXAMPLE_DATA_DIR, "P300", "subject_01_session_01.npz")
+const EXAMPLE_MI_1 = joinpath(EXAMPLE_DATA_DIR, "MI", "AlexMI_subject_03_session_01.npz")
+const EXAMPLE_MI_1_metadata = joinpath(EXAMPLE_DATA_DIR, "MI", "AlexMI_subject_03_session_01.yml")
+const EXAMPLE_Normative_1 = joinpath(EXAMPLE_DATA_DIR, "Normative", "EC", "F_20_19e_128sr.txt")
+const EXAMPLE_Normative_1_sensors = joinpath(EXAMPLE_DATA_DIR, "Normative", "EC", "F_20_19e_128sr_sensors.txt")
+
+#= old way without artifacts
 const EXAMPLE_P300_1 = joinpath(@__DIR__, "..", "data_examples", "P300", "subject_01_session_01.npz")
-const EXAMPLE_MI_1 = joinpath(@__DIR__, "..", "data_examples", "MI", "AlexMI_subject_03_session_01.npz")
-const EXAMPLE_MI_1_metadata = joinpath(@__DIR__, "..", "data_examples", "MI", "AlexMI_subject_03_session_01.yml")
-const EXAMPLE_Normative_1 = joinpath(@__DIR__, "..", "data_examples", "Normative", "EC", "F_20_19e_128sr.txt")
-const EXAMPLE_Normative_1_sensors = joinpath(@__DIR__, "..", "data_examples", "Normative", "EC", "F_20_19e_128sr_sensors.txt")
+...
+=#
 
 export  Eegle,
 

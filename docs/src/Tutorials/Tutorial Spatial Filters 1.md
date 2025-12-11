@@ -68,7 +68,7 @@ Finally, we obtain ``B=WU`` and ``A=U^TW^+``.
 As a data example we use the [`EXAMPLE_P300_1`](@ref) example P300 BCI example file provided with **Eegle**, selecting 4s from second 77 to second 81. Figure 1 shows the time series of the epoch submitted to spatial filtering (the data ``X``).
 
 ![Figure 1](../assets/Fig1_Tutorial_Spatial_Filters_1.jpg)
-**Figure 1** *The EEG epoch used as example, along with the amplitude spectra in the range 1Hz-32Hz (red) and autocorrelation function for lags up to 1s (in blue)*
+**Figure 1** *The EEG epoch used as example, along with the global field power (grey shaded area), amplitude spectra in the range 1Hz-32Hz (red) and autocorrelation function for lags up to 1s (blue)*
 
 As it can be seen, there are artifacts due to F4 and Cz electrodes contact loss. 
 
