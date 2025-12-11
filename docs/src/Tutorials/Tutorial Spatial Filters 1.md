@@ -65,12 +65,12 @@ Note that, in practice we do not compute the filters by GEVD, but by a two-step 
 
 Finally, we obtain ``B=WU`` and ``A=U^TW^+``.
 
-As a data example we use the [`EXAMPLE_P300_1`](@ref) example P300 BCI example file provided with **Eegle**, selecting 12s from second 70 to second 82. Figure 1 shows the time series of the epoch submitted to spatial filtering (the data ``X``).
+As a data example we use the [`EXAMPLE_P300_1`](@ref) example P300 BCI example file provided with **Eegle**, selecting 4s from second 77 to second 81. Figure 1 shows the time series of the epoch submitted to spatial filtering (the data ``X``).
 
 ![Figure 1](../assets/Fig1_Tutorial_Spatial_Filters_1.jpg)
 **Figure 1** *The EEG epoch used as example, along with the amplitude spectra (red) and autocorrelation function (in blue)*
 
-As it can be seen, there are artifacts due to electrode contact loss, punctually at electrode F4 and all over the epoch at electrode Cz. 
+As it can be seen, there are artifacts due to F4 and Cz electrodes contact loss. 
 
 ## SFA
 
