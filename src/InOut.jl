@@ -96,7 +96,7 @@ While conceived specifically for BCI sessions, the structure can be used also fo
 - `ns`: number of samples 
 - `wl`: window length in samples. Typically, the duration of a BCI trial
 - `offset`: see [offset](@ref)
-- `nc`: number of classes (non-zero tags)
+- `nClasses`: number of classes (non-zero tags)
 - `clabels`: labels of the classes
 - `stim`: the [stimulation vector](@ref)
 - `mark`: the [marker vectors](@ref) 
@@ -117,7 +117,7 @@ While conceived specifically for BCI sessions, the structure can be used also fo
 |             | "hardware"    ||
 
 !!! note "tags"
-    Regardless the class labels (tags) in the file, the `.stim` and `.y` fields are always populated using the first `o.nc`
+    Regardless the class labels (tags) in the file, the `.stim` and `.y` fields are always populated using the first `o.nClasses`
     natural numbers (1,2, ...) when the structure is created by the [`readNY`](@ref) function. 
 
 In Julia, a structure has a default constructor taking all fields as arguments.
@@ -134,7 +134,7 @@ A simplified constructor is also available, as
         run::Int = 1,
         wl::Int = sr,
         offset::Int = 0,
-        nc::Int = 1,
+        nClasses::Int = 1,
         clabels::Vector{String} = [""],
         stim::Vector{Int} = ["0"],
         mark::Vector{Vector{Int}} = [[""]],
@@ -190,14 +190,14 @@ EEG(X::Matrix{T}, sr::Int, sensors::Vector{String};
     run::Int = 1,
     wl::Int = sr,
     offset::Int = 0,
-    nc::Int = 1,
+    nClasses::Int = 1,
     clabels::Vector{String} = [""],
     stim::Vector{Int} = ["0"],
     mark::Vector{Vector{Int}} = [[""]],
     y::Vector{Int} = [0]) where T<:Real =
     EEG(Dict(), Dict(), Dict(), "0.0.1", db, paradigm, subject,
         session, run, sensors, sr, size(X, 2), size(X, 1), wl, offset,
-        nc, clabels, stim, mark, y, X, nothing)
+        nClasses, clabels, stim, mark, y, X, nothing)
 
 # `_standardizeClasses` function is exclusively used within `readNY` (from the InOut.jl package) 
 # to normalize EEG data numerical codes according to standard conventions.
@@ -456,7 +456,7 @@ function readNY(filename    :: AbstractString;
     sr        = round(Int, sr*rate) 
   end
 
-  length(unique(stim))-1==nc || @error "Eegle.InOut, function `readNY`: the number of classes in .nc does not correspond to the unique non-zero labels in .stim"
+  length(unique(stim))-1==nClasses || @error "Eegle.InOut, function `readNY`: the number of classes in .nClasses does not correspond to the unique non-zero labels in .stim"
 
   if upperLimit≠0
       # artefact rejection; change stim and compute mark (it finds the marks using code argument as stim2mark here below)
@@ -466,7 +466,7 @@ function readNY(filename    :: AbstractString;
       # only mark, i.e., samples where the trials start for each class 1, 2,...
       # argument code added 4 Avril 2025 to read MI files with arbitrary label numbers (not just 1, 2, 3...)
       mark = stim2mark(stim, wl; offset=os, code=sort(unique(stim))[2:end]) 
-      #mark=[[i+os for i in eachindex(stim) if stim[i]==j && i+os+wl<=ns] for j=1:nc]
+      #mark=[[i+os for i in eachindex(stim) if stim[i]==j && i+os+wl<=ns] for j=1:nClasses]
   end
 
   stim = mark2stim(mark, ns); # new stim with offset taken into account 
@@ -478,7 +478,7 @@ function readNY(filename    :: AbstractString;
 
   length(mark) == nClasses || @error "Eegle.InOut, function `readNY`: the number of classes in .mark does not correspond to the number of markers found in .stim"
 
-  trials = !(classes===false) ? [X[mark[i][j]:mark[i][j]+wl-1, :] for i=1:nc for j=1:length(mark[i])] : nothing
+  trials = !(classes===false) ? [X[mark[i][j]:mark[i][j]+wl-1, :] for i=1:nClasses for j=1:length(mark[i])] : nothing
 
   if !isempty(msg) println(msg) end
   # println("$(repeat("═", 65))") # (printing stdClass if true and offset if !=0)
@@ -500,12 +500,12 @@ function readNY(filename    :: AbstractString;
      ns,
      wl,
      os, # trials offset
-     nc,
+     nClasses,
      #collect(keys(info["stim"]["labels"])), # clabels
      clabels,
      stim,
      mark,
-     [i for i=1:nc for j=1:length(mark[i])], # y: all labels
+     [i for i=1:nClasses for j=1:length(mark[i])], # y: all labels
      X, # whole EEG recording
      trials # all trials, by class, if requested, nothing otherwise
   )
@@ -840,26 +840,26 @@ function Base.show(io::IO, ::MIME{Symbol("text/plain")}, o::EEG)
     type=eltype(o.X)
     l=length(o.stim)
     println(io, titleFont, "∿ EEG Data type; $r x $c ")
-    println(io, separatorFont, "∼∽∿∽∽∽∿∼∿∽∿∽∿∿∿∼∼∽∿∼∽∽∿∼∽∽∼∿∼∿∿∽∿∽∼∽∽∿∽∽", greyFont)
+    println(io, separatorFont, "∼∽∿∽∽∽∿∼∿∽∿∽∿∿∿∼∼∽∿∼∽∽∿∼∽∽∼∿∼∿∿∽∿∽∼∽∽∿∽∽∽∽∿∽∽∽∽∿∽∽∽∽∿", greyFont)
     println(io, "NY format version (.formatversion): $(o.formatversion)")
-    println(io, separatorFont, "∼∽∿∽∽∽∿∼∿∽∿∽∿∿∿∼∼∽∿∼∽∽∿∼∽∽∼∿∼∿∿∽∿∽∼∽∽∿∽∽", defaultFont)
-    println(io, ".db (database)   : $(o.db)")
-    println(io, ".paradigm        : $(":"*String(o.paradigm))")    
-    println(io, ".subject         : $(o.subject)")
-    println(io, ".session         : $(o.session)")
-    println(io, ".run             : $(o.run)")
-    println(io, ".sensors         : $(length(o.sensors))-Vector{String}")
-    println(io, ".sr(samp. rate)  : $(o.sr)")
-    println(io, ".ne(# electrodes): $(o.ne)")
-    println(io, ".ns(# samples)   : $(o.ns)")
-    println(io, ".wl(win. length) : $(o.wl)")
-    println(io, ".offset          : $(o.offset)")
-    println(io, ".nc(# classes)   : $(o.nc)")
-    println(io, ".clabels(c=class): $(length(o.clabels))-Vector{String}")
-    println(io, ".stim(ulations)  : $(length(o.stim))-Vector{Int}")
-    println(io, ".mark(ers) : $([length(o.mark[i]) for i=1:length(o.mark)])-Vectors{Int}")
-    println(io, ".y (all c labels): $(length(o.y))-Vector{Int}")
-    println(io, ".X (EEG data)    : $(r)x$(c)-Matrix{$(type)}")
+    println(io, separatorFont, "∼∽∿∽∽∽∿∼∿∽∿∽∿∿∿∼∼∽∿∼∽∽∿∼∽∽∼∿∼∿∿∽∿∽∼∽∽∿∽∽∽∽∿∽∽∽∽∿∽∽∽∽∿", defaultFont)
+    println(io, ".db (database)         : $(o.db)")
+    println(io, ".paradigm              : $(":"*String(o.paradigm))")    
+    println(io, ".subject               : $(o.subject)")
+    println(io, ".session               : $(o.session)")
+    println(io, ".run                   : $(o.run)")
+    println(io, ".sensors               : $(length(o.sensors))-Vector{String}")
+    println(io, ".sr(samp. rate)        : $(o.sr)")
+    println(io, ".ne(# electrodes)      : $(o.ne)")
+    println(io, ".ns(# samples)         : $(o.ns)")
+    println(io, ".wl(win. length)       : $(o.wl)")
+    println(io, ".offset                : $(o.offset)")
+    println(io, ".nClasses(# classes)   : $(o.nClasses)")
+    println(io, ".clabels(c=class)      : $(length(o.clabels))-Vector{String}")
+    println(io, ".stim(ulations)        : $(length(o.stim))-Vector{Int}")
+    println(io, ".mark(ers)             : $([length(o.mark[i]) for i=1:length(o.mark)])-Vectors{Int}")
+    println(io, ".y (all c labels)      : $(length(o.y))-Vector{Int}")
+    println(io, ".X (EEG data)          : $(r)x$(c)-Matrix{$(type)}")
     isnothing(o.trials) ? println("                : nothing") :
                         println(io, ".trials          : $(length(o.trials))-Vector{Matrix{$(type)}}")
     println(io, "Dict: .id, .acquisition, .documentation")
