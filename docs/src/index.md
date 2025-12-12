@@ -37,7 +37,7 @@ When you need a function, check its documentation and the examples given therein
 
 | Contributor | Contribution |
 |:----------|:----------|
-| [Abdeljalil Anajjar](https://github.com/AbdeljalilAnajjar) | web interface for downloading databases |
+| [Abdeljalil Anajjar](https://github.com/AbdeljalilAnajjar) | web GUI for downloading the [FII BCI Corpus](@ref "FII BCI Corpus Overview") and Julia artifacts for data example files |
 | [Alexandre Bleuzé](https://www.linkedin.com/in/alexandre-bleuz%C3%A9-069b37154/) | Toeplitz algebra for multivariate regression mean ERP estimations |
 
 

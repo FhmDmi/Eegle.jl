@@ -60,6 +60,8 @@ In this case, however, you must install DSP.jl as well.
 
 |  Package | Scope |
 |:-----------------------|:-----------------------|
+| [Artifacts](https://github.com/JuliaLang/julia/blob/master/stdlib/Artifacts/src/Artifacts.jl)| Julia support for artifacts |
+| [ArtifactUtils](https://github.com/JuliaPackaging/ArtifactUtils.jl)| a tool for working with artifacts |
 | [Bonito](https://github.com/SimonDanisch/Bonito.jl)| build interactive web applications, dashboards, and visualizations |
 | [CSV](https://github.com/JuliaData/CSV.jl) | support for the *CSV* format |
 | [DataFrames](https://github.com/JuliaData/DataFrames.jl) | manipulation of tables|
@@ -129,7 +131,7 @@ The reminder of this page is of interest only for contributing code and document
 - When using a method of the **Eegle** package, qualify the module it is taken from, for example: 
     - `Eegle.FileSystem.getFilesInDir(dbDir; ext=(".npz", ), isin)`
 - Communicate the module and function when printing a messages within a function, for example: 
-    - `@warn "Eegle.Database, function loadNYdb: the $filemane files has not been found:\n"`
+    - `@warn "Eegle.Database, function loadDB: the $filemane files has not been found:\n"`
 - The name of internal functions (not-exported) begins by an underscore, for example: 
     - `function _weightsDB(...)`
 - The name of functions modifying one or more arguments ends with an exclamation mark, for example:
