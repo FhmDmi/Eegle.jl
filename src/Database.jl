@@ -10,10 +10,10 @@ module Database
 
 InfoDB          | structure holding the information summarizing an EEG database
 
-loadNYdb        | return a list of .npz files in a directory (this is considered a 'database')
+loadDB        | return a list of .npz files in a directory (this is considered a 'database')
 infoDB          | print and return information about a database (InfoDB structure)
 selectDB        | select database folders based on paradigm and class requirements
-weightsdb       | get weights for each session of a database for statistical analysis
+weightsDB       | get weights for each session of a database for statistical analysis
 downloadDB      | run a GUI to download the FII BCI corpus
 =#
 
@@ -34,7 +34,7 @@ import Eegle
 
 export
     InfoDB,
-    loadNYdb, 
+    loadDB, 
     infoDB,
     selectDB,
     weightsDB,
@@ -143,7 +143,7 @@ end
 
 """
 ```julia
-    function loadNYdb(dbDir=AbstractString, isin::String="")
+    function loadDB(dbDir=AbstractString, isin::String="")
 ```
 Return a list of the complete paths of all *.npz* files found in a directory given as argument `dbDir`.
 For each *NPZ* file, there must be a corresponding *YAML* metadata file with the same name and extension *.yml*, otherwise
@@ -159,14 +159,14 @@ contains the string will be included.
 **Examples**
 xxx
 """
-function loadNYdb(dbDir=AbstractString, isin::String="")
+function loadDB(dbDir=AbstractString, isin::String="")
   # create a list of all .npz files found in dbDir (complete path)
   npzFiles=Eegle.FileSystem.getFilesInDir(dbDir; ext=(".npz", ), isin=isin)
 
   # check if for each .npz file there is a corresponding .yml file
   missingYML=[i for i ∈ eachindex(npzFiles) if !isfile(splitext(npzFiles[i])[1]*".yml")]
   if !isempty(missingYML)
-    @warn "Eegle.Database, function `loadNYdb`: the following .yml files have not been found:\n"
+    @warn "Eegle.Database, function `loadDB`: the following .yml files have not been found:\n"
     for i ∈ missingYML 
         println(splitext(npzFiles[i])[1]*".yml") 
     end
@@ -193,7 +193,7 @@ db = infoDB(dbDir)
 """
 function infoDB(dbDir)
 
-    files = loadNYdb(dbDir)
+    files = loadDB(dbDir)
 
     # make sure only .npz files have been passed in the list `files`
     for (i, f) ∈ enumerate(files)
@@ -616,7 +616,7 @@ end
 function _weightsDB(subject, n)
     usub = unique(subject)
     sess = [sum(ss==s for ss∈subject) for s∈usub]
-    sum(sess) ≠ n && error("Eegle.Database, function `_weightsdb` called by `weightsdb`: the number of sessions does not match the number of files in the database")
+    sum(sess) ≠ n && error("Eegle.Database, function `_weightsDB` called by `weightsDB`: the number of sessions does not match the number of files in the database")
 
     w=[sqrt(length(usub))*(sqrt(s)) for s ∈ sess] # weights for each unique subject
     weights = [w[findfirst(el -> el == s, usub)] for s ∈ subject] # weights for each input file
@@ -688,11 +688,11 @@ function weightsDB(files)
     for (i, f) ∈ enumerate(files)
         splitext(f)[2]≠".npz" && deleteat!(files, i)
     end
-    length(files)==0 && error("Eegle.Database, function `weightsdb`: no .npz file is present in the list of files passed as argument")
+    length(files)==0 && error("Eegle.Database, function `weightsDB`: no .npz file is present in the list of files passed as argument")
 
     # read one YAML file to find out the type of dictionary values
     filename=files[1]
-    isfile(splitext(filename)[1]*".yml") || error("Eegle.Database, function `weightsdb`: no .yml (recording info) file has been found for npz file \n:", filename)
+    isfile(splitext(filename)[1]*".yml") || error("Eegle.Database, function `weightsDB`: no .yml (recording info) file has been found for npz file \n:", filename)
 
     # get memory for all entry of the YAML dictionary for all files
     # knowing the type of the values is much more memory-efficient
@@ -701,7 +701,7 @@ function weightsDB(files)
 
     for (f, filename) ∈ enumerate(files)
 
-        isfile(splitext(filename)[1]*".yml") || error("Eegle.Database, function `weightsdb`: no .yml (recording info) file has been found for npz file \n:", filename)
+        isfile(splitext(filename)[1]*".yml") || error("Eegle.Database, function `weightsDB`: no .yml (recording info) file has been found for npz file \n:", filename)
         push!(subject, YAML.load(open(splitext(filename)[1]*".yml"))["id"]["subject"])
     end
 
