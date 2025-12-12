@@ -11,7 +11,7 @@ module Database
 InfoDB          | structure holding the information summarizing an EEG database
 
 loadNYdb        | return a list of .npz files in a directory (this is considered a 'database')
-infoNYdb        | print and return information about a database (InfoDB structure)
+infoDB          | print and return information about a database (InfoDB structure)
 selectDB        | select database folders based on paradigm and class requirements
 weightsdb       | get weights for each session of a database for statistical analysis
 downloadDB      | run a GUI to download the FII BCI corpus
@@ -35,7 +35,7 @@ import Eegle
 export
     InfoDB,
     loadNYdb, 
-    infoNYdb,
+    infoDB,
     selectDB,
     weightsDB,
     downloadDB
@@ -75,7 +75,7 @@ end
 ```
 Immutable structure holding the summary information and metadata of an EEG database (DB) in [NY format](@ref).
 
-It is created by functions [infoNYdb](@ref) and [`selectDB`](@ref).
+It is created by functions [infoDB](@ref) and [`selectDB`](@ref).
 
 **Fields**
 
@@ -154,7 +154,7 @@ contains the string will be included.
 
 **See Also** 
 
-[`infoNYdb`](@ref), [`FileSystem.getFilesInDir`](@ref)
+[`infoDB`](@ref), [`FileSystem.getFilesInDir`](@ref)
 
 **Examples**
 xxx
@@ -178,7 +178,7 @@ end
 
 """
 ```julia
-    function infoNYdb(dbDir)
+    function infoDB(dbDir)
 ```
 Create a [InfoDB](@ref) structure and show it in Julia's REPL.
 
@@ -188,10 +188,10 @@ This function carry out a sanity checks on the database and prints warnings if t
 
 **Examples**
 ```julia
-db = infoNYdb(dbDir)
+db = infoDB(dbDir)
 ```
 """
-function infoNYdb(dbDir)
+function infoDB(dbDir)
 
     files = loadNYdb(dbDir)
 
@@ -199,11 +199,11 @@ function infoNYdb(dbDir)
     for (i, f) ∈ enumerate(files)
         splitext(f)[2]≠".npz" && deleteat!(files, i)
     end
-    length(files)==0 && error("Eegle.Database, function `infoNYdb`: there are no .npz files in the list of files passed as argument")
+    length(files)==0 && error("Eegle.Database, function `infoDB`: there are no .npz files in the list of files passed as argument")
 
     # read one YAML file to find out the type of dictionary values
     filename = files[1]
-    isfile(splitext(filename)[1]*".yml") || error("Eegle.Database, function `infoNYdb`: no .yml (recording info) file has been found for npz file \n:", filename)
+    isfile(splitext(filename)[1]*".yml") || error("Eegle.Database, function `infoDB`: no .yml (recording info) file has been found for npz file \n:", filename)
     info = YAML.load(open(splitext(filename)[1]*".yml")) # read info file
 
     # get memory for all entries of the YAML dictionary for all files
@@ -241,7 +241,7 @@ function infoNYdb(dbDir)
 
     for (f, filename) ∈ enumerate(files)
 
-        isfile(splitext(filename)[1]*".yml") || error("Eegle.Database, function `infoNYdb`: no .yml (recording meta-data) file has been found for npz file \n:", filename)
+        isfile(splitext(filename)[1]*".yml") || error("Eegle.Database, function `infoDB`: no .yml (recording meta-data) file has been found for npz file \n:", filename)
         info = YAML.load(open(splitext(filename)[1]*".yml"))
 
         acq = info["acquisition"]
@@ -283,7 +283,7 @@ function infoNYdb(dbDir)
     nwarnings = 0
     function mywarn(text::String)
         nwarnings += 1
-        @warn "Eegle.Database, function `infoNYdb`: $text"
+        @warn "Eegle.Database, function `infoDB`: $text"
     end
    
     # Check critical field consistency (warn if not unique)
@@ -297,12 +297,12 @@ function infoNYdb(dbDir)
     # CRITICAL ERROR CHECK: unicity of triplets (subject, session, run)
     ssr = Tuple[]
     for (i, j, l) ∈ zip(subject, session, run) push!(ssr, (i, j, l)) end
-    length(unique(ssr)) < length(subject) && error("Eegle.Database, function `infoNYdb`:: there are duplicated triplets (subject, session, run)")
+    length(unique(ssr)) < length(subject) && error("Eegle.Database, function `infoDB`:: there are duplicated triplets (subject, session, run)")
 
     # CRITICAL ERROR CHECK: session count consistency
     usub = unique(subject)
     sess = [sum(ss==s for ss∈subject) for s∈usub] # sessions per subject
-    sum(sess) ≠ length(files) && error("Eegle.Database, function `infoNYdb`: the number of sessions does not match the number of files in database")
+    sum(sess) ≠ length(files) && error("Eegle.Database, function `infoDB`: the number of sessions does not match the number of files in database")
 
     # Warning about run field inconsistency
     length(unique(run)) > 1 && mywarn("field `run` should be considered the number of runs and should be the same in all recordings. In any case this field is not used")
@@ -492,7 +492,7 @@ function selectDB(corpusDir     :: String,
         (isnothing(classes) ? " (no class filter)" : " containing: $(join(classes, ", "))"))
     
     @inbounds for dbDir in dbDirs
-        info = infoNYdb(dbDir)
+        info = infoDB(dbDir)
         
         # Skip if paradigm doesn't match
         uppercase(info.paradigm) != string(paradigm) && continue
