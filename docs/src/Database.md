@@ -9,11 +9,16 @@ This module implements tools to facilitate the work with EEG databases, in parti
 To learn how to use BCI databases, see [Tutorial ML 2](@ref).
 
 
+## Structures
+
+|  Function            |           Description             |
+|:---------------------|:----------------------------------|
+|[`Eegle.Database.InfoDB`](@ref)      | structure holding the information summarizing an EEG-BCI database |
+
 ## Methods
 
 |  Function            |           Description             |
 |:---------------------|:----------------------------------|
-|[`Eegle.Database.infoDB`](@ref)      | immutable structure holding the information summarizing an EEG database |
 |[`Eegle.Database.loadNYdb`](@ref)    | return a list of *.npz* files in a directory (this is considered a [database](@ref)) |
 |[`Eegle.Database.infoNYdb`](@ref)    | print, save and return metadata about a database |
 |[`Eegle.Database.selectDB`](@ref)    | select databases and sessions based on inclusion criteria
@@ -22,7 +27,7 @@ To learn how to use BCI databases, see [Tutorial ML 2](@ref).
 
 📖
 ```@docs
-    Eegle.Database.infoDB
+    Eegle.Database.InfoDB
     Eegle.Database.loadNYdb
     Eegle.Database.infoNYdb
     Eegle.Database.selectDB

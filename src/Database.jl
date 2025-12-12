@@ -8,9 +8,10 @@ module Database
 #=
 # ? ¤ CONTENT ¤ ? #
 
-infoDB          | immutable structure holding the information summarizing an EEG database
+InfoDB          | structure holding the information summarizing an EEG database
+
 loadNYdb        | return a list of .npz files in a directory (this is considered a 'database')
-infoNYdb        | print and return information about a database (infoDB structure)
+infoNYdb        | print and return information about a database (InfoDB structure)
 selectDB        | select database folders based on paradigm and class requirements
 weightsdb       | get weights for each session of a database for statistical analysis
 downloadDB      | run a GUI to download the FII BCI corpus
@@ -32,7 +33,7 @@ const greyFont      = "\x1b[90m"
 import Eegle
 
 export
-    infoDB,
+    InfoDB,
     loadNYdb, 
     infoNYdb,
     selectDB,
@@ -42,7 +43,7 @@ export
 
 """
 ```julia
-struct infoDB
+struct InfoDB
     dbName              :: String
     condition           :: String
     paradigm            :: String
@@ -110,7 +111,7 @@ This is checked by **Eegle** when a database is read.
 - `.timestamp`: date of the publication of the DB
 - `.formatVersion`: version of the [NY format](@ref) in which the recordings have been stored.
 """
-struct infoDB
+struct InfoDB
     dbName              :: String                           # database name
     condition           :: String                           # experimental condition
     paradigm            :: String                           # experimental paradigm (MI, P300, etc.)
@@ -179,7 +180,7 @@ end
 ```julia
     function infoNYdb(dbDir)
 ```
-Create a [infoDB](@ref) structure and show it in Julia's REPL.
+Create a [InfoDB](@ref) structure and show it in Julia's REPL.
 
 The only argument (`dbDir`) is the directory holding all files of a database — see [NY format](@ref).
 
@@ -310,7 +311,7 @@ function infoNYdb(dbDir)
         println(separatorFont, "\n⚠ Be careful, $nwarnings warnings have been found", defaultFont)
     end
 
-    # Create infoDB structure
+    # Create InfoDB structure
     # Extract main information
     db_dbName = unique(dbName)[1]
     db_condition = unique(condition)[1]
@@ -359,8 +360,8 @@ function infoNYdb(dbDir)
         db_nTrials[class_name] = trials
     end
 
-    # Create and return infoDB structure (will be displayed automatically via Base.show)
-    return infoDB(
+    # Create and return InfoDB structure (will be displayed automatically via Base.show)
+    return InfoDB(
         db_dbName,
         db_condition,  
         db_paradigm,
@@ -403,7 +404,7 @@ function selectDB(<corpusDir    :: String,>
 ```
 Select BCI databases pertaining to the given BCI `paradigm` and all [sessions](@ref "session") therein meeting the provided inclusion criteria. 
 
-Return the selected databases as a list of [`infoDB`](@ref) structures, wherein the `infoDB.files` field lists the included sessions only.
+Return the selected databases as a list of [`InfoDB`](@ref) structures, wherein the `InfoDB.files` field lists the included sessions only.
 
 **Arguments**
 - `corpusDir`: the directory on the local computer where to start the search. Any folder in this directory is a candidate [database](@ref) to be selected.
@@ -480,7 +481,7 @@ function selectDB(corpusDir     :: String,
         @info "If you plan to train machine learning models, specify the `classes` argument to ensure consistent class selection across databases."
     end
 
-    selectedDB = infoDB[]  # List of infoDB structures
+    selectedDB = InfoDB[]  # List of InfoDB structures
     all_cLabels = Set{String}()  # To collect all available classes for ERP/MI paradigm
     excluded_files_info = Tuple{String, Vector{String}}[]  # (database_name, excluded_files)
    
@@ -531,7 +532,7 @@ function selectDB(corpusDir     :: String,
                 continue
             end
             
-             # Create filtered infoDB if files were excluded
+             # Create filtered InfoDB if files were excluded
             if !isempty(excluded_files)
                 push!(excluded_files_info, (info.dbName, excluded_files))
                 
@@ -595,7 +596,7 @@ function selectDB(corpusDir     :: String,
         println("\n$(repeat("═", 150))")
         println("\n💡 For detailed trial counts per class, please inspect individual database structures")
     end
-    return selectedDB;  # selectedDB is a list of infoDB struct respecting the conditions
+    return selectedDB;  # selectedDB is a list of InfoDB struct respecting the conditions
 end
 
 function selectDB(paradigm      :: Symbol;
@@ -804,9 +805,9 @@ end
 
 
 # overwrite the Base.show function to nicely print information
-# about the infoDB structure in the REPL
+# about the InfoDB structure in the REPL
 # ++++++++++++++++++++  Show override  +++++++++++++++++++ # (REPL output)
-function Base.show(io::IO, ::MIME{Symbol("text/plain")}, db::infoDB)
+function Base.show(io::IO, ::MIME{Symbol("text/plain")}, db::InfoDB)
     # Format ntrials_per_class - show mean ± std + min,max 
     trials_parts = String[]
     for class_name in db.cLabels  # use clabels to maintain order

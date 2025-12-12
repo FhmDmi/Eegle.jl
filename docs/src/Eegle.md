@@ -60,6 +60,8 @@ In this case, however, you must install DSP.jl as well.
 
 |  Package | Scope |
 |:-----------------------|:-----------------------|
+| [Artifacts](https://github.com/JuliaLang/julia/blob/master/stdlib/Artifacts/src/Artifacts.jl)| Julia support for artifacts |
+| [ArtifactUtils](https://github.com/JuliaPackaging/ArtifactUtils.jl)| a tool for working with artifacts |
 | [Bonito](https://github.com/SimonDanisch/Bonito.jl)| build interactive web applications, dashboards, and visualizations |
 | [CSV](https://github.com/JuliaData/CSV.jl) | support for the *CSV* format |
 | [DataFrames](https://github.com/JuliaData/DataFrames.jl) | manipulation of tables|

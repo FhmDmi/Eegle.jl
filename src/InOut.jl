@@ -68,7 +68,7 @@ export
         ns              :: Int           
         wl              :: Int           
         offset          :: Int           
-        nc              :: Int           
+        nClasses        :: Int           
         clabels         :: Vector{String} 
         stim            :: Vector{Int}    
         mark            :: Vector{Vector{Int}}  
@@ -172,7 +172,7 @@ struct EEG
     ns              :: Int           # number of samples
     wl              :: Int           # window length: typically, the duration of the trials
     offset          :: Int           # each trial start at `stim` sample + offset
-    nc              :: Int           # number of classes
+    nClasses        :: Int           # number of classes
     clabels         :: Vector{String} # class labels given as strings
     stim            :: Vector{Int}    # stimulations for each sample (0, 1, 2...). 0 means no stimulation
     mark            :: Vector{Vector{Int}}  # markers (in sample) for class 1, 2...
@@ -402,7 +402,7 @@ function readNY(filename    :: AbstractString;
 
   # added Avril-June 2025 to allow loading a file keeping only the chosen classes
   stim = Vector{Int64}(stim);
-  nc      = info["stim"]["nclasses"]; 
+  nClasses = info["stim"]["nclasses"]; 
   labels_dict = sort(collect(info["stim"]["labels"]), by=x->x[2])
   clabels = [pair[1] for pair in labels_dict]
   clabelsval = [pair[2] for pair in labels_dict]
@@ -426,7 +426,7 @@ function readNY(filename    :: AbstractString;
         for c ∈ elimina, i ∈ eachindex(stim) stim[i] == c && (stim[i]=0) end
     end
 
-    nc = length(classes)
+    nClasses = length(classes)
     clabels = [c for c in clabels if c in classes]
     clabelsval = [c for c in clabelsval if c in classes_val] # needed for stdClass
 
@@ -476,7 +476,7 @@ function readNY(filename    :: AbstractString;
     os = 0
   end
 
-  length(mark) == nc || @error "Eegle.InOut, function `readNY`: the number of classes in .mark does not correspond to the number of markers found in .stim"
+  length(mark) == nClasses || @error "Eegle.InOut, function `readNY`: the number of classes in .mark does not correspond to the number of markers found in .stim"
 
   trials = !(classes===false) ? [X[mark[i][j]:mark[i][j]+wl-1, :] for i=1:nc for j=1:length(mark[i])] : nothing
 
