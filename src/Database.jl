@@ -613,42 +613,64 @@ function selectDB(paradigm      :: Symbol;
     end
 end
 
+
 function _weightsDB(subject, n)
     usub = unique(subject)
-    sess = [sum(ss==s for ss∈subject) for s∈usub]
-    sum(sess) ≠ n && error("Eegle.Database, function `_weightsDB` called by `weightsDB`: the number of sessions does not match the number of files in the database")
+    sess = [count(==(s), subject) for s in usub]
 
-    w=[sqrt(length(usub))*(sqrt(s)) for s ∈ sess] # weights for each unique subject
-    weights = [w[findfirst(el -> el == s, usub)] for s ∈ subject] # weights for each input file
-    #m = mean(weights)
-    #(weights./=sum(weights)).*=m
-    return (weights./=length(weights), [usub sess])
+    sum(sess) ≠ n && error(
+        "Eegle.Database, function `_weightsDB` called by `weightsDB`: " *
+        "the number of sessions does not match the number of files in the database"
+    )
+
+    M = length(usub)
+    N = n
+
+    # per-subject numerator: √M · √S_m
+    w_sub = sqrt(M) .* sqrt.(sess)
+
+    # map subject identifier → index in usub
+    sub2idx = Dict(s => i for (i, s) in enumerate(usub))
+
+    weights = Vector{Float64}(undef, N)
+    for (i, s) in enumerate(subject)
+        k = sub2idx[s]
+        weights[i] = w_sub[k] / sess[k]
+    end
+
+    # M × 2 schedule: [subject_id  number_of_sessions]
+    schedule = hcat(usub, sess)
+
+    return weights, schedule
 end
+
 
 """
 ```julia
     function weightsDB(files)
 ```
-Given a database provided by argument `files` as a list of *.npz* files, 
+Given a [database](@ref) in [NY format](@ref), provided by argument `files` as a list of *.npz* files,
+where each file holds a BCI [session](@ref), 
 compute a weight for each session to be used in statistical analysis when merging the classification performance 
-or any other relevant index across databases. 
+or any other relevant index within and across databases. 
 
-The goal of the weighting is to balance the contribution of different databases 
-and the different [subjects](@ref subject) therein, considering both the number of unique subjects in each database
-and the fact that the number of [session](@ref) for each subject may be different.
+The goal of the weighting is to balance the contribution of all unique [subjects](@ref subject), considering 
+that the number of sessions for each subject may be different.
+Specifically, this weighting assigns each subject a total contribution that grows with the 
+square root of the number of sessions provided and with the square root of the number of subjects 
+in the database, thereby rewarding richer subject-level information, while preventing databases 
+with many sessions or many subjects from dominating the analysis.
 
-The weight assigned to each session is inversely proportional to the square root of the number of unique subjects 
-in the database and to the square root of the number of sessions available for the same subject.
-
-Let ``s_m`` be one of the ``S_m`` sessions for each unique subject ``m``, the weight ``w_{m,s_m}`` for session ``s_m`` is given by:
+Let ``s_m`` denote one of the ``S_m`` sessions for each unique subject ``m``, 
+the weight ``w_{m,s_m}`` for session ``s_m`` is given by:
 
 ```math
-    w_{m,s_m} = \\frac{\\sqrt{M} \\cdot \\sqrt{S_m}}{N}
+    w_{m,s_m} = \\frac{\\sqrt{M} \\cdot \\sqrt{S_m}}{S_m}
 ```
 
 where ``M`` is the number of unique subjects in the database and ``N`` is the total number of sessions (i.e., `length(files)`).
 
-This weighting ensures that the **sum of the weights for each subject** is proportional to
+This weighting ensures that the **sum of the weights for each subject in the database** is proportional to
 
 ```math
 \\sqrt{M} \\cdot \\sqrt{S_m}
@@ -656,32 +678,81 @@ This weighting ensures that the **sum of the weights for each subject** is propo
 
 For example,
 
-- if the database has ``M = 100`` subjects and each has 1 session, the 
-  total weight for each subject is ``\\sqrt{100} \\cdot \\sum_{m=1}^{100} \\frac{\\sqrt{1}}{N} = 10``
-- if each of the 100 subjects has 4 sessions, the
-  total weight for each subject is ``\\sqrt{100} \\cdot \\sum_{m=1}^{100} \\frac{\\sqrt{4}}{N} = 20``.
+- if database *A* has ``M = 64`` unique subjects and each provides 1 session, ``N = 64`` and the 
+  total weight for each session is 
+ 
+``\\frac{\\sqrt{64}\\cdot\\sqrt{1}}{1} = 8``;
+
+- if database *B* also has ``M = 64`` unique subjects, but each provides 4 sessions, 
+  the weight for each session is 
+
+``\\frac{\\sqrt{64}\\cdot\\sqrt{4}}{4} = 4`` 
+
+  and the sum of the weights for 
+  each unique subject is ``4 \\cdot 4 = 16``, reflecting he fact that the subjects 
+  in database *B* provide more sessions as compared to database *A*, thus they should be
+  weighted more; 
+
+- if database *C* has ``M = 16`` unique subjects providing 4 sessions each as database *B*,
+  the weight for each session is 
+
+``\\frac{\\sqrt{16}\\cdot\\sqrt{4}}{4} = 2``
+
+  and the sum of the weights for each unique subject is ``4 \\cdot 2 = 8``,
+  reflecting the fact that database *C* provides fewer subjects than database *B*;
+
+- if database *D* has ``M = 4`` unique subjects, two of which providing 1 session and two 
+  of which providing 4 sessions, the weight for each session of the subjects providing
+  4 sessions is 
+  
+``\\frac{\\sqrt{4}\\cdot\\sqrt{4}}{4} = 1`` 
+
+  and the weight for each session of the subjects providing 1 session is 
+
+``\\frac{\\sqrt{4}\\cdot\\sqrt{1}}{1} = 2``, 
+
+  thus the total weight for the subjects providing 4 session is ``4 \\cdot 1 = 4``, 
+  which is larger than that of subjects providing a single session (``2``), 
+  reflecting the fact that these subjects provides more session.
 
 This is a compromise between two extreme strategies commonly used when merging indices
-across databases, which are both inadequate:
+across subjects and/or databases, which are both inadequate:
 
-- **Uniform per-session weights** (i.e., all sessions contribute equally), which favors larger databases or those with many sessions
-- **Uniform per-database weights** (i.e., all databases contribute equally), which overemphasizes small databases.
+- **Uniform per-session weights** (i.e., all sessions contribute equally), 
+  which favors larger databases or those with many sessions
+- **Uniform per-database weights** (i.e., all databases contribute equally), 
+  which overemphasizes small databases.
 
-Once obtained the weights for several databases, they can be globally normalized in any desired way.
+Once obtained the weights for one or more databases, 
+they can be globally normalized in any desired way
+(e.g., to unit mean or unit sum),
+within databases, or after concatenating them across databases.
 
 **Return**
-- `weights`: a vector of length ``N``, containing the weight for each session in `files`
-- `schedule`: an ``N × 2`` matrix of integers where:
-  - the first column contains the index of the subject to which the session belongs
-  - the second column contains the number of sessions for that subject.
+- `weights`: a vector of length ``N``, containing the weight corresponding to each session in `files`
+- `schedule`: an ``M × 2`` matrix of integers where:
+  - the first column contains the index of the unique subjects
+  - the second column contains the number of sessions for those subjects.
 
 **Examples**
+
+The following example selects motor imagery databases featuring classes
+"left_hand" and "right_hand" from the 
+[FII BCI Corpus Overview](@ref "FII BCI Corpus"),
+compute the weights for all files (session) in all selected databases,
+stack them in a single vector and normalize all weights to unit mean. 
+Once this is done, computing the mean of any index (e.g., balanced accuracy) 
+stacked in the same way across databases and weighted by `w` will result in the
+weighted average index across all sessions and all databases as defined above.
+
 ```julia
-w, schedule = weightsDB(files)
+using Eegle
+
+DB_MI = selectDB(:MI; classes = ["left_hand", "right_hand"])
+w = vcat([weightsDB(db.files)[1] for db in DB_MI]...)
+w ./= mean(w)
 ```
 
-**Tutorials**
-xxx
 """
 function weightsDB(files)
     # make sure only .npz files have been passed in the list `files`
