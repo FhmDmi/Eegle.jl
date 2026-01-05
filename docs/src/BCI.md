@@ -5,8 +5,9 @@ end
 
 ## BCI.jl
 
-This module implements **machine learning** for EEG data and, particularly, brain-computer interface data, using Riemannian geometry. Data encoding is achieved
-by estimating a form of covariance matrix for the EEG epochs or BCI trials.
+This module implements a high-level interface to package [PosDefManifold.jl](https://github.com/Marco-Congedo/PosDefManifold.jl) to perform **machine learning** on EEG data and, particularly, brain-computer interface data, using **Riemannian geometry**. 
+
+Data encoding is achieved by estimating a form of covariance matrix for the EEG epochs or BCI trials.
 
 For **tutorials**, see [Machine Learning](@ref). 
 

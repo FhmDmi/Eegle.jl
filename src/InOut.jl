@@ -456,7 +456,7 @@ function readNY(filename    :: AbstractString;
     sr        = round(Int, sr*rate) 
   end
 
-  length(unique(stim))-1==nc || @error "Eegle.InOut, function `readNY`: the number of classes in .nc does not correspond to the unique non-zero labels in .stim"
+  length(unique(stim))-1==nClasses || @error "Eegle.InOut, function `readNY`: the number of classes does not correspond to the unique non-zero labels in .stim"
 
   if upperLimit≠0
       # artefact rejection; change stim and compute mark (it finds the marks using code argument as stim2mark here below)
@@ -466,7 +466,7 @@ function readNY(filename    :: AbstractString;
       # only mark, i.e., samples where the trials start for each class 1, 2,...
       # argument code added 4 Avril 2025 to read MI files with arbitrary label numbers (not just 1, 2, 3...)
       mark = stim2mark(stim, wl; offset=os, code=sort(unique(stim))[2:end]) 
-      #mark=[[i+os for i in eachindex(stim) if stim[i]==j && i+os+wl<=ns] for j=1:nc]
+      #mark=[[i+os for i in eachindex(stim) if stim[i]==j && i+os+wl<=ns] for j=1:nClasses]
   end
 
   stim = mark2stim(mark, ns); # new stim with offset taken into account 
@@ -478,7 +478,7 @@ function readNY(filename    :: AbstractString;
 
   length(mark) == nClasses || @error "Eegle.InOut, function `readNY`: the number of classes in .mark does not correspond to the number of markers found in .stim"
 
-  trials = !(classes===false) ? [X[mark[i][j]:mark[i][j]+wl-1, :] for i=1:nc for j=1:length(mark[i])] : nothing
+  trials = !(classes===false) ? [X[mark[i][j]:mark[i][j]+wl-1, :] for i=1:nClasses for j=1:length(mark[i])] : nothing
 
   if !isempty(msg) println(msg) end
   # println("$(repeat("═", 65))") # (printing stdClass if true and offset if !=0)
@@ -500,12 +500,12 @@ function readNY(filename    :: AbstractString;
      ns,
      wl,
      os, # trials offset
-     nc,
+     nClasses,
      #collect(keys(info["stim"]["labels"])), # clabels
      clabels,
      stim,
      mark,
-     [i for i=1:nc for j=1:length(mark[i])], # y: all labels
+     [i for i=1:nClasses for j=1:length(mark[i])], # y: all labels
      X, # whole EEG recording
      trials # all trials, by class, if requested, nothing otherwise
   )
@@ -854,7 +854,7 @@ function Base.show(io::IO, ::MIME{Symbol("text/plain")}, o::EEG)
     println(io, ".ns(# samples)   : $(o.ns)")
     println(io, ".wl(win. length) : $(o.wl)")
     println(io, ".offset          : $(o.offset)")
-    println(io, ".nc(# classes)   : $(o.nc)")
+    println(io, ".nClasses        : $(o.nClasses)")
     println(io, ".clabels(c=class): $(length(o.clabels))-Vector{String}")
     println(io, ".stim(ulations)  : $(length(o.stim))-Vector{Int}")
     println(io, ".mark(ers) : $([length(o.mark[i]) for i=1:length(o.mark)])-Vectors{Int}")

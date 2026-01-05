@@ -28,10 +28,10 @@ export
 
 """
 ```julia
-    function standardize(X::AbstractArray{T}; 
-        robust::Bool = false,
-        prop::Real = 0.2) 
-    where T<:Real
+function standardize(X::AbstractArray{T}; 
+    robust::Bool = false,
+    prop::Real = 0.2) 
+where T<:Real
 ```
 Standardize the whole ``T×N`` EEG recording `X`, where ``T`` and ``N`` denotes the number of samples and channels (sensors), respectively, using: 
 - the arithmetic mean and standard deviation of all data in `X` if `robust` is false (default)
@@ -68,14 +68,14 @@ end
 
 """
 ```julia
-    function resample(  X::AbstractMatrix{T},
-                        sr::S,
-                        rate::Union{T, S, Rational};
-        Nϕ::Integer = 32,
-        rel_bw::Float64 = 1.0,
-        attenuation::Int = 60,
-        stim::Union{Vector{S}, Nothing} = nothing) 
-    where {T<:Real, S<:Int}
+function resample(  X::AbstractMatrix{T},
+                    sr::S,
+                    rate::Union{T, S, Rational};
+    Nϕ::Integer = 32,
+    rel_bw::Float64 = 1.0,
+    attenuation::Int = 60,
+    stim::Union{Vector{S}, Nothing} = nothing) 
+where {T<:Real, S<:Int}
 ```
 Resampling of an EEG data matrix using the polyphase FIR filter with Kaiser window filter taps,  
 as per the [resample](https://docs.juliadsp.org/stable/filters/#DSP.Filters.resample) method in DSP.jl.
@@ -169,10 +169,10 @@ end
 
 """
 ```julia
-    function removeChannels(X::AbstractMatrix{T}, 
-                            what::Union{Int, Vector{S}},
-                            sensors::Vector{String}) 
-    where {T<:Real, S<:Int}
+function removeChannels(X::AbstractMatrix{T}, 
+                        what::Union{Int, Vector{S}},
+                        sensors::Vector{String}) 
+where {T<:Real, S<:Int}
 
 ```
 Remove one or more channels, i.e., columns, from the ``T×N`` EEG recording `X`, 
@@ -220,10 +220,10 @@ end
 
 """
 ```julia
-    function removeSamples( X::AbstractMatrix{T}, 
-                            what::Union{Int, Vector{S}},
-                            stim::Vector{S}) 
-    where {T<:Real, S<:Int}
+function removeSamples( X::AbstractMatrix{T}, 
+                        what::Union{Int, Vector{S}},
+                        stim::Vector{S}) 
+where {T<:Real, S<:Int}
 
 ```
 Remove one or more samples, i.e., rows, from the ``T×N`` EEG recording `X`, 
@@ -276,14 +276,14 @@ end
 
 """
 ```julia
-    function embedLags( X::AbstractMatrix{T}, 
-                        lags = 0) 
-    where T<:Real 
+function embedLags( X::AbstractMatrix{T}, 
+                    lags = 0) 
+where T<:Real 
 ```
 Lag embedding (or delay embedding) is a technique to augment the data. Second-order statistics of the augmented data, that is, covariance or cross-spectral matrices,
 hold information not only of volume conduction and instantaneous connectivity, but also of lagged connectivity.
 These matrices can be used, for example, in blind source separation
-and Riemannian classification. 
+and Riemannian classification — see for example [Carrara2024ACM](@cite). 
 
 Lag embedding is employed in chaos theory for studying 
 dynamical systems by means of 
@@ -292,8 +292,6 @@ dynamical systems by means of
 delay embedding techniques.
 
 If `lags` = 0 (default), return `X` (no lag embedding).
-
-**Tutorials** xxx, xxx
 
 **Description**
 

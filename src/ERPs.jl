@@ -41,8 +41,7 @@ export
     reject,
     tfas,
     trialsCospectra,
-    bss,
-    extractTrials
+    bss
 
 """
 ```julia
@@ -64,10 +63,6 @@ export
 
 Estimate the weighted mean ERPs (event-related potentials), as the standard arithmetic mean (default) 
 or using the multivariate regression method, as detailed in [Congedo2016STCP](@cite).
-
-**Tutorials**
-
-xxx
 
 **METHOD (1)**
 
@@ -105,7 +100,10 @@ Different markers can be used instead by passing [marker vectors](@ref) with the
 
     Markers which value plus the offset exceeds ``t`` minus the window length will be ignored, as they cannot define a complete ERP (or trial).
 
-**See** [Eegle.ERPs.`stim2mark`](@ref), [`Eegle.ERPs.trialsWeights`](@ref)
+**See Also** 
+
+[`stim2mark`](@ref), [`trialsWeights`](@ref)
+
 
 **Examples**
 ```julia
@@ -119,6 +117,7 @@ N, sr, wl = 19, 128, 128
 # number of tags per class
 nm = [30, 45, 28]
 
+# create random data and random tags for the example
 X = randn(sr*100, N)
 mark = [[rand(1:sr*100-wl) for i=1:m] for m∈nm]
 
@@ -126,7 +125,7 @@ mark = [[rand(1:sr*100-wl) for i=1:m] for m∈nm]
 𝐌 = mean(X, wl, mark; weights=:a)
 
 # compute the same means for class 1 and 3 only
-𝐌 = mean(X, wl, [mark[1], mark[3]]; weights=:a
+𝐌 = mean(X, wl, [mark[1], mark[3]]; weights=:a)
 
 # compute the same mean only for the first class
 # and return it as a matrix (not as a vector of matrices)
@@ -207,11 +206,11 @@ end
 
 """
 ```julia
-    function stim2mark( stim::Vector{S}, 
-                        wl::S;
-        offset::S=0, 
-        code=nothing) 
-    where S <: Int
+function stim2mark( stim::Vector{S}, 
+                    wl::S;
+    offset::S=0, 
+    code=nothing) 
+where S <: Int
 ```
 Convert a [stimulation vector](@ref) into [marker vectors](@ref).
 
@@ -241,7 +240,9 @@ Convert a [stimulation vector](@ref) into [marker vectors](@ref).
 A vector of ``z`` marker vectors, where ``z`` is the number of classes, i.e.,
 the highest integer in `stim` or the number of non-zero elements in `code` if it is provided.
 
-**See** [`mark2stim`](@ref)
+**See Also** 
+
+[`mark2stim`](@ref)
 
 **Examples**
 ```julia
@@ -257,7 +258,7 @@ mark = stim2mark(stim, wl)
 
 stim2 = mark2stim(mark, ns) # is identical to stim
 
-stim == stim2
+stim == stim2 # must be true
 ```
 
 """
@@ -269,10 +270,10 @@ end
 
 """
 ```julia
-    function mark2stim( mark::Vector{Vector{S}}, 
-                        ns::S;
-        offset::S=0, code=nothing) 
-    where S <: Int
+function mark2stim( mark::Vector{Vector{S}}, 
+                    ns::S;
+    offset::S=0, code=nothing) 
+where S <: Int
 ```
 Reverse transformation of [`stim2mark`](@ref).
 
@@ -296,9 +297,9 @@ end
 
 """
 ```julia
-    function merge( mark::Vector{Vector{S}}, 
-                    mergeClasses::Vector{Vector{S}})
-    where S <: Int
+function merge( mark::Vector{Vector{S}}, 
+                mergeClasses::Vector{Vector{S}})
+where S <: Int
 ```
 Merge the vectors of [marker vectors](@ref) `mark` and sort the markers within each class.
 Return another marker vectors.
@@ -334,7 +335,6 @@ merge(mark::Vector{Vector{S}}, mergeClasses::Vector{Vector{S}}) where S <: Int =
 # Given `𝐓`, a vector pf trials, return `𝐓` if `linComb` is nothing (default), 
 # the `linComb` columns of the trials in `𝐓` if `linComb` is an integer or 
 # a linear combination given by vector `linComb` of the trials in `𝐓` if `linComb` is a vector of reals.
-# xxx TO DO: allow readNY to call this function
 function _linComb(𝐓::Vector{Matrix{R}}, linComb::Union{Vector{R}, S, Nothing} = nothing) where {R<:Real, S<:Int}
     if      isnothing(linComb)
             return 𝐓
@@ -351,21 +351,21 @@ end
 
 """
 ```julia
-    function trials(X::Matrix{R}, 
-                    mark::Vector{Vector{S}}, 
-                    wl::S;
-        shape::Symbol = :cat
-        weights::Union{Vector{R}, Nothing} = nothing,
-        linComb::Union{Vector{R}, S, Nothing} = nothing,
-        offset::S = 0) 
-    where {R<:Real, S<:Int}
-
+function trials(X::Matrix{R}, 
+                mark::Vector{Vector{S}}, 
+                wl::S;
+    shape::Symbol = :cat
+    weights::Union{Vector{R}, Nothing} = nothing,
+    linComb::Union{Vector{R}, S, Nothing} = nothing,
+    offset::S = 0) 
+where {R<:Real, S<:Int}
 ```
 Extract trials of duration `wl` from a tagged EEG recording `X`.
 Optionally, multiply them by `weights` and compute a linear combination across sensors thereof.
 
 !!! tip
-    To extract trials and compute their mean, see [`mean`](@ref);
+    Trials of data in [NY format](@ref) are extracted by default when upon reading — see [`readNY`](@ref); 
+    to extract trials in order to compute their mean, see [`mean`](@ref);
     for segmenting non-tagged data, see [`Eegle.Processing.epoching`](@ref).
 
 **Arguments**
@@ -397,12 +397,20 @@ otherwise it a vector of ``wl`` elements holding the linear combination.
 !!! note "Empty marker vectors"
     Empty marker vectors are ignored if `shape` is equal to `:cat`, otherwise an empty vector is returned in their corresponding positions.
 
+**See Also** 
+
+[`merge`](@ref), [`trialsWeights`](@ref)
+
 **Examples**
 ```julia
 using Eegle # or using Eegle.ERPs
 
 # Example P300 BCI session 
 o = readNY(EXAMPLE_P300_1)
+
+# The trials for the BCI session have been already extracted 
+# and are available in field o.trials. 
+# Here below are shown examples of low-level operations.
 
 # Extract 1-s trials starting at samples specified in `mark`
 mark = [ [245, 658, 987], [258, 758, 1987]  ]
@@ -467,13 +475,12 @@ trials( X::Matrix{R}, mark::Vector{Vector{S}}, wl::S;
 
 """
 ```julia
-    function trialsWeights( X::Matrix{R}, 
-                            mark::Vector{Vector{S}},
-                            wl::S;
-        M::Union{Matrix{R}, Nothing} = nothing,
-        offset::S = 0) 
-    where {R<:Real, S<:Int}
-
+function trialsWeights( X::Matrix{R}, 
+                        mark::Vector{Vector{S}},
+                        wl::S;
+    M::Union{Matrix{R}, Nothing} = nothing,
+    offset::S = 0) 
+where {R<:Real, S<:Int}
 ```
 Compute adaptive weights for trials as the inverse of their squared
 Frobenius norm, along the lines of [Congedo2016STCP](@cite).
@@ -481,7 +488,7 @@ The method is unsupervised, i.e., agnostic to class labels,
 but a supervised version is available using the `M` arguments.
 
 !!! tip "Mean ERPs"
-    This function is not needed to compute weighted mean ERPs, as this function is called by [`mean`](@ref).
+    This function is provided for low-level operation. It is not needed to compute weighted mean ERPs, as this function is called by [`mean`](@ref).
 
 **Arguments**
 
@@ -506,14 +513,14 @@ weights = trialsWeights(o.X, o.mark, o.wl)
 # weights[1] and weights[2] are the weights for class
 # "non-target" and "target", respectively.
 
-# check that the mean of weights within each class is 1
-mean(weights[1])
-mean(weights[2])
+# The mean of weights within each class is 1
+mean(weights[1]) # must be ≈ 1
+mean(weights[2]) # must be ≈ 1
 
 # Supervised weights using the mean ERPs
 M = mean(o.X, o.wl, o.mark; overlapping=true, weights=:a)
 weights = trialsWeights(o.X, o.mark, o.wl; M) 
-# for the keyword argument, in Julia `M`, it is the same as `M=M`
+# for keyword arguments, in Julia `M` is the same as `M=M`
 ```
 """
 function trialsWeights(X::Matrix{R}, mark::Vector{Vector{S}}, wl::S;
@@ -540,19 +547,20 @@ end
 
 """
 ```julia
-    function reject(X::Matrix{R}, 
-                    stim::Vector{Int}, 
-                    wl::S;
-        offset::S = 0,
-        upperLimit::Union{R, S} = 1.2,
-        returnDetails::Bool=false) 
-    where {R<:Real, S<:Int}
+function reject(X::Matrix{R}, 
+                stim::Vector{Int}, 
+                wl::S;
+    offset::S = 0,
+    upperLimit::Union{R, S} = 1.2,
+    returnDetails::Bool=false) 
+where {R<:Real, S<:Int}
 ```
 Automatic rejection of artefacted trials in tagged EEG data by automatic amplitude thresholding.
 
 !!! tip "Read data and reject artifacts"
     This function is called by [`Eegle.InOut.readNY`](@ref) to perform artifact rejection while reading
-    EEG data in the [NY format](@ref). In turn, this is called by several functions, for example [`Eegle.BCI.crval`](@ref).
+    EEG data in the [NY format](@ref). In turn, this is called by several functions, for example [`Eegle.BCI.crval`](@ref),
+    thus in general it is not needed.
 
 **Arguments**
 - `X`: the whole EEG recording, a matrix of size ``T×N``, where ``T`` is the number of samples and ``N`` the number of electrodes
