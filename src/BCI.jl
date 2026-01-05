@@ -64,17 +64,15 @@ export  covmat,
         < same arguments as method (1) > ...)
 ```
 Covariance matrix estimation(s) of: 
-- (1): a single data matrix (e.g., a trial) `X`
-- (2): a vector of ``K`` data matrices `𝐗`.
+- (1) a single data matrix (e.g., a trial) `X`
+- (2) a vector of ``K`` data matrices `𝐗`.
 
 **Arguments**
 - (1) `X`: ``N×T`` real data matrix, where ``N`` and ``T`` denotes the number of samples and channels, respectively
 - (2) `𝐗`: a vector holding ``k`` such matrices.
-
-** Arguments **
-If `τ` is a positive number, the non-centered lagged (auto)covariance is computed. 
-In this case only the `prototype`, `standardize` and `threaded` keyword arguments here below apply.
-The default `τ` is 0. 
+- If `τ` is a positive number, the non-centered lagged (auto)covariance is computed. 
+  In this case only the `prototype`, `standardize` and `threaded` keyword arguments here below apply.
+  The default `τ` is 0. 
 
 **Optional Keyword Arguments**
 - `covtype`: covariance estimator (default = `LShrLW`):
@@ -141,7 +139,7 @@ C = covmat(𝐗; covtype=:Tyler)
 
 ## using an example file in NY format provided with Eegle:
 ## read a P300 BCI session, extract the trials and
-## compute the covariance matrices of all using 
+## compute the covariance matrices of all trials using 
 ## standard settings for P300 BCI data.
 C = covmat(readNY(EXAMPLE_P300_1; bandPass=(1, 24), upperLimit=1.2).trials)
 ```    
@@ -468,7 +466,7 @@ using Eegle
 # a) P300 data: standard pipeline (MDM classifier)
 crval(EXAMPLE_P300_1; bandPass = (1, 24)) # [0.711]
 
-# a) with a random shuffling to generate folds
+# a) with a random shuffling to generate different folds
 crval(EXAMPLE_P300_1; bandPass = (1, 24), seed = 1234) # [0.685]
 
 ## b) with artifact rejection
@@ -493,7 +491,8 @@ crval(EXAMPLE_P300_1, ENLR(); args...) # [non-deterministic]
 
 ## b) with Recentering and projecting the data onto the TS at the
 ## identity matrix (this avoids the computation of the barycenter)
-crval(EXAMPLE_P300_1, ENLR(); meanISR=I, args...) # [non-deterministic]
+crval(EXAMPLE_P300_1, ENLR(); meanISR=I, pipeline, args...) 
+# [non-deterministic]
 
 # ====================================
 

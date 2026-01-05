@@ -146,7 +146,8 @@ end
     function loadDB(dbDir=AbstractString, isin::String="")
 ```
 Return a list of the complete paths of all *.npz* files found in a directory given as argument `dbDir`.
-For each *NPZ* file, there must be a corresponding *YAML* metadata file with the same name and extension *.yml*, otherwise
+Such a directory is a [database](@ref) in [NY format](@ref), thus, for each *NPZ* file 
+there must be a corresponding *YAML* metadata file with the same name and extension *.yml*, otherwise
 the file is not included in the list.
 
 If a string is provided as kwarg `isin`, only the files whose name
@@ -154,10 +155,10 @@ contains the string will be included.
 
 **See Also** 
 
-[`infoDB`](@ref), [`FileSystem.getFilesInDir`](@ref)
+[`selectDB`](@ref), [`infoDB`](@ref), [`FileSystem.getFilesInDir`](@ref)
 
 **Examples**
-xxx
+See the first example of [`weightsDB`](@ref)
 """
 function loadDB(dbDir=AbstractString, isin::String="")
   # create a list of all .npz files found in dbDir (complete path)
@@ -182,9 +183,13 @@ end
 ```
 Create a [InfoDB](@ref) structure and show it in Julia's REPL.
 
-The only argument (`dbDir`) is the directory holding all files of a database — see [NY format](@ref).
+The only argument (`dbDir`) is the directory holding all files of a [database](@ref) in [NY format](@ref).
 
 This function carry out a sanity checks on the database and prints warnings if the checks fail.
+
+**See Also** 
+
+[`selectDB`](@ref), [`loadDB`](@ref)
 
 **Examples**
 ```julia
@@ -402,9 +407,11 @@ function selectDB(<corpusDir    :: String,>
         summarize   :: Bool = true,
         verbose     :: Bool = false)
 ```
-Select BCI databases pertaining to the given BCI `paradigm` and all [sessions](@ref "session") therein meeting the provided inclusion criteria. 
+Select BCI databases pertaining to the given BCI `paradigm` and all [sessions](@ref "session") therein 
+meeting the provided inclusion criteria. 
 
-Return the selected databases as a list of [`InfoDB`](@ref) structures, wherein the `InfoDB.files` field lists the included sessions only.
+Return the selected databases as a list of [`InfoDB`](@ref) structures, 
+wherein the `InfoDB.files` field lists the included sessions only.
 
 **Arguments**
 - `corpusDir`: the directory on the local computer where to start the search. Any folder in this directory is a candidate [database](@ref) to be selected.
@@ -436,6 +443,9 @@ Return the selected databases as a list of [`InfoDB`](@ref) structures, wherein 
 
 - `verbose` : if true print some feedback (in addition to the summary table)
 
+**See Also** 
+
+[`selectDB`](@ref), [`infoDB`](@ref), [`loadDB`](@ref) 
 
 **Examples**
 ```julia
@@ -823,7 +833,7 @@ The **Choose path** button invokes a folder selection window to choose the folde
     The folder selection window may open minimized. Check the task bar if you don't see it.
 
 If the **Overwrite existing data** check box is not checked (default), the databases will be downloaded only if a folder with the same name
-does not exist already. If you have previously downloaded the corpus and you you want to update to a new version, check this box.
+does not exist already. If you have previously downloaded the corpus and you want to update to a new version, check this box.
 
 As soon as the **Download Now** button is pressed, the GUI automatically downloads the databases, extracts their contents, and removes the ZIP archives.
 

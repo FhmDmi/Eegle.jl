@@ -1,14 +1,14 @@
 # Tutorial SF 1
 
-Gievn an EEG data matrix ``X`` of dimension ``t⋅n``, a **spatial filter** ``Bₛ`` is a matrix of dimension ``n⋅p``, with ``p<n``.
+Gievn an EEG data matrix ``X`` of dimension ``T⋅N``, where ``T`` is the number of samples and ``N`` the number of sensors, a **spatial filter** ``Bₛ`` is a matrix of dimension ``N⋅P``, with ``P<N``.
 
-The spatial filter has a left-inverse ``Aₛ`` of dimension ``p⋅n`` verifying ``AₛBₛ=I``, where ``I`` is the identity matrix.
+The spatial filter has a left-inverse ``Aₛ`` of dimension ``P⋅N`` verifying ``AₛBₛ=I``, where ``I`` is the identity matrix.
 
-The goal of spatial filters is to filter out ``n-p`` undesired components, thus they are very useful
+The goal of spatial filters is to filter out ``N-P`` undesired components, thus they are very useful
 for removing noise, or, more in general, unwanted components from the data. 
 They work by sorting the components according to a measurable criterion. Then, the components within a suitable range of the criterion are eliminated.
 
-In fact, ``Bₛ`` is formed by a subset of ``p`` columns  of ``B`` and ``Aₛ`` is formed by the same subset of ``p`` rows of ``A``. 
+In fact, ``Bₛ`` is formed by a subset of ``P`` columns  of ``B`` and ``Aₛ`` is formed by the same subset of ``P`` rows of ``A``. 
 
 All **filtered components** are given by 
 
@@ -26,14 +26,14 @@ The package [Diagonalizations.jl](https://github.com/Marco-Congedo/Diagonalizati
 features several useful spatial filters for EEG, such as:
 
 - [PCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/pca/): sort components by variance
-- [Whitening](https://marco-congedo.github.io/Diagonalizations.jl/stable/whitening/): as PCA, but also standardize the variance
+- [Whitening](https://marco-congedo.github.io/Diagonalizations.jl/stable/whitening/): as PCA, but also standardize the variance of all components
 - [CSP](https://marco-congedo.github.io/Diagonalizations.jl/stable/csp/): sort components 
     - by variance ratio between one class with respect to another
     - by signal-to-noise ratio of ERPs (X-DAWN)
 - [MCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/mca/): sort components by cross-covariance between two EEG epochs
 - [CCA](https://marco-congedo.github.io/Diagonalizations.jl/stable/cca/): sort components by cross-correlation between two EEG epochs.
 
-In this tutorial, we will see how to construct spatial filters based on the *generalized eigenvalue-eigenvector decomposition* (*GEVD*), which is one of the most useful and powerful technique in signal processing.
+In this tutorial, we will see how to construct custom spatial filters based on the *generalized eigenvalue-eigenvector decomposition* (*GEVD*), which is one of the most useful and powerful technique in signal processing.
 
 In linear algebra, GEVD is synonymous of *joint diagonalization*, in that such spatial filters verify
 
@@ -65,7 +65,7 @@ Note that, in practice we do not compute the filters by GEVD, but by a two-step 
 
 Finally, we obtain ``B=WU`` and ``A=U^TW^+``.
 
-As a data example we use the [`EXAMPLE_P300_1`](@ref) example P300 BCI example file provided with **Eegle**, selecting 4s from second 77 to second 81. Figure 1 shows the time series of the epoch submitted to spatial filtering (the data ``X``).
+As a data example we use the [`EXAMPLE_P300_1`](@ref) example P300 BCI example file provided with **Eegle**, selecting 4s from second 77 to second 81. Figure 1 shows the time series of the epoch submitted to spatial filtering (that is, the data ``X``).
 
 ![Figure 1](../assets/Fig1_Tutorial_Spatial_Filters_1.jpg)
 **Figure 1** *The EEG epoch used as example, along with the global field power (grey shaded area), amplitude spectra in the range 1Hz-32Hz (red) and autocorrelation function for lags up to 1s (blue)*
@@ -78,15 +78,17 @@ It is defined by [Eq.3] setting
 - ``C`` as the sample covariance matrix of ``X``
 - ``S`` as the sample covariance matrix of the first-differences of ``X``.
 
-First, let us write a function to compute ``B`` and ``A`` with the two-step procedures here above is
+First, let us write a function to compute ``B`` and ``A`` with the two-step procedures here above:
 
 ```julia
+using Eegle
+
 function sfa(X::AbstractMatrix{T};
             eVar::Union{Float64, Int64, Nothing} = nothing) where T<: Real
-    C = covmat(X; covtype = SCM)
+    C = covmat(X; covtype = SCM) # from Eegle.BCI.jl
     S = covmat(diff(X, dims=1); covtype = SCM)
-    white = whitening(C; eVar)
-    U = eigvecs(white.F'*S*white.F)
+    white = whitening(C; eVar) # from Diagonalizations.jl
+    U = eigvecs(white.F'*S*white.F) # from LinearAlgebra.jl
     return white.F*U, U'*white.iF
 end
 ```
@@ -138,12 +140,18 @@ It is again defined by [Eq.3] setting
 First, let us write a function to compute ``B`` and ``A`` with the two-step procedures here above. With the exception of one line, it is identical to the function for the SFA:
 
 ```julia
+using Eegle
+
 function mosc(X::AbstractMatrix{T};
             eVar::Union{Float64, Int64, Nothing} = nothing) where T<: Real
 
     C = covmat(X; covtype = SCM)
+    # since the autocovariance matrix is not symmetrical,
+    # we take its symmetric part
     S = hermitianpart(covmat(X, 1; covtype = SCM))  
     white = whitening(C; eVar)
+    # we use `reverse` to sort components by decreasing
+    # order of autocorrelation
     U = reverse(eigvecs(white.F'*S*white.F), dims=2)
     return white.F*U, U'*white.iF
 end
@@ -181,8 +189,9 @@ As one can see the artifacts have been, once gain, removed. The result is very c
 
 ## Conclusion
 
-Using joint diagonalization a very large number of filters can be obtained.
+Using joint diagonalization a very large number of filters can be obtained, besides those
+already provided by [Diagonalizations.jl](https://github.com/Marco-Congedo/Diagonalizations.jl).
 
 **NB:** In general, better results are obtained extending procedures based on the *joint diagonalization* of two matrices to
-the *approximate joint diagonalization* of several matrices ([congedo2008bss](@cite), [Congedo2013HDR](@cite), [GouyPailler2010](@cite)). 
+the *approximate joint diagonalization* of several matrices ([congedo2008bss](@cite), [Congedo2013HDR](@cite), [GouyPailler2010](@cite)). Those can be obtained with the help of *Diagonalizations.jl* as well.
 

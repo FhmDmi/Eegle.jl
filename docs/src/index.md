@@ -1,13 +1,14 @@
 # Eegle Documentation
-The EEG General Library (**Eegle**) is a general-purpose package for
+The **EEG General Library** (Eegle) is a general-purpose package for
 preprocessing and processing human Electroencephalography (EEG) data.
 
 It is the foundational building block that enables the integration of diverse
-state-of-the-art packages, leveraging the powerful [Julia](https://julialang.org/) scientific eco-system.
+state-of-the-art packages specifically conceived for EEG data, 
+and leveraging the powerful [Julia](https://julialang.org/) scientific eco-system.
 
-It also provides some modules for advanced EEG analysis.
+It also provides modules for advanced EEG analysis.
 
-**Eegle** promotes standardization, conventions and a learning approach based on simple examples and advanced tutorials.
+**Eegle** promotes standardization, use of conventions and a learning approach based on simple examples and tutorials.
 
 ![Figure 1](assets/Fig1_index.png)
 
