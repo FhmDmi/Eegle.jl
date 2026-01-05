@@ -1,7 +1,7 @@
 # Tutorial ML 2
 
-A common task in [BCI](@ref "Acronyms") research is to test a machine learning model (MLM) on a large amount of real data.
-This tutorial uses the [FII BCI corpus](@ref "FII BCI Corpus Overview") as an example.
+A common task in [BCI](@ref "Acronyms") research is to test a *machine learning model* (MLM) on a large amount of real data.
+This tutorial uses the [FII BCI corpus](@ref "FII BCI Corpus Overview") to crry out such a task.
 
 If you did not download the corpus yet, do so before running this tutorial using the [`downloadDB`](@ref) function.
 
@@ -11,10 +11,11 @@ The tutorial shows how to
     - BCI Paradigm (Motor Imagery or P300)
     - availability of specific classes
     - minimum number of trials per class
+
 2. Run a cross-validation for all selected [sessions](@ref "session") in all selected [databases](@ref "database") and store the balanced accuracies obtained on all cross-validations
 
 !!! info
-    As a MLM, the [MDM](https://marco-congedo.github.io/PosDefManifoldML.jl/stable/mdm/) Riemannian classifier employing the affine-invariant (Fisher-Rao) metric is used [barachant2012multi](@cite), [Congedo2017Review](@cite). As a covariance matrix estimator, the linear shrinkage estimator of [LedoitWolf2004](@cite) is used. These are state-of-the art settings used as default in **Eegle**. 
+    As a MLM, the [MDM](https://marco-congedo.github.io/PosDefManifoldML.jl/stable/mdm/) Riemannian classifier employing the affine-invariant (Fisher-Rao) metric is used [barachant2012multi](@cite). As a covariance matrix estimator, the linear shrinkage estimator of [LedoitWolf2004](@cite) is used. These are state-of-the art settings used as default in **Eegle**. 
 
     For each session, an 8-fold stratified cross-validation is run. While doing computations, summary results per session will be printed, including the mean and standard deviation of the balanced accuracy obtained across the folds as well as the p-value of the cross-validation test-statistic.
 
