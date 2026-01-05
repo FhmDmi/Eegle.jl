@@ -158,7 +158,7 @@ contains the string will be included.
 [`selectDB`](@ref), [`infoDB`](@ref), [`FileSystem.getFilesInDir`](@ref)
 
 **Examples**
-See the first example of [`weightDB`](@ref)
+See the first example of [`weightsDB`](@ref)
 """
 function loadDB(dbDir=AbstractString, isin::String="")
   # create a list of all .npz files found in dbDir (complete path)

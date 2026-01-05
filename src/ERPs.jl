@@ -364,7 +364,7 @@ Extract trials of duration `wl` from a tagged EEG recording `X`.
 Optionally, multiply them by `weights` and compute a linear combination across sensors thereof.
 
 !!! tip
-    Trials of data in [NY format](@ref) are extracted by default when upon reading — see [`readNY`](@ref); 
+    Trials of data in [NY format](@ref) are extracted by default when upon reading — see [`Eegle.InOut.readNY`](@ref); 
     to extract trials in order to compute their mean, see [`mean`](@ref);
     for segmenting non-tagged data, see [`Eegle.Processing.epoching`](@ref).
 
