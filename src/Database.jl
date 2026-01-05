@@ -651,8 +651,8 @@ end
 ```
 Given a [database](@ref) in [NY format](@ref), provided by argument `files` as a list of *.npz* files,
 where each file holds a BCI [session](@ref), 
-compute a weight for each session to be used in statistical analysis when merging the classification performance 
-or any other relevant index within and across databases. 
+compute a weight for each session to be used in statistical analysis when merging 
+any session-based relevant index such as the classification performance, within and across databases. 
 
 The goal of the weighting is to balance the contribution of all unique [subjects](@ref subject), considering 
 that the number of sessions for each subject may be different.
@@ -679,54 +679,39 @@ This weighting ensures that the **sum of the weights for each subject in the dat
 For example,
 
 - if database *A* has ``M = 64`` unique subjects and each provides 1 session, ``N = 64`` and the 
-  total weight for each session is 
- 
-``\\frac{\\sqrt{64}\\cdot\\sqrt{1}}{1} = 8``;
+  total weight for each session is ``\\frac{\\sqrt{64}\\cdot\\sqrt{1}}{1} = 8``;
 
 - if database *B* also has ``M = 64`` unique subjects, but each provides 4 sessions, 
-  the weight for each session is 
+  the weight for each session is ``\\frac{\\sqrt{64}\\cdot\\sqrt{4}}{4} = 4`` 
+  and the sum of the weights for each unique subject is ``4 \\cdot 4 = 16``, 
+  reflecting he fact that the subjects in database *B* provide more sessions than the 
+  subject in database *A*, thus they should be weighted more; 
 
-``\\frac{\\sqrt{64}\\cdot\\sqrt{4}}{4} = 4`` 
-
-  and the sum of the weights for 
-  each unique subject is ``4 \\cdot 4 = 16``, reflecting he fact that the subjects 
-  in database *B* provide more sessions as compared to database *A*, thus they should be
-  weighted more; 
-
-- if database *C* has ``M = 16`` unique subjects providing 4 sessions each as database *B*,
-  the weight for each session is 
-
-``\\frac{\\sqrt{16}\\cdot\\sqrt{4}}{4} = 2``
-
-  and the sum of the weights for each unique subject is ``4 \\cdot 2 = 8``,
+- if database *C* has ``M = 16`` unique subjects providing 4 sessions each as in database *B*,
+  the weight for each session is ``\\frac{\\sqrt{16}\\cdot\\sqrt{4}}{4} = 2`` and the sum of 
+  the weights for each unique subject is ``4 \\cdot 2 = 8``,
   reflecting the fact that database *C* provides fewer subjects than database *B*;
 
 - if database *D* has ``M = 4`` unique subjects, two of which providing 1 session and two 
   of which providing 4 sessions, the weight for each session of the subjects providing
-  4 sessions is 
-  
-``\\frac{\\sqrt{4}\\cdot\\sqrt{4}}{4} = 1`` 
-
-  and the weight for each session of the subjects providing 1 session is 
-
-``\\frac{\\sqrt{4}\\cdot\\sqrt{1}}{1} = 2``, 
-
+  4 sessions is ``\\frac{\\sqrt{4}\\cdot\\sqrt{4}}{4} = 1`` and the weight for each session 
+  of the subjects providing 1 session is ``\\frac{\\sqrt{4}\\cdot\\sqrt{1}}{1} = 2``, 
   thus the total weight for the subjects providing 4 session is ``4 \\cdot 1 = 4``, 
   which is larger than that of subjects providing a single session (``2``), 
-  reflecting the fact that these subjects provides more session.
+  reflecting the fact that these subjects provide more session.
 
 This is a compromise between two extreme strategies commonly used when merging indices
 across subjects and/or databases, which are both inadequate:
 
 - **Uniform per-session weights** (i.e., all sessions contribute equally), 
-  which favors larger databases or those with many sessions
+  which overemphasizes larger databases and subjects providing many sessions
 - **Uniform per-database weights** (i.e., all databases contribute equally), 
-  which overemphasizes small databases.
+  which overemphasizes small databases and subjects providing many sessions.
 
 Once obtained the weights for one or more databases, 
 they can be globally normalized in any desired way
 (e.g., to unit mean or unit sum),
-within databases, or after concatenating them across databases.
+within databases, or, concatenating them, across databases.
 
 **Return**
 - `weights`: a vector of length ``N``, containing the weight corresponding to each session in `files`
@@ -736,11 +721,21 @@ within databases, or after concatenating them across databases.
 
 **Examples**
 
-The following example selects motor imagery databases featuring classes
+*Example 1* uses the [loadDB](@ref) function to create weights for all *.npz* files 
+found in directory `dir` which name contains the string "condition1".
+
+The following two examples select motor imagery databases featuring classes
 "left_hand" and "right_hand" from the 
-[FII BCI Corpus Overview](@ref "FII BCI Corpus"),
-compute the weights for all files (session) in all selected databases,
-stack them in a single vector and normalize all weights to unit mean. 
+[FII BCI Corpus](@ref "FII BCI Corpus Overview") using the [selectDB](@ref) function and
+compute the weights for all files (i.e., sessions) in all selected databases. In particular:
+
+*Example 2* computes and normalize to unit mean the weights separately for each database. 
+Once this is done, computing the mean of any index (e.g., balanced accuracy) weighted by `w` 
+within each database will result in the
+weighted average index across all sessions within each database, as defined above.
+
+*Example 3* stacks the weights for all databases in a single vector and normalize 
+all weights to unit mean. 
 Once this is done, computing the mean of any index (e.g., balanced accuracy) 
 stacked in the same way across databases and weighted by `w` will result in the
 weighted average index across all sessions and all databases as defined above.
@@ -748,8 +743,17 @@ weighted average index across all sessions and all databases as defined above.
 ```julia
 using Eegle
 
+# Example 1
+w, schedule = weightsDB(loadDB(dir, "condition1"))
+
+# Example 2
 DB_MI = selectDB(:MI; classes = ["left_hand", "right_hand"])
-w = vcat([weightsDB(db.files)[1] for db in DB_MI]...)
+w = [weightsDB(db.files)[1] for db ∈ DB_MI]
+w = [v ./= mean(v) for v ∈ w]
+
+# Example 3
+DB_MI = selectDB(:MI; classes = ["left_hand", "right_hand"])
+w = vcat([weightsDB(db.files)[1] for db ∈ DB_MI]...)
 w ./= mean(w)
 ```
 
@@ -777,7 +781,7 @@ function weightsDB(files)
     end
 
     subject = subject isa Vector{String} ? [parse(Int, s) for s ∈ subject] : subject
-    subject = subject isa Vector{Float64} ? Int.(subjects) : subject
+    subject = subject isa Vector{Float64} ? Int.(subject) : subject
 
     return _weightsDB(subject, length(files))
 end

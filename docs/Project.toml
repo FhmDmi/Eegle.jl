@@ -1,6 +1,7 @@
 authors = ["Marco Congedo, Fahim Doumi"]
 
 [deps]
+ArtifactUtils = "8b73e784-e7d8-4ea5-973d-377fed4e3bce"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 CovarianceEstimation = "587fd27a-f159-11e8-2dae-1979310e6154"
 DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
