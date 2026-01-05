@@ -11,14 +11,14 @@ forming an integrated library. Thus, if you state
 using Eegle
 ```
 
-you have access of all functions exported by all **Eegle** modules and by all re-exported external packages.
+you have access to all functions exported by all **Eegle** modules and by all re-exported external packages.
 
 Like external packages, **Eegle** modules can be used individually. 
 For example, if you only need some functions for preprocessing
 and signal processing, you can state
 
 ```julia
-    using Eegle.preprocessing, DSP
+    using Eegle.Preprocessing, DSP
 ```
 
 In this case, however, you must install DSP.jl as well.
@@ -30,7 +30,7 @@ In this case, however, you must install DSP.jl as well.
 | Code Unit   | Description |
 |:------------|:------------|
 | [BCI.jl](@ref) | Brain-Computer Interface machine learning based on Riemannian geometry |
-| [Database.jl](@ref) | utilities for handling databases |
+| [Database.jl](@ref) | utilities for handling databases and the [FII BCI Corpus](@ref "FII BCI Corpus Overview")|
 | [ERPs.jl](@ref) | operations on Event-Related Potentials and BCI trials |
 | [FileSystem.jl](@ref) | manipulation of files and directories |
 | [InOut.jl](@ref) | reading and writing of data |
@@ -44,7 +44,7 @@ In this case, however, you must install DSP.jl as well.
 |:-----------------------|:-----------------------|
 | [CovarianceEstimation](https://github.com/mateuszbaran/CovarianceEstimation.jl) | covariance matrix estimations |
 | [Diagonalizations](https://github.com/Marco-Congedo/Diagonalizations.jl) |  spatial filters, (approximate joint) diagonalization algorithms |
-| [Distributions](https://github.com/JuliaStats/Distributions.jl) | statistical distributions|
+| [Distributions](https://github.com/JuliaStats/Distributions.jl) | Julia standard package for statistical distributions|
 | [DSP](https://github.com/JuliaDSP/DSP.jl) | Julia standard package for digital signal processing|
 | [FourierAnalysis](https://github.com/Marco-Congedo/FourierAnalysis.jl) | FFT-based frequency domain and time-frequency domain analysis |
 | [LinearAlgebra](https://bit.ly/2W5Wq8W) | Julia standard package for matrix types and linear algebra (BLAS, LAPACK)  |
@@ -89,6 +89,7 @@ In this case, however, you must install DSP.jl as well.
 |  Resource | Scope |
 |:-----------------------|:-----------------------|
 | [Eegle-Tools](https://github.com/FhmDmi/Eegle-Tools) | a collection of useful scripts used to develop Eegle or using Eegle  |
+| [pyLittleEegle](https://github.com/FhmDmi/pyLittleEegle) | encapsulate a subset of **Eegle**'s functions in a Python package |
 
 
 ### similar packages
@@ -147,7 +148,7 @@ The reminder of this page is of interest only for contributing code and document
     - add the documentation right on top of the function (no blank lines)
     - add the function in the `export` section of the module
     - add the function in the docstring of the module's .md file in the docs/src directory.
-- Leave an empty space around the `=` sign
+- Leave an empty space around the `=` sign when affecting variables
 - Follows Julia general conventions:
     - functions starts by a lower-case letter, while structures and modules by a capital letter 
     - in general, constants are fully capitalized
