@@ -251,4 +251,4 @@ This document describes all the changes applied to downloaded Motor Imagery data
 **Specific Treatments:**
 
 - **Session concatenation**: 3 sessions of 2 runs each with identical conditions, runs concatenated into corresponding sessions
-- **Channel removal**: EOG channels removed
+- **Channel removal**: EOG channels removed (old version of Zhou2016 for MOABB)
