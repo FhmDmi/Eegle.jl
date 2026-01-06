@@ -26,10 +26,10 @@ export
 
 """
 ```julia
-    function filtfilt(  X::Matrix, 
-                        sr::Int, 
-                        responseType::DSP.FilterType; 
-        designMethod::DSP.ZeroPoleGain=Butterworth(2))
+function filtfilt(  X::Matrix, 
+                    sr::Int, 
+                    responseType::DSP.FilterType; 
+    designMethod::DSP.ZeroPoleGain=Butterworth(2))
 ```
 Apply a digital filter in a forward-backward manner to obtain a linear phase response.
 
@@ -74,7 +74,7 @@ end
 
 """
 ```julia
-    function centeringMatrix(N::Int)
+function centeringMatrix(N::Int)
 ```
 
 The common average reference (CAR) operator for referencing EEG data 
@@ -108,7 +108,7 @@ X_car = X * centeringMatrix(size(X, 2))
 # or
 X_car = X * ℌ(size(X, 2))
 
-# double centered data: zero mean across time and space
+# double-centered data: zero mean across time and space
 X_dc = ℌ(size(X, 1)) * X * ℌ(size(X, 2))
 ```
 """
@@ -117,9 +117,9 @@ centeringMatrix(N::Int) = I-1/N*(ones(N)*ones(N)')
 
 """
 ```julia
-    function globalFieldPower(X::AbstractMatrix{T}; 
-        func::Function = identity) 
-    where T<:Real 
+function globalFieldPower(X::AbstractMatrix{T}; 
+    func::Function = identity) 
+where T<:Real 
 ```
 The global field power (GFP) is the sample-by-sample total EEG power.
 
@@ -143,9 +143,9 @@ Usually the GFP is computed on common average reference data — see [`centering
 using Eegle
 
 X=randn(128, 19)
-# ℌ is an alias for centeringMatrix
 
 # using an anonymous function
+# ℌ is an alias for centeringMatrix
 g = globalFieldPower(X * ℌ(size(X, 2)); func=x->sqrt(x/size(X, 2)))
 
 ```
@@ -157,9 +157,9 @@ end
 
 """
 ```julia
-    function globalFieldRMS(X::AbstractMatrix{T}; 
-        func=identity) 
-    where T<:Real
+function globalFieldRMS(X::AbstractMatrix{T}; 
+    func=identity) 
+where T<:Real
 ```
 The global field root mean square (GFRMS) is the square root of the [`globalFieldPower`](@ref) once
 this has been divided by the number of electrodes.
@@ -188,8 +188,8 @@ X=randn(128, 19)
 g = globalFieldRMS(X * ℌ(size(X, 2)))
 # ℌ is an alias for centeringMatrix
 
-# using an anonymous function
-g = globalFieldRMSX * ℌ(size(X, 2)); func=x->x^2)
+# return the natural log of the GFRMS
+g = globalFieldRMS(X * ℌ(size(X, 2)); func=log)
 ```
 """
 function globalFieldRMS(X::AbstractMatrix{T}; func=identity) where T<:Real
@@ -244,13 +244,13 @@ end
 
 """
 ```julia
-    function epoching(X::AbstractMatrix{T}, sr;
-        wl::Int = round(Int, sr*1.5),
-        slide::Int = 0,
-        minSize::S = round(Int, sr*1.5),
-        lowPass::Union{T, S} = 14,
-        richReturn::Bool = false) 
-    where {T<:Real, S<:Int}
+function epoching(X::AbstractMatrix{T}, sr;
+    wl::Int = round(Int, sr*1.5),
+    slide::Int = 0,
+    minSize::S = round(Int, sr*1.5),
+    lowPass::Union{T, S} = 14,
+    richReturn::Bool = false) 
+where {T<:Real, S<:Int}
 ```
 Segment an EEG file in successive epochs and compute a vector of unit ranges delimiting the epochs.
 This is used to extract epochs from spontaneous EEG recording. For tagged data (e.g., ERPs and BCI data), 
@@ -297,22 +297,24 @@ ranges = epoching(X, sr;
         wl = sr * 4)
 # return (1:512, 513:1024, ...)
 
-# adaptive epoching of θ (4Hz-7.5Hz) oscillations
+# adaptive epoching of θ (Theta: 4Hz-7.5Hz) oscillations
 Xθ = filtfilt(X, sr, Bandpass(4, 7.5))
-ranges = epoching(Xθ, sr;
+rangesθ = epoching(Xθ, sr;
         minSize = round(Int, sr ÷ 4), # at least one θ cycle
         lowPass = 7.5)  # ignore minima due to higher frequencies
 
-# Get the epochs from any of the above:
-𝐗 = [X[r, :] for r ∈ ranges] # or 𝐗 = [Xθ[r, :] for r ∈ ranges]
+# Get the epochs from the above epoching:
+𝐗 = [X[r, :] for r ∈ ranges] 
+𝐗θ = [Xθ[r, :] for r ∈ rangesθ]
 
-# Get the covariance matrices of the epochs from any of the above
-𝐂 = covmat(𝐗) # See CovarianceMatrices.jl
+# Get the covariance matrices of the above epochs
+𝐂 = covmat(𝐗) 
+𝐂θ = covmat(𝐗θ)
 
 # If only the covariance matrices are needed,
 # a more memory-efficient way avoiding the extraction of 𝐗 is
 𝐂 = ℍVector(covmat([view(X, r, :) for r ∈ ranges]))
-𝐂θ = ℍVector(covmat([view(Xθ, r, :) for r ∈ ranges]))
+𝐂θ = ℍVector(covmat([view(Xθ, r, :) for r ∈ rangesθ]))
 ```
 **See** [`Eegle.BCI.covmat`](@ref)
 """

@@ -2,6 +2,8 @@
 
 This document describes the standard dictionary structure used in `.yml` metadata files for EEG time series data in the [NY format](@ref).
 
+This structure was conceived during the PhD thesis of [Pedro Rodrigues](https://plcrodrigues.github.io/) at GIPSA-lab in Grenoble.
+
 ## Overview
 
 The YAML format is used to share EEG metadata in both Python and Julia environments.  
