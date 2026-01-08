@@ -6,8 +6,8 @@ This document describes all the changes applied to downloaded Motor Imagery data
 
 **Class Labels:**
 
-- Original: 2-right_hand, 3-feet, 4-rest
-- Modified: No changes required
+- Original: 1-beginning of a trial, 2-right_hand, 3-feet, 4-rest
+- Modified: 1-beginning of a trial → 0  
 
 **Sampling Rate:**
 
@@ -251,4 +251,4 @@ This document describes all the changes applied to downloaded Motor Imagery data
 **Specific Treatments:**
 
 - **Session concatenation**: 3 sessions of 2 runs each with identical conditions, runs concatenated into corresponding sessions
-- **Channel removal**: EOG channels removed
+- **Channel removal**: EOG channels removed (old version of Zhou2016 for MOABB)
