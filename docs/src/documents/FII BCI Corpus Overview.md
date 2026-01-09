@@ -2,8 +2,21 @@
 
 This document outlines the rationale and content of the **FII BCI Corpus** Zenodo repositories for [Motor Imagery (MI)](https://doi.org/10.5281/zenodo.17801878) and [P300](https://doi.org/10.5281/zenodo.17250465) BCI paradigm. Those are selections of BCI databases, annotated and curated for research purposes in a collaborative project carried out at *University Federico II of Naples* and *University Grenoble Alpes of Grenoble*.
 
+## Install
+
 The corpus can be easily installed using **Eegle**'s download GUI — see [`Eegle.Database.downloadDB`](@ref).
-The size of the corpus on disk is **36.6 GB** for MI and **14.2 GB** for P300.
+The size on disk is **36.6 GB** for MI and **14.2 GB** for P300.
+
+## Contribute
+
+The corpus is an ongoing collective endeavour. If you wish to contribute a database to enlarge the corpus, please open an issue
+in [this repository](https://github.com/FhmDmi/Eegle-Tools/tree/master/Converters), or contact the maintainers:
+
+* **Fahim Doumi**: fahim dot doumi dot pro at gmail dot com
+* **Marco Congedo**: marco dot congedo at gmail dot com
+* **Antonio Esposito**: anthony dot esp at live dot it.
+
+## Description
 
 Along with EEG data and class labels, the corpus provides comprehensive metadata that allow to select the data for the study at hand and extract relevant information. This makes it particularly easy to carry out machine learning research on BCI data — see for example [Tutorial ML 2](@ref). For comparing results, a [benchmark](@ref "BCI FII Corpus Benchmark") is provided.
 
@@ -25,7 +38,7 @@ For the details on the discarding procedures for each file see the *@discarded.m
 
 For the details on the treatment that has been carried out on each database, see [Treatment MI](@ref) and [Treatment P300](@ref).
 
-# Inclusion and Exclusion Criteria
+## Inclusion and Exclusion Criteria
 
 Databases have been extracted from MOABB[^1], excluding those recorded on clinical populations.
 
