@@ -5,7 +5,12 @@ push!(LOAD_PATH,"docs/src/")
 
 using Documenter, DocumenterCitations, DocumenterInterLinks, DocumenterTools, Revise
 
-## ADD HERE ALL MODULES!
+using Pkg
+Pkg.activate(@__DIR__)
+Pkg.develop(PackageSpec(path=joinpath(@__DIR__, "..")))  # Local Eegle
+Pkg.instantiate()
+
+## ADD HERE ALL MODULES # loads LOCAL versions to catch the new developments
 using   Eegle, 
         Eegle.Preprocessing,
         Eegle.Processing, 

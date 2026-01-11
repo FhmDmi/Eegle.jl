@@ -219,22 +219,22 @@ end
 
 """
 ```julia
-    function encode(o::EEG;
-        paradigm::Symbol = o.paradigm,
-        covtype = LShrLW,
-        targetLabel::String = "target",
-        overlapping::Bool = false,
-        weights = :a,
-        pcadim::Int = 8,
-        standardize::Bool = false,
-        lags::Int = 0,
-        tikh :: Union{Real, Int} = 0,
-        useBLAS :: Bool = true,
-        threaded = true,
-        reg::Symbol = :rmt,
-        tol::Real = 1e-6,
-        maxiter::Int = 200,
-        verbose::Bool = false)
+function encode(o::EEG;
+    paradigm::Symbol = o.paradigm,
+    covtype = LShrLW,
+    targetLabel::String = "target",
+    overlapping::Bool = false,
+    weights = :a,
+    pcadim::Int = 8,
+    standardize::Bool = false,
+    lags::Int = 0,
+    tikh :: Union{Real, Int} = 0,
+    useBLAS :: Bool = true,
+    threaded = true,
+    reg::Symbol = :rmt,
+    tol::Real = 1e-6,
+    maxiter::Int = 200,
+    verbose::Bool = false)
 ```
 Encode all trials in an [`EEG`](@ref) data structure as covariance matrices according to a given BCI paradigm.
 This is used in Riemannian geometry machine learning.
@@ -354,42 +354,42 @@ end
 
 """
 ```julia
-    function crval( filename    :: AbstractString, 
-                    model       :: MLmodel = MDM(Fisher);
-            # Arguments passed to both encode and crval
-            verbose     :: Bool = true,
-            threaded    :: Bool = true,
-            # Arguments passed to readNY
-            toFloat64   :: Bool = true,
-            bandStop    :: Tuple = (),
-            bandPass    :: Tuple = (),
-            bsDesign    :: DSP.ZeroPoleGain = Butterworth(8),
-            bpDesign    :: DSP.ZeroPoleGain = Butterworth(4),
-            rate        :: Union{Real, Rational, Int} = 1,
-            upperLimit  :: Union{Real, Int} = 0,
-            classes     :: Union{Bool, Vector{String}} = true, 
-            stdClass    :: Bool = true, 
-            # Arguments passed to encode
-            covtype = LShrLW,
-            targetLabel :: String = "target",
-            overlapping :: Bool = false,
-            weights = :a,
-            pcadim      :: Int = 8,
-            standardize :: Bool = false,
-            lags        :: Int = 0,
-            tikh        :: Union{Real, Int} = 0,
-            useBLAS     :: Bool = true,
-            reg         :: Symbol = :rmt,
-            tol         :: Real = 1e-6,
-            maxiter     :: Int = 200,
-            # Arguments passed to crval
-            pipeline    :: Union{Pipeline, Nothing} = nothing,
-            nFolds      :: Int = 8,
-            seed        :: Int = 0,
-            scoring     :: Symbol = :b,
-            hypTest     :: Union{Symbol, Nothing} = :Bayle,
-            outModels   :: Bool = false,
-            fitArgs...)
+function crval( filename    :: AbstractString, 
+                model       :: MLmodel = MDM(Fisher);
+        # Arguments passed to both encode and crval
+        verbose     :: Bool = true,
+        threaded    :: Bool = true,
+        # Arguments passed to readNY
+        toFloat64   :: Bool = true,
+        bandStop    :: Tuple = (),
+        bandPass    :: Tuple = (),
+        bsDesign    :: DSP.ZeroPoleGain = Butterworth(8),
+        bpDesign    :: DSP.ZeroPoleGain = Butterworth(4),
+        rate        :: Union{Real, Rational, Int} = 1,
+        upperLimit  :: Union{Real, Int} = 0,
+        classes     :: Union{Bool, Vector{String}} = true, 
+        stdClass    :: Bool = true, 
+        # Arguments passed to encode
+        covtype = LShrLW,
+        targetLabel :: String = "target",
+        overlapping :: Bool = false,
+        weights = :a,
+        pcadim      :: Int = 8,
+        standardize :: Bool = false,
+        lags        :: Int = 0,
+        tikh        :: Union{Real, Int} = 0,
+        useBLAS     :: Bool = true,
+        reg         :: Symbol = :rmt,
+        tol         :: Real = 1e-6,
+        maxiter     :: Int = 200,
+        # Arguments passed to crval
+        pipeline    :: Union{Pipeline, Nothing} = nothing,
+        nFolds      :: Int = 8,
+        seed        :: Int = 0,
+        scoring     :: Symbol = :b,
+        hypTest     :: Union{Symbol, Nothing} = :Bayle,
+        outModels   :: Bool = false,
+        fitArgs...)
 ```
 
 Perform cross-validations of a BCI [session](@ref) stored in [NY format](@ref). 

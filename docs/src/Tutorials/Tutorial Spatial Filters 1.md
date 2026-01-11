@@ -1,5 +1,7 @@
 # Tutorial SF 1
 
+[💻 Full Code](@ref "Code for Tutorial SF 1")
+
 Gievn an EEG data matrix ``X`` of dimension ``T⋅N``, where ``T`` is the number of samples and ``N`` the number of sensors, a **spatial filter** ``Bₛ`` is a matrix of dimension ``N⋅P``, with ``P<N``.
 
 The spatial filter has a left-inverse ``Aₛ`` of dimension ``P⋅N`` verifying ``AₛBₛ=I``, where ``I`` is the identity matrix.
@@ -194,4 +196,14 @@ already provided by [Diagonalizations.jl](https://github.com/Marco-Congedo/Diago
 
 **NB:** In general, better results are obtained extending procedures based on the *joint diagonalization* of two matrices to
 the *approximate joint diagonalization* of several matrices ([congedo2008bss](@cite), [Congedo2013HDR](@cite), [GouyPailler2010](@cite)). Those can be obtained with the help of *Diagonalizations.jl* as well.
+
+***
+#### Code for Tutorial SF 1
+
+```@example
+using Eegle # hide
+parseTutorial("Tutorial Spatial Filters 1") # hide
+```
+
+[⬆️ Go to Top](@ref "Tutorial SF 1")
 

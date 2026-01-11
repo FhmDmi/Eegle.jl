@@ -143,7 +143,7 @@ end
 
 """
 ```julia
-    function loadDB(dbDir=AbstractString, isin::String="")
+function loadDB(dbDir=AbstractString, isin::String="")
 ```
 Return a list of the complete paths of all *.npz* files found in a directory given as argument `dbDir`.
 Such a directory is a [database](@ref) in [NY format](@ref), thus, for each *NPZ* file 
@@ -179,7 +179,7 @@ end
 
 """
 ```julia
-    function infoDB(dbDir)
+function infoDB(dbDir)
 ```
 Create a [InfoDB](@ref) structure and show it in Julia's REPL.
 
@@ -657,7 +657,7 @@ end
 
 """
 ```julia
-    function weightsDB(files)
+function weightsDB(files)
 ```
 Given a [database](@ref) in [NY format](@ref), provided by argument `files` as a list of *.npz* files,
 where each file holds a BCI [session](@ref), 

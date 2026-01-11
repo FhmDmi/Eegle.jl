@@ -5,16 +5,15 @@
 module Miscellaneous
 
 using PosDefManifold: AnyMatrix
+using Eegle.FileSystem: changeFileExt
 
 # ? ¤ CONTENT ¤ ? 
 
-# waste     | free the memory for all objects passed as arguments
-# charlie   | exit a function printing a message in one line
 # remove    | remove one or several elements from arrays
 # isSquare  | check if a matrix is square
 # minima    | local minima of a sequence
 # maxima    | local maxima of a sequence
-
+# waste     | free the memory for all objects passed as arguments
 
 import Eegle
 
@@ -30,13 +29,13 @@ export
     minima,
     maxima,
     waste,
-    charlie
+    parseTutorial
 
 """
 ```julia
-    function remove(X::Union{Vector, Matrix}, 
-                    what::Union{Int, Vector{Int}}; 
-        dims=1)
+function remove(X::Union{Vector, Matrix}, 
+                what::Union{Int, Vector{Int}}; 
+    dims=1)
 ```
 Return vector `X` removing one or more elements, or matrix `X` removing one or more
 columns or rows.
@@ -90,7 +89,7 @@ end
 
 """
 ```julia
-  function isSquare(X)
+function isSquare(X)
 ```
 Return true if `X` is an [AnyMatrix](https://marco-congedo.github.io/PosDefManifold.jl/stable/MainModule/#AnyMatrix-type)
 and is square, false otherwise.
@@ -102,8 +101,8 @@ end
 
 """
 ```julia
-    function minima(v::AbstractVector{T}) 
-    where T<:Real
+function minima(v::AbstractVector{T}) 
+where T<:Real
 ```
 Return the 2-tuple formed by the vector of local minima of vector `v` and the
 vector of the indices of `v` corresponding to the minima.
@@ -124,8 +123,8 @@ end
 
 """
 ```julia
-    function maxima(v::AbstractVector{T}) 
-    where T<:Real
+function maxima(v::AbstractVector{T}) 
+where T<:Real
 ```
 Return the 2-tuple formed by the vector of local maxima of vector `v` and the
 vector of the indices of `v` corresponding to the maxima.
@@ -144,25 +143,77 @@ function maxima(v::AbstractVector{T}) where T<:Real
 end
 
 
-# xxx
-# Force garbage collector to free memory for all arguments passed as `args...`.
-# Must be revised.
-# See [here](https://github.com/JuliaCI/BenchmarkTools.jl/pull/22)
+"""
+```julia
+function waste(args...)
+```
+Force garbage collector to free memory for all arguments passed as `args...`.
+
+The arguments can be of any type. See [here](https://github.com/JuliaCI/BenchmarkTools.jl/pull/22)
+
+**Examples**
+```julia
+using Eegle # or using Eegle.Miscellaneous
+
+A = randn(1000, 1000)
+b = randn(10000)
+
+waste(A, b)
+
+```
+"""
 function waste(args...)
   for a in args a=nothing end
-  for i=1:4 GC.gc(true) end
+  for i=1:4 GC.gc(false) end
 end
 
-# xxx
-# if b is true, print a warning with the `msg` and return true,
-# otherwise return false. This is used within functions
-# to make a check and if necessary print a message and return.
-# Example: charlie(type ≠ :s && type ≠ :t, "my message") && return
-charlie(b::Bool, msg::String; fb::Symbol=:warn) =
-  if        fb==:warn b ? (@warn msg; return true) : return false
-  elseif    fb==:error b ? (@error msg; return true) : return false
-  elseif    fb==:info b ? (@info msg; return true) : return false
-  end
+# exported to be used by Documenter.jl to
+# - extract the julia code blocks from tutorial markdown file given ad `mdfile`
+# - print the code in a @example block in the tutorials file
+# this allow the user to copy the whole tutorial code
+function parseTutorial(mdfile::String)
+    # Construct path
+    path = joinpath(
+        abspath(@__DIR__, ".."),
+        "docs", "src", "Tutorials",
+        changeFileExt(mdfile, ".md")
+    )
 
+    isfile(path) || throw(ArgumentError(
+        "Function Eegle.Miscellaneous.parseTutorial: File not found: $path. Please check the spelling."))
+
+    # Read raw markdown
+    text = read(path, String)
+
+    # Regex: ```julia ... ```
+    julia_fence = r"```julia\s*(?s)(.*?)```"
+
+    blocks = String[]
+    block_separator_added = false
+    
+    for m in eachmatch(julia_fence, text)
+        # Get raw code content and normalize line endings
+        raw_code = m.captures[1]
+        lines = split(replace(raw_code, "\r\n" => "\n"), "\n", keepempty=false)
+        
+        # Add separator if this is not the first block
+        if !isempty(blocks) && !block_separator_added
+            push!(blocks, "")  # blank line
+            block_separator_added = true
+        end
+        
+        # Preserve ALL original whitespace - just split by lines
+        for line in lines
+            push!(blocks, line * "\n")
+        end
+        
+        block_separator_added = false  # reset for next block
+    end
+
+    for block in blocks
+        isempty(block) ? println() : print(block)
+    end
+    return nothing
+end
 
 end # module
