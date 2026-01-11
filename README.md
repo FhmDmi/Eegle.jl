@@ -12,7 +12,7 @@ It is the fundamental brick allowing the integration of several packages dedicat
 <img src="docs/src/assets/Fig1_index.png" width="780" style="display: block; margin: auto;">
 
 ---
-## Installation
+## ⚙️ Installation
 
 Execute the following command in julia's REPL:
 
@@ -23,29 +23,29 @@ Execute the following command in julia's REPL:
 
 The package is self-contained, as it re-exports several packages and all its submodules. 
 
-## Quick Start
+## —͟͟͞͞★ Quick Start
 
 A large collection of tutorials (mostly to come) will get you on track.
 
 ---
-## Disclaimer
+## 🤔 Disclaimer
 
-**Eegle** is currently under development. This version is a **pre-release** for testing purposes.
+**Eegle** is currently under development and the full testing process has not been completed. 
 
 ---
-## About the authors
+## ✍️ About the authors
 
 [Marco Congedo](https://sites.google.com/site/marcocongedo), corresponding author, is a Research Director of [CNRS](http://www.cnrs.fr/en) (Centre National de la Recherche Scientifique), working at [UGA](https://www.univ-grenoble-alpes.fr/english/) (University of Grenoble Alpes). **Contact**: first name dot last name at gmail dot com.
 
 [Fahim Doumi](https://www.linkedin.com/in/fahim-doumi-4888a9251/?locale=fr_FR) at the time of writing was a research ingeneer at the Department of Enginnering of the [University Federico II of Naples](https://www.unina.it/en_GB/home).
 
 ---
-## Contribute
+## 🌱 Contribute
 
 Please contact the authors if you are interested in contributing.
 
 ---
-| **Documentation**  | 
+| ** 🎓 Documentation**  | 
 |:-------------------------------------:|
 | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl/stable) | 
 | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | 
