@@ -16,8 +16,9 @@ It is the fundamental brick allowing the integration of several packages dedicat
 
 Execute the following command in julia's REPL:
 
-    ]add https://github.com/Marco-Congedo/Eegle.jl
-
+```julia
+    ]add Eegle
+```
 ---
 
 The package is self-contained, as it re-exports several packages and all its submodules. 
