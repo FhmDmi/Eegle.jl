@@ -1,5 +1,7 @@
 # Tutorial ML 1
 
+[💻 Full Code](@ref "Code for Tutorial ML 1")
+
 The goal of this tutorial is to show how Riemannian machine learning can be done using **Eegle**
 in conjunction with package [PosDefManifold.jl](https://github.com/Marco-Congedo/PosDefManifoldML.jl). 
 
@@ -134,3 +136,13 @@ The results are identical. Let us verify:
 cvMDM.avgAcc == cvMDM2.avgAcc # must be true
 cvACM.avgAcc == cvACM2.avgAcc # must be true
 ```
+
+***
+#### Code for Tutorial ML 1
+
+```@example
+using Eegle # hide
+parseTutorial("Tutorial Machine Learning 1") # hide
+```
+
+[⬆️ Go to Top](@ref "Tutorial ML 1")

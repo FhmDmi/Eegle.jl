@@ -50,32 +50,32 @@ export
 
 """
 ```julia
-    struct EEG
-        id              :: Dict{Any,Any} 
-        acquisition     :: Dict{Any,Any} 
-        documentation   :: Dict{Any,Any} 
-        formatversion   :: String        
+struct EEG
+    id              :: Dict{Any,Any} 
+    acquisition     :: Dict{Any,Any} 
+    documentation   :: Dict{Any,Any} 
+    formatversion   :: String        
 
-        # the following fields are those most useful in practice
-        db              :: String  
-        paradigm        :: Symbol      
-        subject         :: Int           
-        session         :: Int           
-        run             :: Int           
-        sensors         :: Vector{String}
-        sr              :: Int           
-        ne              :: Int           
-        ns              :: Int           
-        wl              :: Int           
-        offset          :: Int           
-        nClasses        :: Int           
-        clabels         :: Vector{String} 
-        stim            :: Vector{Int}    
-        mark            :: Vector{Vector{Int}}  
-        y               :: Vector{Int}          
-        X               :: Matrix{T} where T<:Real 
-        trials          :: Union{Vector{Matrix{T}}, Nothing} 
-    where T<:Real 
+    # the following fields are those most useful in practice
+    db              :: String  
+    paradigm        :: Symbol      
+    subject         :: Int           
+    session         :: Int           
+    run             :: Int           
+    sensors         :: Vector{String}
+    sr              :: Int           
+    ne              :: Int           
+    ns              :: Int           
+    wl              :: Int           
+    offset          :: Int           
+    nClasses        :: Int           
+    clabels         :: Vector{String} 
+    stim            :: Vector{Int}    
+    mark            :: Vector{Vector{Int}}  
+    y               :: Vector{Int}          
+    X               :: Matrix{T} where T<:Real 
+    trials          :: Union{Vector{Matrix{T}}, Nothing} 
+where T<:Real 
 ```
 Data structure for an EEG BCI (Brain-Computer Interface) [session](@ref), holding data and metadata.
 
@@ -124,22 +124,22 @@ In Julia, a structure has a default constructor taking all fields as arguments.
 A simplified constructor is also available, as
 
 ```julia
-    EEG(    X::Matrix{T}, 
-            sr::Int, 
-            sensors::Vector{String};
-        db::String = "",
-        paradigm::Symbol = :NA,
-        subject::Int = 0,
-        session::Int = 1,
-        run::Int = 1,
-        wl::Int = sr,
-        offset::Int = 0,
-        nClasses::Int = 1,
-        clabels::Vector{String} = [""],
-        stim::Vector{Int} = ["0"],
-        mark::Vector{Vector{Int}} = [[""]],
-        y::Vector{Int} = [0])
-    where T<:Real
+EEG(    X::Matrix{T}, 
+        sr::Int, 
+        sensors::Vector{String};
+    db::String = "",
+    paradigm::Symbol = :NA,
+    subject::Int = 0,
+    session::Int = 1,
+    run::Int = 1,
+    wl::Int = sr,
+    offset::Int = 0,
+    nClasses::Int = 1,
+    clabels::Vector{String} = [""],
+    stim::Vector{Int} = ["0"],
+    mark::Vector{Vector{Int}} = [[""]],
+    y::Vector{Int} = [0])
+where T<:Real
 ```
 The above creates an EEG structure providing, *ad minima*:
 - the EEG data `X`
@@ -263,17 +263,17 @@ end
 
 """
 ```julia
-    function readNY(filename :: AbstractString;
-        toFloat64   :: Bool = true,
-        bandStop    :: Tuple = (),
-        bandPass    :: Tuple = (),
-        bsDesign    :: DSP.ZeroPoleGain = Butterworth(8),
-        bpDesign    :: DSP.ZeroPoleGain = Butterworth(4),
-        rate        :: Union{Real, Rational, Int} = 1,
-        upperLimit  :: Union{Real, Int} = 0,
-        classes     :: Union{Bool, Vector{String}} = true, 
-        stdClass    :: Bool = true, 
-        msg         :: String="") 
+function readNY(filename :: AbstractString;
+    toFloat64   :: Bool = true,
+    bandStop    :: Tuple = (),
+    bandPass    :: Tuple = (),
+    bsDesign    :: DSP.ZeroPoleGain = Butterworth(8),
+    bpDesign    :: DSP.ZeroPoleGain = Butterworth(4),
+    rate        :: Union{Real, Rational, Int} = 1,
+    upperLimit  :: Union{Real, Int} = 0,
+    classes     :: Union{Bool, Vector{String}} = true, 
+    stdClass    :: Bool = true, 
+    msg         :: String="") 
 ```
 Read EEG/BCI data in [NY format](#NY-format), prepreprocess them if desired, and create an [`EEG`](@ref) structure.
 
@@ -523,12 +523,12 @@ end
 
 """
 ```julia
-    function readgTec(fileName::AbstractString;
-        dataType::Type = Float32,
-        writeMetaDataFiles::Bool = true,
-        verbose::Bool = true,
-        skipFirstSamples::Int = 0,
-        chRange::Union{UnitRange, Symbol} = :All)
+function readgTec(fileName::AbstractString;
+    dataType::Type = Float32,
+    writeMetaDataFiles::Bool = true,
+    verbose::Bool = true,
+    skipFirstSamples::Int = 0,
+    chRange::Union{UnitRange, Symbol} = :All)
 
 ```
 Read an EEG data file saved in HDF5 format by the [g.Tec g.Recorder software](https://www.gtec.at/product/g-recorder/?srsltid=AfmBOorZgVDJBTE81uhRRZNpSFaL8xjYWgBHteW3M2Yb60YKu54jZ_lu).
@@ -654,8 +654,8 @@ end
 
 """
 ```julia
-    function readSensors(fileName::String; 
-        hasHeader::Bool=true)
+function readSensors(fileName::String; 
+    hasHeader::Bool=true)
 ```
 Read a list of EEG sensor labels from ASCII file `fileName`.
 The file has one sensor label per line.

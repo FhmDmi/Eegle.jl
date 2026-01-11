@@ -1,5 +1,7 @@
 # Tutorial ML 2
 
+[💻 Full Code](@ref "Code for Tutorial ML 2")
+
 A common task in [BCI](@ref "Acronyms") research is to test a *machine learning model* (MLM) on a large amount of real data.
 This tutorial uses the [FII BCI corpus](@ref "FII BCI Corpus Overview") to crry out such a task.
 
@@ -85,3 +87,13 @@ For all possible options in running cross-validations, see [`Eegle.BCI.crval`](@
 
 !!! tip
     Do not use Julia's `@threaded` macro in the internal loops above as by default function `crval` is already multi-threaded across folds.
+
+***
+#### Code for Tutorial ML 2
+
+```@example
+using Eegle # hide
+parseTutorial("Tutorial Machine Learning 2") # hide
+```
+
+[⬆️ Go to Top](@ref "Tutorial ML 2")

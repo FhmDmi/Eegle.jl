@@ -2,7 +2,8 @@
 
 Running the tutorials is the fastest way to learn how to use **Eegle** and to appreciate the way it integrates diverse packages for EEG analysis and classification.
 
-To run tutorials, copy the code blocks therein (there is a button at the right end of each block) and paste them (e.g., CTRL+V in Windows) in the REPL or in a .jl script to be run.
+!!! tip
+    To run an entire tutorial, click on the '💻 Full Code' link placed at the top of the page of each tutorial. This will scroll up to the bottom of the page, where the block containing the full code can be copied on the clipboard. Once copied, paste the code (e.g., CTRL+V in Windows) in the REPL or in a .jl script to be run.
 
 Tutorials are organized by theme; start with those that most closely resemble your current research needs.
 
@@ -14,7 +15,8 @@ Tutorials are organized by theme; start with those that most closely resemble yo
 ]add CairoMakie, GLMakie, ColorSchemes, Colors
 ```
 
-- For plotting EEG traces we use dedicated applications. Plotting tools will for julia are under development.
+!!! note
+    For plotting EEG traces we use dedicated applications. A dedicated plotting package for **Eegle** is under development.
 
 # Themes
 

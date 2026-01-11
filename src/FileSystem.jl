@@ -32,9 +32,13 @@ export
 
 """
 ```julia
-    function fileBase(file::String)
+function fileBase(file::String)
 ```
 Return `file`, including the complete path, without the extension.
+
+Return `file` if it has no extension.
+
+`file` does not need to exist.
 
 !!! tip "basename"
     Julia's `basename` function returns instead the file name with no path and with extension
@@ -45,7 +49,7 @@ fileBase(joinpath(homedir(), "myfile.txt"))
 # return (joinpath(homedir(), "myfile"))
 ```
 """
-fileBase(file::String) = file[begin:findlast(==('.'), file)-1]
+fileBase(file::String) = isnothing(findlast(==('.'), file)) ? file : file[begin:findlast(==('.'), file)-1]
 
 """
 ```julia
@@ -68,18 +72,26 @@ fileExt(file::String) = file[findlast(==('.'), file):end]
 
 Return the complete path of `file` with extension changed to `ext`.
 
+If `file` has no extension, add it.
+
+`file` does not need to exist.
+
 **Example**
 ```julia
 changeFileExt(joinpath(homedir(), "myfile.txt"), ".csv") 
 # return joinpath(homedir(), "myfile.csv")
+
+changeFileExt(joinpath(homedir(), "myfile"), ".csv") 
+# return joinpath(homedir(), "myfile.csv")
+
 ```
 """
 changeFileExt(file::String, ext::String) = fileBase(file) * ext
 
 """
 ```julia
-    function getFilesInDir(dir::Union{String, Vector{String}}; 
-        ext::Tuple=(), isin::String="")
+function getFilesInDir(dir::Union{String, Vector{String}}; 
+    ext::Tuple=(), isin::String="")
 ```
 
 Return a vector of strings comprising the complete path of all files in directory `dir`.
@@ -130,7 +142,7 @@ end
 
 """
 ```julia
-    function getFoldersInDir(dir::String; isin::String="")
+function getFoldersInDir(dir::String; isin::String="")
 ```
 
 Return a vector of strings comprising the complete path of all directories in directory `dir`.
@@ -163,6 +175,8 @@ else
     isempty(S) && @warn "Function `getFoldersInDir`: input directory does not contain any folders"
     return Vector{String}(S)
 end
+
+
 
 
 

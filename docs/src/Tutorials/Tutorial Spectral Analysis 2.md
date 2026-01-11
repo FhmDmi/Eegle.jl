@@ -1,5 +1,7 @@
 # Tutorial SA 2
 
+[💻 Full Code](@ref "Code for Tutorial SA 2")
+
 Sometimes the *power spectral density* is to be estimated on specific epochs (e.g., experimental trials).
 
 This tutorial uses the [`EXAMPLE_MI_1`](@ref) Motor Imagery (MI) Brain-Computer Interface EEG file provided with **Eegle** and shows how to
@@ -17,7 +19,7 @@ This tutorial uses the [`EXAMPLE_MI_1`](@ref) Motor Imagery (MI) Brain-Computer 
 Tell julia the package to be used
 
 ```julia
-    using Eegle, FourierAnalysis, CairoMakie
+using Eegle, FourierAnalysis, CairoMakie
 ```
 
 Load the example MI file by means of the `readNY` function of the **Eegle** [InOut.jl](@ref) module.
@@ -116,3 +118,13 @@ save("spectra.png", fig, px_per_unit = 300/96)
 The expected ERD (Event-Related Desynchronization) related to right-hand movement imaging is expected to be better visible at electrode "C3", which is located near the contralateral sensorimotor cortex. The effect of the ERDs is seen as a lower power during "right hand' trials as compared to "rest" trials.
 
 Similarly, the expected effect of the "feet" ERD is seen at midline electrode "Cz", which is the closest to the foot area of the sensorimotor cortex.
+
+***
+#### Code for Tutorial SA 2
+
+```@example
+using Eegle # hide
+parseTutorial("Tutorial Spectral Analysis 2") # hide
+```
+
+[⬆️ Go to Top](@ref "Tutorial SA 2")
