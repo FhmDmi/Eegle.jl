@@ -110,7 +110,7 @@ Here is a non-exhaustive list:
 
 Julia is a just-in-time compiled, column-major, 1-based indexing language.
 In practice, for using this package, this means that:
-- The first time you execute a function, it will be compiled. From the second on, it will go fast
+- The first time you execute a function, it will be compiled. From the second on, it will go fast,
 - EEG data are organized in ``T×N`` matrices, where ``T`` and ``N`` denotes the number of samples and channels, respectively
 - `for` loops starts at 1. For indexing loops in Julia, whenever possible, you should use [eachindex](https://docs.julialang.org/en/v1/base/arrays/#Base.eachindex).
 

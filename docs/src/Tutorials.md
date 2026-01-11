@@ -14,7 +14,7 @@ Tutorials are organized by theme; start with those that most closely resemble yo
 ]add CairoMakie, GLMakie, ColorSchemes, Colors
 ```
 
-- For plotting EEG traces and topographic maps we use dedicated applications running only under Windows. The output is always given as a figure so that you can follow the tutorials also if you work with another OS.
+- For plotting EEG traces we use dedicated applications. Plotting tools will for julia are under development.
 
 # Themes
 

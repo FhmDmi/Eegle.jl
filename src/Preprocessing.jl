@@ -34,7 +34,7 @@ function standardize(X::AbstractArray{T};
 where T<:Real
 ```
 Standardize the whole ``T×N`` EEG recording `X`, where ``T`` and ``N`` denotes the number of samples and channels (sensors), respectively, using: 
-- the arithmetic mean and standard deviation of all data in `X` if `robust` is false (default)
+- the arithmetic mean and standard deviation of all data in `X` if `robust` is false (default),
 - the Winsorized (trimmed) mean and standard deviation of all data in `X` if `robust` is true.
 
 The trimmed statistics are computed excluding the `prop` proportion of data at both sides (default=0.2),
