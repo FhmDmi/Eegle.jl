@@ -8,6 +8,8 @@ This module implements tools to facilitate the work with EEG databases, in parti
 
 To learn how to use BCI databases, see [Tutorial ML 2](@ref).
 
+Most functionalities of this module are also encapsulated in the [pyLittleEegle](https://github.com/FhmDmi/pyLittleEegle) package for the Python language.
+
 
 ## Structures
 

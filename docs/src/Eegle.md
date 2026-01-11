@@ -88,7 +88,7 @@ In this case, however, you must install DSP.jl as well.
 
 |  Resource | Scope |
 |:-----------------------|:-----------------------|
-| [Eegle-Tools](https://github.com/FhmDmi/Eegle-Tools) | a collection of useful scripts used to develop Eegle or using Eegle  |
+| [Eegle-Tools](https://github.com/FhmDmi/Eegle-Tools) | a collection of useful scripts used to develop  and use **Eegle**  |
 | [pyLittleEegle](https://github.com/FhmDmi/pyLittleEegle) | encapsulate a subset of **Eegle**'s functions in a Python package |
 
 
