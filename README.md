@@ -45,7 +45,7 @@ A large collection of tutorials (mostly to come) will get you on track.
 Please contact the authors if you are interested in contributing.
 
 ---
-| ** 🎓 Documentation**  | 
+| 🎓 **Documentation**  | 
 |:-------------------------------------:|
 | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl/stable) | 
 | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | 
