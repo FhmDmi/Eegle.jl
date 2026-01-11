@@ -21,8 +21,10 @@ It also provides modules for advanced EEG analysis.
 Execute the following commands in Julia's REPL:
 
 ```julia
-]add https://github.com/Marco-Congedo/Eegle.jl
+    ]add Eegle
 ```
+then hit the 'back' keyboard key to exit the REPL package manager mode.
+
 
 ## Quick Start
 Read the [next page](@ref "Eegle") of this documentation for general informations, then work out the tutorials.
