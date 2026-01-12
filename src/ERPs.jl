@@ -1,8 +1,3 @@
-# v 0.1 Nov 2019; 
-# v 0.2 April 2025
-# Part of the Eegle.jl package.
-# Copyright Marco Congedo, CNRS, University Grenoble Alpes.
-
 module ERPs
 
 using   LinearAlgebra,
@@ -36,8 +31,8 @@ export
     stim2mark,
     mark2stim,
     merge,
-    trialsWeights,
     trials,
+    trialsWeights,
     reject,
     tfas,
     trialsCospectra,
@@ -678,7 +673,7 @@ function reject(X::Matrix{R}, stim::Vector{Int}, wl::S;
     # println("length(rejecmark):", length(cleanmark))
 
     if returnDetails
-        return cleanstim, rejecstim, cleanmark, rejecmark, rejected, fmrs, m, thrDown, thrUp
+        return cleanstim, rejecstim, cleanmark, rejecmark, rejected, frms, m, thrDown, thrUp
     else
         return cleanstim, rejecstim, cleanmark, rejecmark, rejected
     end

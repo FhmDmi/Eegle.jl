@@ -1,25 +1,12 @@
-# v 0.1 Nov 2024
-# v 0.2 June 2025
-# Part of the Eegle.jl package.
-# Copyright Marco Congedo, Fahim Doumi, CNRS, University Grenoble Alpes.
-
 module Database
 
-#=
-# ? ¤ CONTENT ¤ ? #
+using NPZ
+using YAML
+using HDF5
+using EzXML
+using DataFrames
 
-InfoDB          | structure holding the information summarizing an EEG database
-
-loadDB        | return a list of .npz files in a directory (this is considered a 'database')
-infoDB          | print and return information about a database (InfoDB structure)
-selectDB        | select database folders based on paradigm and class requirements
-weightsDB       | get weights for each session of a database for statistical analysis
-downloadDB      | run a GUI to download the FII BCI corpus
-=#
-
-using NPZ, YAML, HDF5, EzXML, DataFrames
-
-using Eegle.FileSystem
+import Eegle
 
 # code for the GUI to download the FII BCI Corpus (called by `DownloadDB`)
 include(joinpath("GUIs", "downloadDB", "DB_download_interface.jl"))
@@ -29,8 +16,6 @@ const titleFont     = "\x1b[95m"
 const separatorFont = "\x1b[35m"
 const defaultFont   = "\x1b[0m"
 const greyFont      = "\x1b[90m"
-
-import Eegle
 
 export
     InfoDB,
@@ -659,6 +644,11 @@ end
 ```julia
 function weightsDB(files)
 ```
+
+**Tutorials**
+
+[Tutorial ML 2](@ref)
+
 Given a [database](@ref) in [NY format](@ref), provided by argument `files` as a list of *.npz* files,
 where each file holds a BCI [session](@ref), 
 compute a weight for each session to be used in statistical analysis when merging 
@@ -739,16 +729,16 @@ The following two examples select motor imagery databases featuring classes
 [FII BCI Corpus](@ref "FII BCI Corpus Overview") using the [selectDB](@ref) function and
 compute the weights for all files (i.e., sessions) in all selected databases. In particular:
 
-*Example 2* computes and normalize to unit mean the weights separately for each database. 
-Once this is done, computing the mean of any index (e.g., balanced accuracy) weighted by `w` 
-within each database will result in the
-weighted average index across all sessions within each database, as defined above.
+- *Example 2* computes and normalize to unit mean the weights separately for each database. 
+  Once this is done, computing the mean of any index (e.g., balanced accuracy) weighted by `w` 
+  within each database will result in the
+  weighted average index across all sessions within each database, as defined above.
 
-*Example 3* stacks the weights for all databases in a single vector and normalize 
-all weights to unit mean. 
-Once this is done, computing the mean of any index (e.g., balanced accuracy) 
-stacked in the same way across databases and weighted by `w` will result in the
-weighted average index across all sessions and all databases as defined above.
+- *Example 3* stacks the weights for all databases in a single vector and normalize 
+  all weights to unit mean. 
+  Once this is done, computing the mean of any index (e.g., balanced accuracy) 
+  stacked in the same way across databases and weighted by `w` will result in the
+  weighted average index across all sessions and all databases as defined above.
 
 ```julia
 using Eegle

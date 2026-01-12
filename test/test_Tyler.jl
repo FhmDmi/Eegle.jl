@@ -1,4 +1,5 @@
 using LinearAlgebra
+using MAT, Test
 
 
 ## Tyler M-Estimator fixed point algorithm (Tyler, 1987)
@@ -36,7 +37,6 @@ function tme(   X::AbstractMatrix{T};
     return Rnew
 end
 
-using MAT, Test
 
 # change this to point to the directory where the .mat files are
 dataDir="C:\\Users\\congedom\\Documents\\Code\\MATLAB\\Tayler"

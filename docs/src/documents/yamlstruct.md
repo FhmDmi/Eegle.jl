@@ -26,9 +26,11 @@ The YAML file contains the following top-level keys:
 
 Specifies the version of the YAML metadata format.
 
-| Field          | Type   | Description                     | Example   |
-|----------------|--------|---------------------------------|-----------|
-| `formatversion`| String | Metadata format version number  | `"0.0.3"` |
+!!! details "show me"
+
+    | Field          | Type   | Description                     | Example   |
+    |----------------|--------|---------------------------------|-----------|
+    | `formatversion`| String | Metadata format version number  | `"0.0.3"` |
 
 ---
 
@@ -36,16 +38,18 @@ Specifies the version of the YAML metadata format.
 
 Contains all technical information about the EEG data acquisition process.
 
-| Field         | Type              | Description                                          | Example |
-|---------------|-------------------|------------------------------------------------------|---------|
-| `filter`      | String            | Filter settings of the EEG acquisition machine       | `"Low-Pass 83Hz (Butterworth order 4 zero phase) for downsampling"` |
-| `ground`      | String            | Location of the ground electrode                     | `"Fpz"` or `"N/A"` |
-| `reference`   | String            | Location of the reference electrode                  | `"A1"` or `"N/A"` |
-| `hardware`    | String            | Commercial name and producer of EEG amplifier        | `"g.tec EEG - g.USBamp EEG amplifier"` |
-| `software`    | String            | Software used for data acquisition                   | `"OpenViBE, INRIA (France)"` or `"N/A"` |
-| `samplingrate`| Integer           | Sampling rate in Hz                                  | `256` |
-| `sensors`     | Array of Strings  | EEG electrode locations (excluding ground/reference) | `["Fpz", "F7", "F3", "Fz", ...]` |
-| `sensortype`  | String            | Type and material of electrodes                      | `"Ag/AgCl Wet electrodes"` |
+!!! details "show me"
+
+    | Field         | Type              | Description                                          | Example |
+    |---------------|-------------------|------------------------------------------------------|---------|
+    | `filter`      | String            | Filter settings of the EEG acquisition machine       | `"Low-Pass 83Hz (Butterworth order 4 zero phase) for downsampling"` |
+    | `ground`      | String            | Location of the ground electrode                     | `"Fpz"` or `"N/A"` |
+    | `reference`   | String            | Location of the reference electrode                  | `"A1"` or `"N/A"` |
+    | `hardware`    | String            | Commercial name and producer of EEG amplifier        | `"g.tec EEG - g.USBamp EEG amplifier"` |
+    | `software`    | String            | Software used for data acquisition                   | `"OpenViBE, INRIA (France)"` or `"N/A"` |
+    | `samplingrate`| Integer           | Sampling rate in Hz                                  | `256` |
+    | `sensors`     | Array of Strings  | EEG electrode locations (excluding ground/reference) | `["Fpz", "F7", "F3", "Fz", ...]` |
+    | `sensortype`  | String            | Type and material of electrodes                      | `"Ag/AgCl Wet electrodes"` |
 
 ---
 
@@ -53,13 +57,15 @@ Contains all technical information about the EEG data acquisition process.
 
 Contains references and documentation links for the dataset.
 
-| Field          | Type   | Description                            | Example |
-|----------------|--------|----------------------------------------|---------|
-| `description`  | String | Link to dataset description            | `"https://zenodo.org/records/806023"` |
-| `doi`          | String | Digital Object Identifier              | `"https://theses.hal.science/tel-01196752"` |
-| `investigators`| String | Principal investigators                | `"Alexandre Barachant"` |
-| `place`        | String | Institution where experiment was conducted | `"GIPSA-lab..."` |
-| `repository`   | String | Link to data repository                | `"https://zenodo.org/records/806023"` |
+!!! details "show me"
+
+    | Field          | Type   | Description                            | Example |
+    |----------------|--------|----------------------------------------|---------|
+    | `description`  | String | Link to dataset description            | `"https://zenodo.org/records/806023"` |
+    | `doi`          | String | Digital Object Identifier              | `"https://theses.hal.science/tel-01196752"` |
+    | `investigators`| String | Principal investigators                | `"Alexandre Barachant"` |
+    | `place`        | String | Institution where experiment was conducted | `"GIPSA-lab..."` |
+    | `repository`   | String | Link to data repository                | `"https://zenodo.org/records/806023"` |
 
 ---
 
@@ -67,15 +73,17 @@ Contains references and documentation links for the dataset.
 
 Contains identification information for the specific recording.
 
-| Field      | Type    | Description                    | Example  |
-|------------|---------|--------------------------------|----------|
-| `condition`| String  | Experimental condition         | `"None"` or specific condition |
-| `database` | String  | Name of the database           | `"AlexMI"` |
-| `paradigm` | String  | BCI paradigm type              | `"MI"` or `"P300"` |
-| `run`      | Integer | Run number within session      | `1` |
-| `session`  | Integer | Session number                 | `1` |
-| `subject`  | Integer | Subject identifier             | `1` |
-| `timestamp`| Integer | Year of data collection        | `2012` |
+!!! details "show me"
+
+    | Field      | Type    | Description                    | Example  |
+    |------------|---------|--------------------------------|----------|
+    | `condition`| String  | Experimental condition         | `"None"` or specific condition |
+    | `database` | String  | Name of the database           | `"AlexMI"` |
+    | `paradigm` | String  | BCI paradigm type              | `"MI"` or `"P300"` |
+    | `run`      | Integer | Run number within session      | `1` |
+    | `session`  | Integer | Session number                 | `1` |
+    | `subject`  | Integer | Subject identifier             | `1` |
+    | `timestamp`| Integer | Year of data collection        | `2012` |
 
 ---
 
@@ -83,13 +91,15 @@ Contains identification information for the specific recording.
 
 Contains stimulation and labeling information.
 
-| Field             | Type       | Description                                      | Example |
-|-------------------|------------|--------------------------------------------------|---------|
-| `labels`          | Dictionary | Mapping of class names to numeric codes          | `{right_hand: 2, feet: 3, rest: 4}` |
-| `nclasses`        | Integer    | Total number of stimulus classes                 | `3` |
-| `trials_per_class`| Dictionary | Number of trials available for each class        | `{feet: 20, rest: 20, right_hand: 20}` |
-| `offset`          | Integer    | Offset in samples from stimulation to trial start| `0` |
-| `windowlength`    | Integer    | Trial duration in samples                        | `768` |
+!!! details "show me"
+
+    | Field             | Type       | Description                                      | Example |
+    |-------------------|------------|--------------------------------------------------|---------|
+    | `labels`          | Dictionary | Mapping of class names to numeric codes          | `{right_hand: 2, feet: 3, rest: 4}` |
+    | `nclasses`        | Integer    | Total number of stimulus classes                 | `3` |
+    | `trials_per_class`| Dictionary | Number of trials available for each class        | `{feet: 20, rest: 20, right_hand: 20}` |
+    | `offset`          | Integer    | Offset in samples from stimulation to trial start| `0` |
+    | `windowlength`    | Integer    | Trial duration in samples                        | `768` |
 
 ---
 
@@ -97,21 +107,24 @@ Contains stimulation and labeling information.
 
 Contains classification performance metrics associated with this recording/subject.
 
-For **MI** paradigm, performances are organized by task pair and classifier.
 
-| Field     | Type       | Description                              | Example key |
-|----------|------------|------------------------------------------|-------------|
-| `<task>` | Dictionary | Accuracy per classifier for a given task | `right_hand-feet` |
+!!! details "show me"
 
-Inside each task:
+    For **MI** paradigm, performances are organized by task pair and classifier.
 
-| Field        | Type   | Description              | Example |
-|-------------|--------|--------------------------|---------|
-| `MDM`       | Float  | Accuracy of MDM classifier | `0.825` |
-| `ENLR`      | Float  | Accuracy of ENLR classifier | `0.65` |
-| `SVM`       | Float  | Accuracy of SVM classifier | `0.675` |
+    | Field     | Type       | Description                              | Example key |
+    |----------|------------|------------------------------------------|-------------|
+    | `<task>` | Dictionary | Accuracy per classifier for a given task | `right_hand-feet` |
 
-For **P300** paradigms, `perf` usually contains global accuracies per classifier (without task subkeys).
+    Inside each task:
+
+    | Field        | Type   | Description              | Example |
+    |-------------|--------|--------------------------|---------|
+    | `MDM`       | Float  | Accuracy of MDM classifier | `0.825` |
+    | `ENLR`      | Float  | Accuracy of ENLR classifier | `0.65` |
+    | `SVM`       | Float  | Accuracy of SVM classifier | `0.675` |
+
+    For **P300** paradigms, `perf` usually contains global accuracies per classifier (without task subkeys).
 
 ---
 

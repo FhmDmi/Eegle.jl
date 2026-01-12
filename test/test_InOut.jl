@@ -1,14 +1,5 @@
-println("\x1b[95m", "Testing module Eegle.InOut.jl...")
+println("\x1b[95m", "\nTesting module Eegle.InOut.jl...", "\x1b[0m")
 
-# xxx add EEG
-# xxx add readNY
-# xxx add readSensors
-# xxx add readgTec
-# xxx add readASCII
-# xxx add writeASCII
-# xxx add writeVector
-# xxx add EEG structure methods
-# xxx add mean
-
+println("No testing is needed for this module")
 
 

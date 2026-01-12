@@ -1,18 +1,3 @@
-# Model Driven and Data Driven weighted minimum norm, sLORETA and eLORETA
-# vector type inverse solutions for EEG
-# v 0.2 Oct 2024 (v0.1 Nov 2019)
-# Part of the Eegle.jl package.
-# Copyright Marco Congedo, CNRS, University Grenoble Alpes.
-
-# ¤-¤-¤-¤-¤-¤-¤-¤ CONTENT ¤-¤-¤-¤-¤-¤-¤-¤ #
-
-# centeringMatrix | common average reference operator (alias: ℌ)
-# c2cd            | current density vector given a current vector
-# psfLocError     | point spread function localization error
-# minnorm         | minimum norm transformation Matrix
-# sLORETA         | sLORETA transformation Matrix
-# eLORETA         | eLORETA transformation Matrix
-
 module Tomography
 
 using LinearAlgebra, Statistics
@@ -22,7 +7,6 @@ const titleFont     = "\x1b[95m"
 const separatorFont = "\x1b[35m"
 const defaultFont   = "\x1b[0m"
 const greyFont      = "\x1b[90m"
-
 
 export
   centeringMatrix, ℌ,

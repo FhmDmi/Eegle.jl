@@ -1,37 +1,22 @@
-#= 
-    CovMat.jl - version 0.1, April 2025  
-    Part of the Eegle.jl package  
-    Copyright Marco Congedo, CNRS, University Grenoble Alpes  
-
-Estimation of covariance matrices for EEG trials, including regularized and prototype-based covariance estimation.
-=#
-
 module BCI
-
-#=
-# ? ¤ CONTENT ¤ ? #
-covmat      | covariance matrix estimtions
-encode      | encoding of BCI trials as covariance matrices
-crval       | cross-validation accuracy of BCI data using PosDefManifold.jl
-=#
 
 using Base.Threads: @threads
 using LinearAlgebra: eigvecs, BLAS
-using PosDefManifold
 using CovarianceEstimation
 using Diagonalizations: SCM, LShrLW, NShrLW
-using PosDefManifold: Fisher
+using PosDefManifold
 using PosDefManifoldML: PosDefManifoldML, transform!, Tikhonov, MLmodel, Pipeline, MDM
 using DSP: DSP, ZeroPoleGain, Butterworth
 
+using Eegle.InOut: EEG, readNY
+using Eegle.Preprocessing: embedLags
 
-using Eegle.Preprocessing, Eegle.InOut, Eegle.ERPs
+import Eegle
 
 include("tools/Tyler.jl")
 using .Tyler  # relative import with dot     
 
-import Eegle
-
+# import to define a new method for crval
 import PosDefManifoldML.crval
 
 # Module REPL text colors
@@ -39,7 +24,6 @@ const titleFont     = "\x1b[95m"
 const separatorFont = "\x1b[35m"
 const defaultFont   = "\x1b[0m"
 const greyFont      = "\x1b[90m"
-
 
 export  covmat, 
         encode,
@@ -326,7 +310,7 @@ function encode(o::EEG;
                 
     elseif paradigm==:P300
 
-        # get indeces for target class labels"
+        # get indeces for target class labels
         TargetIndex = findfirst(isequal(lowercase(targetLabel)), lowercase.(o.clabels)) 
         isnothing(TargetIndex) && throw(ArgumentError("Eegle.BCI, function `encode`: target label '$targetLabel' for P300 encoding not found among the class labels of the EEG structure o."))
 
@@ -391,6 +375,10 @@ function crval( filename    :: AbstractString,
         outModels   :: Bool = false,
         fitArgs...)
 ```
+
+**Tutorials**
+
+[Tutorial ML 1](@ref), [Tutorial ML 2](@ref)
 
 Perform cross-validations of a BCI [session](@ref) stored in [NY format](@ref). 
 
@@ -464,24 +452,24 @@ using Eegle
 # Averege accuracy is reported in square brackets
 
 # a) P300 data: standard pipeline (MDM classifier)
-crval(EXAMPLE_P300_1; bandPass = (1, 24)) # [0.711]
+crval(EXAMPLE_P300_1; bandPass = (1, 24)) # [0.72]
 
 # a) with a random shuffling to generate different folds
-crval(EXAMPLE_P300_1; bandPass = (1, 24), seed = 1234) # [0.685]
+crval(EXAMPLE_P300_1; bandPass = (1, 24), seed = 1234) # [0.694]
 
 ## b) with artifact rejection
 args = (bandPass = (1, 24), upperLimit = 1)
-crval(EXAMPLE_P300_1; args...) # [0.723]
+crval(EXAMPLE_P300_1; args...) # [0.726]
 
 ## b) using a 5-fold cross-validation (instead of 8-fold default)
-crval(EXAMPLE_P300_1, MDM(); nFolds=5, args...) # [0.702]
+crval(EXAMPLE_P300_1, MDM(); nFolds=5, args...) # [0.727]
 
 ## b) using the Log-Euclidean metric for the MDM classifier
-crval(EXAMPLE_P300_1, MDM(logEuclidean); args...) # [0.663]
+crval(EXAMPLE_P300_1, MDM(logEuclidean); args...) # [0.693]
 
 ## b) with artifact rejection and pre-conditioning
 pipeline = @→ Recenter(; eVar=0.999) → Compress → Shrink(Fisher)
-crval(EXAMPLE_P300_1, MDM(Euclidean); pipeline, args...) # [0.719]
+crval(EXAMPLE_P300_1, MDM(Euclidean); pipeline, args...) # [0.721]
 
 ## b) using a Ridge logistic regression model in the tangent space (TS)
 crval(EXAMPLE_P300_1, ENLR(; alpha = 0); args...) # [non-deterministic]

@@ -1,17 +1,4 @@
-# v 0.4 May 2023
-# v 0.5 May 2025
-# Part of the Eegle.jl package.
-# Copyright Marco Congedo, CNRS, University Grenoble Alpes.
-
 module FileSystem
-
-# Functions:
-
-# fileBase | remove the extension from a file name
-# fileExt | get the extension (with dot) of a file
-# ChangeFileExt | change the file extension
-# getFilesInDir | get all files in a directory 
-# getFoldersInDir | get all folders in a directory
 
 import Eegle
 
@@ -20,7 +7,6 @@ const titleFont     = "\x1b[95m"
 const separatorFont = "\x1b[35m"
 const defaultFont   = "\x1b[0m"
 const greyFont      = "\x1b[90m"
-
 
 export
     fileBase,

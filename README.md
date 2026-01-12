@@ -25,7 +25,7 @@ The package is self-contained, as it re-exports several packages and all its sub
 
 ## —͟͟͞͞★ Quick Start
 
-A large collection of tutorials (mostly to come) will get you on track.
+A large collection of [tutorials](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/) (mostly to come) will get you on track.
 
 ---
 ## 🤔 Disclaimer

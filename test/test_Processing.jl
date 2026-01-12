@@ -1,23 +1,23 @@
-println("\x1b[95m", "Testing module Eegle.Processing.jl...")
+println("\x1b[95m", "\nTesting module Eegle.Processing.jl...", "\x1b[0m")
 
 ## filtfilt: already tested in test_Preprocessing.jl
 
 ## centeringMatrix
-@testset "centeringMatrix" begin
+@testset "centeringMatrix                " begin   
     X1 = randn(32, 19)
     # CAR
-    X_car = X * centeringMatrix(size(X, 2))
-    @test norm(mean(X_car; dims=2))/size(X, 1) < tol
+    X_car = X1 * centeringMatrix(size(X1, 2))
+    @test norm(mean(X_car; dims=2))/size(X1, 1) < tol
 end;
 
 ## globalFieldPower
-@testset "globalFieldPower" begin
+@testset "globalFieldPower               " begin       
     ne = 19
     X2 = randn(128, ne)*ℌ(ne)
     @test norm(globalFieldPower(X2)-sum(X2.^2; dims=2))/size(X2, 1) < tol
 end;
 
-@testset "globalFieldRMS" begin
+@testset "globalFieldRMS                 " begin 
     ## globalFieldRMS
     ne = 19
     X3 = randn(128, ne)*ℌ(ne)
@@ -25,7 +25,7 @@ end;
 end;
 
 ## epoching
-@testset "epoching" begin
+@testset "epoching                       " begin    
     X4 = randn(6144, 19)
     sr = 128
     # standard 1s epoching with 50% overlap
