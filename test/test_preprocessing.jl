@@ -1,7 +1,7 @@
-println("\x1b[95m", "Testing module Eegle.Preprocessing.jl...")
+println("\x1b[95m", "\nTesting module Eegle.Preprocessing.jl...", "\x1b[0m")
 
 ## standardize
-@testset "standardize" begin
+@testset "standardize                    " begin      
         X = randn(128, 19)
         stX = standardize(X)
         m = mean(stX)
@@ -12,7 +12,7 @@ println("\x1b[95m", "Testing module Eegle.Preprocessing.jl...")
 end;
 
 ## resample (Downsampling tested and the other resampling cases executed only)
-@testset "resample" begin
+@testset "resample                       " begin      
     sr = 128
     X1 = filtfilt(randn(sr*10, 19), sr, Bandpass(1, sr ÷ (3*4)); designMethod = Butterworth(8))
     Y = resample(X1, sr, 1//4) # downsample by a factor 4
@@ -27,7 +27,7 @@ end;
 end;
 
 ## removeChannels (one case is tested and the others are executed only)
-@testset "removeChannels" begin
+@testset "removeChannels                 " begin  
         X2 = randn(128, 7)
         sensors=["F7", "F8", "C3", "Cz", "C4", "P7", "P8"]
         # remove second channel
@@ -47,7 +47,7 @@ end;
 
 
 ## embedLags (executed only, check visually the example)
-@testset "removeChannels" begin
+@testset "removeChannels                 " begin
     X3 = randn(8, 2) # small example to see the effect
     elX = embedLags(X3, 3)
 end;

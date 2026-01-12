@@ -1,7 +1,29 @@
-println("\x1b[95m", "Testing module Eegle.Miscellaneous.jl...")
+println("\x1b[95m", "\nTesting module Eegle.Miscellaneous.jl...", "\x1b[0m")
 
-# xxx add remove,
-# xxx add isSquare,
-# xxx add minima,
+## minima: 
+@testset "minima                         " begin  
+    x = [2, 1, 2, 1, 2]
+    m = minima(x)
+    @test norm(m[1] .- [2, 4]) ≈ 0
+end;
 
 
+## maxima: 
+@testset "maxima                         " begin         
+    x = [1, 2, 1, 2, 1]
+    m = maxima(x)
+    @test norm(m[1] .- [2, 4]) ≈ 0
+end;
+
+
+## waste: execute only
+@testset "waste                          " begin       
+    x = randn(10, 10)
+    waste(x)
+end;
+
+## parseTutorial
+@testset "parseTutorial                  " begin    
+   # skip as it is only needed for documentation 
+   x = 1
+end;

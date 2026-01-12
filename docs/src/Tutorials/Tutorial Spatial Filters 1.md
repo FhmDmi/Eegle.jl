@@ -6,7 +6,7 @@ Gievn an EEG data matrix ``X`` of dimension ``T⋅N``, where ``T`` is the number
 
 The spatial filter has a left-inverse ``Aₛ`` of dimension ``P⋅N`` verifying ``AₛBₛ=I``, where ``I`` is the identity matrix.
 
-The goal of spatial filters is to filter out ``N-P`` undesired components, thus they are very useful
+The goal of spatial filters is to filter out ``Q=N-P`` undesired components, thus they are very useful
 for removing noise, or, more in general, unwanted components from the data. 
 They work by sorting the components according to a measurable criterion. Then, the components within a suitable range of the criterion are eliminated.
 
@@ -49,7 +49,7 @@ For most spatial filters
 - ``C`` is the covariance matrix of ``X``, 
 - ``S`` is a covariance matrix which definition yields the specificity of each spatial filter.
 
-**Let us see now how to construct two new spatial filters:**
+**Let us see now how to construct new spatial filters.** In particular:
 - **SFA**, which stands for Slow Feature Analysis [Wiskott2002SFA](@cite): sort components data by *slowness*,
 - **MoSc** [Molgedey1994TDSEP](@cite): sort components by *autocorrelation*.
 
@@ -67,12 +67,22 @@ Note that, in practice we do not compute the filters by GEVD, but by a two-step 
 
 Finally, we obtain ``B=WU`` and ``A=U^TW^+``.
 
-As a data example we use the [`EXAMPLE_P300_1`](@ref) example P300 BCI example file provided with **Eegle**, selecting 4s from second 77 to second 81. Figure 1 shows the time series of the epoch submitted to spatial filtering (that is, the data ``X``).
+As a data example we use the [`EXAMPLE_P300_1`](@ref) example P300 BCI example file provided with **Eegle**, selecting 4s from second 55 to second 59. 
+
+Let as load the data
+
+```julia
+using Eegle
+o = readNY(EXAMPLE_P300_1) # from Eegle.InOut.jl
+X = o.X[55*o.sr:59*o.sr, :]
+```
+
+Figure 1 shows the time series of the epoch submitted to spatial filtering (that is, the data ``X``).
 
 ![Figure 1](../assets/Fig1_Tutorial_Spatial_Filters_1.jpg)
 **Figure 1** *The EEG epoch used as example, along with the global field power (grey shaded area), amplitude spectra in the range 1Hz-32Hz (red) and autocorrelation function for lags up to 1s (blue)*
 
-As it can be seen, there are artifacts due to F4 and Cz electrodes contact loss. 
+As it can be seen, there are artifacts due to Cz electrodes contact loss. 
 
 ## SFA
 
@@ -83,8 +93,6 @@ It is defined by [Eq.3] setting
 First, let us write a function to compute ``B`` and ``A`` with the two-step procedures here above:
 
 ```julia
-using Eegle
-
 function sfa(X::AbstractMatrix{T};
             eVar::Union{Float64, Int64, Nothing} = nothing) where T<: Real
     C = covmat(X; covtype = SCM) # from Eegle.BCI.jl
@@ -114,20 +122,23 @@ The plot of ``Y`` is shown in figure 2.
 ![Figure 2](../assets/Fig1_Tutorial_Spatial_Filters_2.jpg)
 **Figure 2** *All filter componenets obtained by SFA. They are sorted by slowness*. 
 
-We ought to remove the first two components
-and compute the filtered data in the sensor space retaining only the remaining components [Eq.2]:
+We sought to remove the first component (``Q=N-P=1``)
+and compute the filtered data in the sensor space retaining only the remaining ``P`` components [Eq.2].
+
+For doing so, we create a diagonal matrix holding ``Q`` zeros and as many ones as necessary to reach the 
+subspace dimension in which ``Y`` has been projected by whitening:
 
 ```julia
-p = n-2
-D = Diagonal([zeros(n-p); ones(p)])
-Z=Y*D*G
+q = 1
+D = Diagonal([zeros(q); ones(size(Y, 2)-q)])
+Z = Y*D*A
 ```
 
 The plot of the filtered data is in Fig. 3. This is to be compared with Fig. 1.
 ![Figure 3](../assets/Fig1_Tutorial_Spatial_Filters_3.jpg)
-**Figure 3** *Data filtered by SFA removing the first two components*. 
+**Figure 3** *Data filtered by SFA removing the first component*. 
 
-As one can see the artifacts have been removed.
+As one can see, the artifacts have been removed.
 
 **NB:** No spatial filter is perfect. Along with undesired components, some cerebral activity will be filtered out as well.
 While this is not an obstacle in some applications, for example, classification of data, it may be so in others,
@@ -142,8 +153,6 @@ It is again defined by [Eq.3] setting
 First, let us write a function to compute ``B`` and ``A`` with the two-step procedures here above. With the exception of one line, it is identical to the function for the SFA:
 
 ```julia
-using Eegle
-
 function mosc(X::AbstractMatrix{T};
             eVar::Union{Float64, Int64, Nothing} = nothing) where T<: Real
 
@@ -175,19 +184,19 @@ The plot of ``Y`` is in Fig. 4
 ![Figure 4](../assets/Fig1_Tutorial_Spatial_Filters_4.jpg)
 **Figure 4** *All filter componenets obtained by MoSC. They are sorted by autocovariance at lag 1*. 
 
-Again, we ought to remove the first two components and compute the filtered data in the sensor space retaining only the remaining components [Eq.2]:
+Again, we sought to remove the first component and compute the filtered data in the sensor space retaining only the remaining components [Eq.2]:
 
 ```julia
-p = n-2
-D = Diagonal([zeros(n-p); ones(p)])
-Z=Y*D*G
+q = 1
+D = Diagonal([zeros(q); ones(size(Y, 2)-q)])
+Z = Y*D*A
 ```
 
-The plot of the filtered data is in Fig. 5. This is to be compared with Fig. 1.
+The plot of the filtered data is in Fig. 5. This is to be compared with Fig. 3.
 ![Figure 5](../assets/Fig1_Tutorial_Spatial_Filters_5.jpg)
-**Figure 5** *Data filtered by MoSc removing the first two components*. 
+**Figure 5** *Data filtered by MoSc removing the first component*. 
 
-As one can see the artifacts have been, once gain, removed. The result is very close to the one obtained by SFA.
+As one can see, the artifact has been, once gain, removed. The result is very close to the one obtained by SFA.
 
 ## Conclusion
 
@@ -195,7 +204,7 @@ Using joint diagonalization a very large number of filters can be obtained, besi
 already provided by [Diagonalizations.jl](https://github.com/Marco-Congedo/Diagonalizations.jl).
 
 **NB:** In general, better results are obtained extending procedures based on the *joint diagonalization* of two matrices to
-the *approximate joint diagonalization* of several matrices ([congedo2008bss](@cite), [Congedo2013HDR](@cite), [GouyPailler2010](@cite)). Those can be obtained with the help of *Diagonalizations.jl* as well.
+the *approximate joint diagonalization* of several matrices [congedo2008bss](@cite), [Congedo2013HDR](@cite), [GouyPailler2010](@cite). Those can be obtained with the help of *Diagonalizations.jl* as well.
 
 ***
 #### Code for Tutorial SF 1

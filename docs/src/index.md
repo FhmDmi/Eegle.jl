@@ -21,7 +21,7 @@ It also provides modules for advanced EEG analysis.
 Execute the following commands in Julia's REPL:
 
 ```julia
-    ]add Eegle
+]add Eegle
 ```
 then hit the 'back' keyboard key to exit the REPL package manager mode.
 

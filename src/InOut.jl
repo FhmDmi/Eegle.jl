@@ -1,31 +1,12 @@
-# v 0.2 April 2023
-# v 0.3 April 2025
-# v 0.4 June 2025
-# Part of the Eegle.jl package.
-# Copyright Marco Congedo, Fahim Doumi, CNRS, University Grenoble Alpes.
-
-# ? ¤ CONTENT ¤ ? 
-
-# STRUCTURES
-# EEG | holds data and metadata of an EEG recording
-
-# FUNCTIONS:
-# readNY        | read an EEG recording in [NY format](@ref)
-# readgTec      | read an EEG recording from a HDF5 file saved by g.Tec g.Recorder software
-# readSensors   | read a list of electrodes from an ICoN electrodes ASCII file
-# readASCII (2 methods) | read one ASCII file or all ASCII files in a directory
-# writeASCII    | write one abstractArray data matrix in ASCII format
-# writeASCII    | write a vector of strings in ASCII format (in 1 line or multiple lines)
-# writeVector   | write a vector of strings as an ASCII file
-##### Methods of the EEG structure
-# mean          | mean ERPs
-
 module InOut
 
-using NPZ, YAML, HDF5, EzXML, DSP 
+using NPZ
+using YAML
+using HDF5
+using EzXML
+using DSP 
 
-# Eegle modules
-using Eegle.FileSystem, Eegle.Preprocessing, Eegle.ERPs
+using Eegle.ERPs: stim2mark, mark2stim, reject
 
 import Statistics: mean
 import Eegle
@@ -35,7 +16,6 @@ const titleFont     = "\x1b[95m"
 const separatorFont = "\x1b[35m"
 const defaultFont   = "\x1b[0m"
 const greyFont      = "\x1b[90m"
-
 
 export
     EEG,
@@ -726,7 +706,8 @@ Write a data matrix `X` into an ASCII text file that can be read by [`readASCII`
 - `digits`: the number of decimal digits written for each value. Default: 6
 - `msg`: print string `msg` in the REPL on exit if it is not empty (empty by default).
 
-If you need to remove columns of `X` (channels) before writing, see [`Eegle.Miscellaneous.remove`](@ref) or [`removeChannels`](@ref).
+If you need to remove columns of `X` (channels) before writing, see [remove](https://marco-congedo.github.io/PosDefManifold.jl/stable/linearAlgebra/#PosDefManifold.remove)
+or [`Eegle.Preprocessing.removeChannels`](@ref).
 
 (2)
 

@@ -9,83 +9,91 @@ Many of these tools are useful for working with tagged EEG data in general, for 
 
 ## Extract ERPs
 
-ERPs are EEG potentials time and phase-locked to the presentation of sensory stimuli.
-
-They are extracted averaging **EEG epochs** (**trials**) of fixed duration starting at a fixed position in time with respect to the presentation of stimuli.
+ERPs are EEG potentials time and phase-locked to the presentation of sensory stimuli. They are extracted averaging **EEG epochs** (**trials**) of fixed duration starting at a fixed position in time with respect to the presentation of stimuli.
 
 **Eegle** handles two ways to extract ERPs:
-using a **stimulation vector** or using **marker vectors**. You can swicth from one representation to the other using
+using a **stimulation vector** or using **marker vectors**. You can switch from one representation to the other using
 the [`stim2mark`](@ref) and [`mark2stim`](@ref) functions.
 
-### stimulation vector
+#### stimulation vector
 
-This is an accessory channel holding as many samples as there are in the EEG recording. The value
-is zero everywhere, except at samples corresponding to a stimulus presentation, where the value is
-a natural number (1, 2, ...), each one coding a stimulus **class**. We name these numbers the **tag** of a sample. Each class **label** is associated to a unique non-zero tag, for example, `left_hand` → 1.
+!!! details "show me"
 
-```
-# Toy example of a stimulation vector for two classes
-[0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0]
-```
+    This is an accessory channel holding as many samples as there are in the EEG recording. The value
+    is zero everywhere, except at samples corresponding to a stimulus presentation, where the value is
+    a natural number (1, 2, ...), each one coding a stimulus **class**. We name these numbers the **tag** of a sample. Each class **label** is associated to a unique non-zero tag, for example, `left_hand` → 1.
 
-### marker vectors
+    ```
+    # Toy example of a stimulation vector for two classes
+    [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0]
+    ```
 
-Equivalently, we can consider a vector holding ``z`` vectors, each one listing the serial numbers
-of the samples belonging to each of the possible ``z`` classes.
+#### marker vectors
 
-```
-# Representation of the above stimulation vector as markers vector
-[[13, 18], [6]]
-```
+!!! details "show me"
 
-Even if one class of stimuli only is present, the marker vectors will still be a vector of vectors (one in this case).
+    This is a vector holding ``z`` vectors, each one listing the serial numbers
+    of the samples belonging to each of the possible ``z`` classes.
 
-### offset
+    ```
+    # Representation of the above stimulation vector as markers vector
+    [[13, 18], [6]]
+    ```
 
-Several **Eegle** methods allow setting an **offset** to determine the starting sample of all evoked potentials (or trials).
-The offset is always to be given in samples. It can be 
-- zero (default): it does not affect the stimulations and corresponding markers, 
-- negative: the stimulations and markers are shifted back,
-- positive: the stimulations and markers are shifted forth.
+    Even if one class of stimuli only is present, the marker vectors will still be a vector of vectors (one in this case).
 
-```
-# Example with `offet=-3`; the above stimulation vector becomes
-[0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
-# and the corresponding marker vectors becomes
-[[10, 15], [3]]
-```
+#### offset
 
-!!! warning "Data in NY format"
-    When data in [NY format](@ref) is read, the offset is applied and reset to zero — see [`readNY`](@ref).
+!!! details "show me"
 
-### overlapping
+    Several **Eegle** methods allow setting an **offset** to determine the starting sample of all evoked potentials (or trials).
+    The offset is always to be given in samples. It can be 
+    - zero (default): it does not affect the stimulations and corresponding markers, 
+    - negative: the stimulations and markers are shifted back,
+    - positive: the stimulations and markers are shifted forth.
 
-The ERPs are said **overlapping** if the minimum inter-stimulus interval is shorter than the ERP window length,
-that is, if a stimulus can be presented before the preceeding evoked response has ended.
-In this situation, the multivariate regression (MR) method can provide better ERP estimates as compared 
-to the standard arithmetic average (AE) [Congedo2016STCP](@cite).
+    ```
+    # Example with `offet=-3`; the above stimulation vector becomes
+    [0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+    # and the corresponding marker vectors becomes
+    [[10, 15], [3]]
+    ```
 
-Methods estimating ERPs in **Eegle** feature the `overlapping` boolean [kwarg](@ref "Acronyms"), by which you can switch
-between the AE (false) and MR method (true).
+    !!! warning "Data in NY format"
+        When data in [NY format](@ref) is read, the offset is applied and reset to zero — see [`readNY`](@ref).
 
-!!! note "Overlapping"
-    If the ERPs are overlapping and you set `overlapping` to true, all means should be estimated at once;
-    In fact, the advantage of the MR method vanishes if the means are computed individually. 
-    
-    In general, do not set `overlapping` to true for computing only one mean, even if the stumulations are overlapping.
-    In this case the AE and MR methods are equivalent, but the AE is faster and more accurate.
-    
-    For the same reason, do not set `overlapping` to true if the ERPs do not actually overlap.
+#### overlapping
+
+!!! details "show me"
+
+    The ERPs are said **overlapping** if the minimum inter-stimulus interval is shorter than the ERP window length,
+    that is, if a stimulus can be presented before the preceeding evoked response has ended.
+    In this situation, the multivariate regression (MR) method can provide better ERP estimates as compared 
+    to the standard arithmetic average (AE) [Congedo2016STCP](@cite).
+
+    Methods estimating ERPs in **Eegle** feature the `overlapping` boolean [kwarg](@ref "Acronyms"), by which you can switch
+    between the AE (false) and MR method (true).
+
+    !!! note "Overlapping"
+        If the ERPs are overlapping and you set `overlapping` to true, all means should be estimated at once;
+        In fact, the advantage of the MR method vanishes if the means are computed individually. 
+        
+        In general, do not set `overlapping` to true for computing only one mean, even if the stumulations are overlapping.
+        In this case the AE and MR methods are equivalent, but the AE is faster and more accurate.
+        
+        For the same reason, do not set `overlapping` to true if the ERPs do not actually overlap.
 
 ## Resources for ERPs
 
-For **classifying ERPs using Riemannian geometry** — see package [PosDefManifoldML.jl](https://github.com/Marco-Congedo/PosDefManifoldML.jl).
+!!! details "show me"
 
-For **spatial filters** increasing the signal-to-noise ratio of ERPs — see the `CSP` and `CSTP` functions in package [Diagonalizations.jl](https://github.com/Marco-Congedo/Diagonalizations.jl) and article [Congedo2016STCP](@cite).
+    For **classifying ERPs using Riemannian geometry** — see package [PosDefManifoldML.jl](https://github.com/Marco-Congedo/PosDefManifoldML.jl).
 
-For the analysis of **time-locked and phase-locked components of ERPs**, as well as **ERP synchronization measures**, in the time-frequency domain — see package [FourierAnalysis.jl](https://github.com/Marco-Congedo/FourierAnalysis.jl) and companion article [congedo2018non](@cite).
+    For **spatial filters** increasing the signal-to-noise ratio of ERPs — see the `CSP` and `CSTP` functions in package [Diagonalizations.jl](https://github.com/Marco-Congedo/Diagonalizations.jl) and article [Congedo2016STCP](@cite).
 
-[Unfold](https://github.com/unfoldtoolbox/Unfold.jl) is a package dedicated to ERP analysis.
+    For the analysis of **time-locked and phase-locked components of ERPs**, as well as **ERP synchronization measures**, in the time-frequency domain — see package [FourierAnalysis.jl](https://github.com/Marco-Congedo/FourierAnalysis.jl) and companion article [congedo2018non](@cite).
+
+    [Unfold](https://github.com/unfoldtoolbox/Unfold.jl) is a package dedicated to ERP analysis.
 
 
 ## Methods

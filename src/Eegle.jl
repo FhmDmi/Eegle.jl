@@ -1,5 +1,7 @@
 module Eegle
 
+using PrecompileSignatures: @precompile_signatures
+
 using Reexport
 
 # Eegle Basic Eco-System
@@ -28,7 +30,7 @@ using Artifacts, ArtifactUtils
 # Artifacts : Example data
 const EXAMPLE_DATA_DIR = joinpath(Eegle.artifact"data_examples", "data_examples") # not exported
 
-# These are all exported
+# `example_data` Artifacts. These paths are all exported
 const EXAMPLE_P300_1 = joinpath(EXAMPLE_DATA_DIR, "P300", "subject_01_session_01.npz")
 const EXAMPLE_MI_1 = joinpath(EXAMPLE_DATA_DIR, "MI", "AlexMI_subject_03_session_01.npz")
 const EXAMPLE_MI_1_metadata = joinpath(EXAMPLE_DATA_DIR, "MI", "AlexMI_subject_03_session_01.yml")
@@ -40,28 +42,26 @@ const EXAMPLE_P300_1 = joinpath(@__DIR__, "..", "data_examples", "P300", "subjec
 ...
 =#
 
-export  Eegle,
+export Eegle,
+# Example data, see constants here above
+EXAMPLE_P300_1,
+EXAMPLE_MI_1,
+EXAMPLE_MI_1_metadata,
+EXAMPLE_Normative_1,
+EXAMPLE_Normative_1_sensors
 
-        # Example data
-        EXAMPLE_P300_1,
-        EXAMPLE_MI_1,
-        EXAMPLE_MI_1_metadata,
-        EXAMPLE_Normative_1,
-        EXAMPLE_Normative_1_sensors
 
 include("FileSystem.jl");       @reexport using .FileSystem
 include("Miscellaneous.jl");    @reexport using .Miscellaneous
 include("Preprocessing.jl");    @reexport using .Preprocessing
 include("Processing.jl");       @reexport using .Processing
-
-
 # modules with internal dependencies
 include("ERPs.jl");             @reexport using .ERPs
 include("InOut.jl");            @reexport using .InOut
 include("BCI.jl");              @reexport using .BCI
 include("Database.jl");         @reexport using .Database
 
-
-# export 
+# Generate and run `precompile` directives.
+@precompile_signatures(Eegle)
 
 end # module

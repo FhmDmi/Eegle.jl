@@ -1,12 +1,10 @@
-# v 0.1 Nov 2019
-# v 0.2 June 2025
-# Part of the Eegle.jl package.
-# Copyright Marco Congedo, CNRS, University Grenoble Alpes.
-
-
 module Preprocessing
 
-using StatsBase, Statistics, LinearAlgebra, DSP, PosDefManifold
+using StatsBase
+using Statistics
+using LinearAlgebra
+using DSP
+using PosDefManifold
 
 import DSP:resample
 import StatsBase.standardize
@@ -96,7 +94,8 @@ as per the [resample](https://docs.juliadsp.org/stable/filters/#DSP.Filters.resa
 !!! warning "Downsampling"
     Downsampling must always be preceeded by low-pass filtering to ensure the suppression of energy above the Nyquist frequency (``s/2``),
     where ``s`` is the new sampling rate after downsampling. The cut-off frequency for the filter is usually taken as ``s/3`` and a sharp filter is used (see examples). 
-    This applies also if you wish to apply downsampling by decimation — see the examples for decimating in [`Eegle.Miscellaneous.remove`](@ref) and [`removeSamples`](@ref).
+    This applies also if you wish to apply downsampling by decimation — see the examples for decimating in [remove](https://marco-congedo.github.io/PosDefManifold.jl/stable/linearAlgebra/#PosDefManifold.remove) 
+    and [`removeSamples`](@ref).
 
 **Return** the resampled data matrix.   
 
@@ -179,7 +178,7 @@ Remove one or more channels, i.e., columns, from the ``T×N`` EEG recording `X`,
 where ``T`` and ``N`` denotes the number of samples and channels (sensors), respectively,
 and remove the corresponding elements from `sensors`, the provided associated vector of ``N`` sensor labels.
 
-For the use of [kwarg](@ref "Acronyms") `what`, see method [`Eegle.Miscellaneous.remove`](@ref), which can be used instead of this function
+For the use of [kwarg](@ref "Acronyms") `what`, see method [remove](https://marco-congedo.github.io/PosDefManifold.jl/stable/linearAlgebra/#PosDefManifold.remove), which can be used instead of this function
 if you do not need to remove channels from a sensor labels vector.
 
 Return the 3-tuple (`newX`, `s`, `ne`), where `newX` is the new EEG recording, `s` is the new sensor labels vector and
@@ -213,8 +212,8 @@ X_, sensors_, ne = removeChannels(X, findall(x->x∉("Cz", "C3", "C4"), sensors)
 function removeChannels(X::AbstractMatrix{T}, what::Union{Int, Vector{S}},
                        sensors::Vector{String}) where {T<:Real, S<:Int}
     di = findfirst(length(sensors).==(size(X)))
-    X = Eegle.Miscellaneous.remove(X, what; dims=di)
-    return X, Eegle.Miscellaneous.remove(sensors, what), size(X, di)
+    X = PosDefManifold.remove(X, what; dims=di)
+    return X, PosDefManifold.remove(sensors, what), size(X, di)
 end
 
 
@@ -230,8 +229,8 @@ Remove one or more samples, i.e., rows, from the ``T×N`` EEG recording `X`,
 where ``T`` and ``N`` denotes the number of samples and channels (sensors), respectively,
 and remove the corresponding elements from `stim`, the associated [stimulation vector](@ref).
 
-For the use of [kwarg](@ref "Acronyms") `what`, see method [`Eegle.Miscellaneous.remove`](@ref), which can be used instead of this function
-if you do not need to remove tags from a stimulation vector.
+For the use of [kwarg](@ref "Acronyms") `what`, see method [remove](https://marco-congedo.github.io/PosDefManifold.jl/stable/linearAlgebra/#PosDefManifold.remove), 
+which can be used instead of this function if you do not need to remove tags from a stimulation vector.
 
 Print a warning if elements in `what` correspond to non-zero tags in `stim`.
 

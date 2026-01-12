@@ -1,12 +1,7 @@
-println("\x1b[95m", "Testing module Eegle.FileSystem.jl...")
+println("\x1b[95m", "\nTesting module Eegle.FileSystem.jl...", "\x1b[0m")
 
+println("No testing is needed for this module")
 
-# xxx add fileBase
-# xxx add fileExt
-# xxx add changeFileExt
-# xxx add getFilesInDir
-# xxx add getFoldersInDir
-# xxx add writeVector
 
 
 

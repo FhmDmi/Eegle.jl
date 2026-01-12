@@ -1,13 +1,12 @@
-# v 0.2 Last Revision: May 2023
-# Part of the Eegle.jl package.
-# Copyright Marco Congedo, CNRS, University Grenoble Alpes.
-
 module Processing
 
-using StatsBase, Statistics, LinearAlgebra, PosDefManifold, DSP
+using StatsBase
+using Statistics
+using LinearAlgebra 
+using PosDefManifold
+using DSP
 
 import DSP:filtfilt
-
 import Eegle
 
 # Module REPL text colors
