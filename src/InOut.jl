@@ -707,7 +707,7 @@ Write a data matrix `X` into an ASCII text file that can be read by [`readASCII`
 - `msg`: print string `msg` in the REPL on exit if it is not empty (empty by default).
 
 If you need to remove columns of `X` (channels) before writing, see [remove](https://marco-congedo.github.io/PosDefManifold.jl/stable/linearAlgebra/#PosDefManifold.remove)
-or [`removeChannels`](@ref).
+or [`Eegle.Preprocessing.removeChannels`](@ref).
 
 (2)
 

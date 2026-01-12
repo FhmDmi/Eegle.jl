@@ -229,8 +229,8 @@ Remove one or more samples, i.e., rows, from the ``T×N`` EEG recording `X`,
 where ``T`` and ``N`` denotes the number of samples and channels (sensors), respectively,
 and remove the corresponding elements from `stim`, the associated [stimulation vector](@ref).
 
-For the use of [kwarg](@ref "Acronyms") `what`, see method [`Eegle.Miscellaneous.remove`](@ref), which can be used instead of this function
-if you do not need to remove tags from a stimulation vector.
+For the use of [kwarg](@ref "Acronyms") `what`, see method [remove](https://marco-congedo.github.io/PosDefManifold.jl/stable/linearAlgebra/#PosDefManifold.remove), 
+which can be used instead of this function if you do not need to remove tags from a stimulation vector.
 
 Print a warning if elements in `what` correspond to non-zero tags in `stim`.
 
