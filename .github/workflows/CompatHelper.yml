@@ -4,16 +4,17 @@ on:
   schedule:
     - cron: '00 00 * * *'
 
+permissions:
+    contents: write
+    pull-requests: write
+
 jobs:
   CompatHelper:
-    permissions:
-      contents: write
-      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: julia-actions/setup-julia@latest
         with:
-          version: 1.3
+          version: '1'
       - name: Pkg.add("CompatHelper")
         run: julia -e 'using Pkg; Pkg.add("CompatHelper")'
       - name: CompatHelper.main()
