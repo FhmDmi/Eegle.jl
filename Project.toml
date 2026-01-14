@@ -1,6 +1,6 @@
 name = "Eegle"
 uuid = "1260424e-cd79-4b74-a0ea-47c69c296663"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["Marco Congedo, Fahim Doumi"]
 
 [deps]
@@ -42,7 +42,7 @@ ArtifactUtils = "0.2.4"
 Bonito = "4"
 CSV = "0.10"
 CovarianceEstimation = "0.2"
-DSP = "0.8"
+DSP = "0.7"
 DataFrames = "1.7"
 Diagonalizations = "0.2"
 Distributions = "0.25"
@@ -65,7 +65,7 @@ Revise = "3.8"
 StatsBase = "0.34"
 YAML = "0.4"
 ZipFile = "0.10.1"
-julia = "1.10"
+julia = "1.10.0-1"
 
 [extras]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
