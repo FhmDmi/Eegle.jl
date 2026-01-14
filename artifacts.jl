@@ -6,7 +6,8 @@
 # Once the release published, click with the right button on the tar.gz file 
 # and select 'copy the link' to get the link).
 
-# NB: When the package is installed, Artifacts are downloaded in homedir()/.julia/artifacts
+# NB: When the package is installed, Artifacts are downloaded in homedir()/.julia/artifacts,
+# for example, in C:\\Users\\Marco\\.julia\\artifacts\\8dbb2143f6a996fd8c715c64d8d37ff642ad5f0e\\data_examples
 # The directory is accessible within the package as `artifact"data_examples"`,
 # where 'data_examples' is the name of the artifact (see code here below).
 
@@ -16,7 +17,7 @@
 # tar -czf data_examples.tar.gz data_examples
 
 using ArtifactUtils, Artifacts
-add_artifact!("Artifacts.toml", "data_examples", "https://github.com/FhmDmi/Eegle-Tools/releases/download/v0.1.9/data_examples.tar.gz", force=true)
+add_artifact!("Artifacts.toml", "data_examples", "https://github.com/Marco-Congedo/Eegle.jl/releases/download/v0.1.1/data_examples.tar.gz", force=true)
 # return: SHA1("8dbb2143f6a996fd8c715c64d8d37ff642ad5f0e")
 
 # to add more artifacts, add lines `add-artifact!...`
