@@ -10,7 +10,7 @@ The size on disk is **36.6 GB** for MI and **14.2 GB** for P300.
 ## Contribute
 
 The corpus is an ongoing collective endeavour. If you wish to contribute a database to enlarge the corpus, please open an issue
-in [this repository](https://github.com/FhmDmi/Eegle-Tools/tree/master/Converters), or contact the maintainers:
+in [this repository](https://github.com/FhmDmi/Eegle-Tools/tree/master/Converters) or contact the maintainers:
 
 * **Fahim Doumi**: fahim dot doumi dot pro at gmail dot com
 * **Marco Congedo**: marco dot congedo at gmail dot com
