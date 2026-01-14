@@ -3,4 +3,4 @@ git-tree-sha1 = "8dbb2143f6a996fd8c715c64d8d37ff642ad5f0e"
 
     [[data_examples.download]]
     sha256 = "ed679c521b5c079631038b785fadbd40cbb015d83aa5631a59be46af84bcc803"
-    url = "https://github.com/FhmDmi/Eegle-Tools/releases/download/v0.1.9/data_examples.tar.gz"
+    url = "https://github.com/Marco-Congedo/Eegle.jl/releases/download/v0.1.1/data_examples.tar.gz"
