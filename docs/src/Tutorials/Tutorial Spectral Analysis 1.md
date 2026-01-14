@@ -19,7 +19,7 @@ This tutorial uses the [`EXAMPLE_Normative_1`](@ref) example normative EEG file 
 Tell julia the package to be used
 
 ```julia
-using Eegle, FourierAnalysis, GLMakie, Colors
+using Eegle, GLMakie, Colors
 ```
 
 Load the example file and the associated sensor labels file.
