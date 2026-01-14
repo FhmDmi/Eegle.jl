@@ -1,5 +1,6 @@
 # Run this script to generate the Artifacts.toml file,
-# which will download and unzip .tar.gz files upon package installation.  
+# which will download and unzip .tar.gz files upon package installation.
+# Then, update the dependencies of the package.  
 # Notice that in windows these files appears in the explorer as .tar files.
 # The .tar.gz files can be hosted, for example, in a github release
 # (upload he tar.gz binaries at the bottom of the page for drafting the release
