@@ -1,7 +1,7 @@
 name = "Eegle"
 uuid = "1260424e-cd79-4b74-a0ea-47c69c296663"
-authors = ["Marco Congedo, Fahim Doumi"]
 version = "0.1.2"
+authors = ["Marco Congedo, Fahim Doumi"]
 
 [deps]
 ArtifactUtils = "8b73e784-e7d8-4ea5-973d-377fed4e3bce"
@@ -54,7 +54,7 @@ FourierAnalysis = "v1.2"
 HDF5 = "0.17"
 HTTP = "1.10.19"
 IsURL = "0.2.0"
-JSON = "0.21.4"
+JSON = "0.21.4, 1"
 LinearAlgebra = "1.11"
 NPZ = "0.4"
 NativeFileDialog = "0.2.1"
