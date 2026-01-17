@@ -114,28 +114,28 @@ of the accuracy classification performance obtained by the two classification me
 Now, let us appreciate what the function [`crval`](@ref) does for us by performing the cross-validation in a step-by-step manner:
 
 **a** - load the data:
-```julia
-o = readNY(EXAMPLE_MI_1; args...)
-```
+
+    o = readNY(EXAMPLE_MI_1; args...)
+
 
 **b** - encode the EEG trials, which are stored in o.trials, as covariance matrices:
-```julia
-C = covmat(o.trials; covtype = SCM)
-Cl = covmat(o.trials; covtype = SCM, lags = 10)
-```
+
+    C = covmat(o.trials; covtype = SCM)
+    Cl = covmat(o.trials; covtype = SCM, lags = 10)
+
 
 **c** - call the `crval` function of package [PosDefManifoldML](https://github.com/Marco-Congedo/PosDefManifoldML.jl):
-```julia
-cvMDM2 = crval(MDM(), C, o.y)
-cvACM2 = crval(MDM(), Cl, o.y; pipeline) 
-# in julia, `pipeline` is the same as `pipeline=pipeline`
-```
+
+    cvMDM2 = crval(MDM(), C, o.y)
+    cvACM2 = crval(MDM(), Cl, o.y; pipeline) 
+    # in julia, `pipeline` is the same as `pipeline=pipeline`
+
 
 The results are identical. Let us verify:
-```julia
-cvMDM.avgAcc == cvMDM2.avgAcc # must be true
-cvACM.avgAcc == cvACM2.avgAcc # must be true
-```
+
+    cvMDM.avgAcc == cvMDM2.avgAcc # must be true
+    cvACM.avgAcc == cvACM2.avgAcc # must be true
+
 
 ***
 #### Code for Tutorial ML 1

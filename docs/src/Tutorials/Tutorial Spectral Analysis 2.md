@@ -91,7 +91,7 @@ begin
     ax1 = Axis(fig[1, 1]; 
                 title = "C3", 
                 limits=(nothing, (0, hiy)),
-                ylabel =  L"\mu V^2")
+                ylabel = L"\text{Power}\ (\mu V^2)")
     for i=1:3
         lines!(ax1, xt, C3s[i], label = o.clabels[i])
     end
@@ -100,8 +100,8 @@ begin
     ax2 = Axis(fig[2, 1];
             title = "Cz", 
             limits=(nothing, (0, hiy)),
-            xlabel = "Frequency",
-            ylabel =  L"\mu V^2")
+            xlabel = L"\text{Frequency}\ (Hz)",
+            ylabel = L"\text{Power}\ (\mu V^2)")
     for i=1:3
         lines!(ax2, xt, Czs[i], label = o.clabels[i])
     end

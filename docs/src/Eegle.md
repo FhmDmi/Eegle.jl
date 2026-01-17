@@ -209,6 +209,7 @@ The reminder of this page is of interest only for contributing code and document
     - When a function has more then two arguments and optional keyword arguments (kwargs), they are given as a list 
         and their possible values, whenever relevant, as a sub-list 
     - Enclose functions, arguments and optional keyword arguments in backticks, which print like this: `mean`
+    - In tutorials, code enclosed in between lines ```julia and ``` will be copied in the box at the bottom of the page, while code just indented will not. See [Tutorial ML 1](@ref) for an example.
     - Use acronym and link them to the [Acronyms](@ref) section, e.g., [BSS](@ref "Acronyms")
     - Do not confuse the em dash hyphen — (a long dash used in text punctuation) with the usual en dash, used, for example, to make lists in markdown.
     - Only the last item of a list or sub-list should end with a dot
