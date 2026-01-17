@@ -25,9 +25,9 @@ using Eegle, GLMakie, Colors
 Load the example file and the associated sensor labels file.
 
 This is a 80s recording on a 20yo woman with
-- sampling rate : 128 
-- number of electrodes: 19
-- high-pass filter: 1.5 Hz. 
+- *sampling rate* : 128 
+- *number of electrodes*: 19
+- *high-pass filter*: 1.5 Hz. 
 
 The following functions are in **Eegle** module [InOut.jl](@ref).
 
@@ -60,7 +60,7 @@ maxb = f2b(maxf, sr, sr*fr)
 S_ = S.y[minb:maxb, :]
 ```
 
-Plot the spectra using GLMakie.jl. The figure will open in a new window. It is resizable and can be inspected, by zooming and panning (right mouse click). Use CTRL+click to reset the plot. Click on a legend element to toggle its visibility.
+Plot the spectra using **GLMakie**. The figure will open in a new window. It is resizable and can be inspected, by zooming and panning (right mouse click). Use CTRL+click to reset the plot. Click on a legend element to toggle its visibility.
 
 ```julia
 begin  
@@ -82,8 +82,8 @@ begin
             title = "Amplitude Spectra", 
             limits = (nothing, (0, hiy)),
             xticks = (xt, string.(xt)),
-            xlabel = "Amplitude",
-            ylabel =  L"\mu V")
+            xlabel = L"\text{Frequency}\ (Hz)",
+            ylabel = L"\text{Amplitude}\ (\mu V)")
 
     for i = 1:ne
         lines!(ax1, S.flabels[minb:maxb], S_[:, i]; 
