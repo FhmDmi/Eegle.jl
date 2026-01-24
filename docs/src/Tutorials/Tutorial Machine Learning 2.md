@@ -55,7 +55,7 @@ for (db, DB) ∈ enumerate(DBs), (f, file) ∈ enumerate(DB.files)
     MIacc[db][f] = cv.avgAcc
 
     # print a summary of the cv results
-    println("\nDatabase ", DB.dbName, ", File ", f, 
+    println("\nDatabase ", DB.dbName,"-", DB.condition,  ", File ", f, 
         ": mean(sd) balanced accuracy ", round(cv.avgAcc*100, digits=2),
         "% (± ", round(cv.stdAcc*100, digits=2), "%); ", 
         "p-value ", round(cv.p; digits = 4))
