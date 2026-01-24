@@ -13,10 +13,6 @@ using Eegle
 
 you have access to all functions exported by all **Eegle** modules and by all re-exported external packages.
 
-Like external packages, **Eegle** modules can be used individually. 
-For example, if you only need some functions for preprocessing
-and signal processing, you can state
-
 ```julia
 using Eegle.Preprocessing, DSP
 ```
@@ -87,7 +83,14 @@ In this case, however, you must install DSP.jl as well.
     | [ZipFile](https://github.com/fhs/ZipFile.jl)| support for reading and writing ZIP archives in Julia |
     | [Test](https://github.com/JuliaLang/julia/tree/master/stdlib/Test)| for development: Julia standard library for integrating package testing |
 
-## Other Resources
+## Resources
+
+### Very useful for Eegle
+
+|  Resource | Scope |
+|:-----------------------|:-----------------------|
+| [EEGPlot](https://github.com/Marco-Congedo/EEGPlot.jl) | static and interactive plots for EEG and ERP data |
+| [UnfoldMakie](https://github.com/unfoldtoolbox/UnfoldMakie.jl/tree/main) | Topographic and several other plots for EEG and ERP data |
 
 ### Related to Eegle
 
@@ -96,8 +99,7 @@ In this case, however, you must install DSP.jl as well.
 | [Eegle-Tools](https://github.com/FhmDmi/Eegle-Tools) | a collection of useful scripts used to develop  and use **Eegle**  |
 | [pyLittleEegle](https://github.com/FhmDmi/pyLittleEegle) | encapsulate a subset of **Eegle**'s functions in a Python package |
 
-
-### Similar packages
+### Others
 
 There are many other Julia's packages that can be useful for EEG data analysis and classification.
 Here is a non-exhaustive list:

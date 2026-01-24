@@ -1,4 +1,4 @@
-# Eegle Documentation
+# 📘 Eegle Documentation
 
 The **EEG General Library** (Eegle) is a general-purpose package for
 preprocessing and processing human Electroencephalography (EEG) data.
@@ -37,7 +37,7 @@ When you need a function, check its documentation and the examples given therein
 
 [Fahim Doumi](https://www.linkedin.com/in/fahim-doumi-4888a9251/?locale=fr_FR) at the time of writing was a research ingeneer at the Department of Enginnering of the [University Federico II of Naples](https://www.unina.it/en_GB/home).
 
-### Contributors: 
+## 🧑‍💻 Contributors
 
 | Contributor | Contribution |
 |:----------|:----------|
@@ -57,29 +57,30 @@ using Pkg
 Pkg.test("Eegle")
 ```
 
-## 🧑‍💻 Reviewers & Contributors
+## 🌱 Contribute
 
-Independent reviewers for both the code and the documentation are welcome.
 To contribute, please check the section [How to Contribute](@ref).
 
-## 📑 Contents
+## ➡️ Contents
 
 ```@contents
 Pages = [       "index.md",
                 "Eegle.md",
-                "FileSystem.md",
+                "Tutorials.md",
                 "Preprocessing.md",
                 "Processing.md",
-                "Miscellaneous.md",
                 "ERPs.md",
                 "BCI.md",
                 "Database.md",
+                "InOut.md",
+                "FileSystem.md",
+                "Miscellaneous.md",
 				"references.md",
 		]
 Depth = 1
 ```
 
-## 🗃️ Index
+## 🧭 Index
 
 ```@index
 ```
