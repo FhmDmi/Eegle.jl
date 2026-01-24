@@ -1,13 +1,11 @@
 # Tutorials
 
-Running the tutorials is the fastest way to learn how to use **Eegle**.
 
 !!! details "How to copy the code of the tutorials to the Clipboard"
-    !!! tip
-        To run an entire tutorial, click on the '💻 Full Code' link placed at the top of the page of each tutorial. This will scroll up to the bottom of the page, where the block containing the full code can be copied. Once copied, paste the code (e.g., CTRL+V in Windows) in the REPL or in a .jl script to be run.
+    To run an entire tutorial, click on the '💻 Full Code' link placed at the top of the page of each tutorial. This will scroll up to the bottom of the page, where the block containing the full code can be copied. Once copied, paste the code (e.g., CTRL+V in Windows) in the REPL or in a .jl script to be run.
 
-Tutorials are organized by theme; start with those that most closely resemble your current research needs:
-
+!!! tip
+    Tutorials are organized by [themes](@ref "Themes"); start with those that most closely resemble your current research needs:
 
 ### Things to know
 - We fully-qualify the name of functions (e.g., `FourierAnalysis.spectra`) or report in the text the package where they can be found. This is just to help you find the documentation of these functions if needed. In your code, you don't need to fully-qualify functions at all.

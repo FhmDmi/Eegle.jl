@@ -10,6 +10,11 @@ It is the fundamental brick allowing the integration of several packages dedicat
 <img src="docs/src/assets/Fig1_index.png" width="780" style="display: block; margin: auto;">
 
 ---
+## 🧩 Requirements
+
+**Julia**: version ≥ 1.10
+
+---
 ## ⚙️ Installation
 
 Execute the following command in julia's REPL:
