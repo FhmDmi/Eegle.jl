@@ -13,12 +13,6 @@ using Eegle
 
 you have access to all functions exported by all **Eegle** modules and by all re-exported external packages.
 
-```julia
-using Eegle.Preprocessing, DSP
-```
-
-In this case, however, you must install DSP.jl as well.
-
 ## Eegle Integrated Library
 
 ### Internal modules

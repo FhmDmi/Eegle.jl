@@ -7,8 +7,6 @@ It is the foundational building block that enables the integration of diverse
 state-of-the-art packages specifically conceived for EEG data, 
 and leveraging the powerful [Julia](https://julialang.org/) scientific eco-system.
 
-It also provides modules for advanced EEG analysis.
-
 **Eegle** promotes standardization, use of conventions and a learning approach based on simple examples and tutorials.
 
 ![Figure 1](assets/Fig1_index.png)
@@ -28,7 +26,7 @@ then hit the 'back' keyboard key to exit the REPL package manager mode.
 
 
 ## —͟͟͞͞★ Quick Start
-Read the [next page](@ref "Eegle") of this documentation for general informations, then work out the tutorials.
+Read the [next page](@ref "Eegle") of this documentation for general informations, then work out the [tutorials](@ref "Tutorials").
 When you need a function, check its documentation and the examples given therein.
 
 ## ✍️ About the Authors
@@ -44,6 +42,9 @@ When you need a function, check its documentation and the examples given therein
 | [Abdeljalil Anajjar](https://github.com/AbdeljalilAnajjar) | web GUI for downloading the [FII BCI Corpus](@ref "FII BCI Corpus Overview") and Julia artifacts for data example files |
 | [Alexandre Bleuzé](https://www.linkedin.com/in/alexandre-bleuz%C3%A9-069b37154/) | Toeplitz algebra for multivariate regression mean ERP estimations |
 
+## 🌱 Contribute
+
+To contribute, please check the section [How to Contribute](@ref).
 
 ## 🛠️ TroubleShoothing
 | Problem   | Solution |
@@ -56,10 +57,6 @@ When you need a function, check its documentation and the examples given therein
 using Pkg
 Pkg.test("Eegle")
 ```
-
-## 🌱 Contribute
-
-To contribute, please check the section [How to Contribute](@ref).
 
 ## ➡️ Contents
 
