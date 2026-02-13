@@ -80,7 +80,7 @@ The common average reference (CAR) operator for referencing EEG data
 potentials so that their mean across sensors (space) is zero at all samples.
 
 Let ``X`` be the ``T×N`` EEG recording, where ``T`` and ``N`` denotes the number of samples and channels (sensors), respectively,
-and let ``H_N`` be the ``N×N`` recentering matrix, then 
+and let ``H_N`` be the ``N×N`` centering matrix, then 
 
 ``Y=XH`` 
 
@@ -95,6 +95,8 @@ where ``I_N`` is the N-dimensional identity matrix and ``\\mathbf{1}_N`` is the 
 **Alias** ℌ (U+0210C, with escape sequence "frakH")
 
 **Return** the ``N×N`` centering matrix.
+
+**See**[`car!`](@ref)
 
 **Examples**
 ```julia
@@ -113,6 +115,62 @@ X_dc = ℌ(size(X, 1)) * X * ℌ(size(X, 2))
 """
 centeringMatrix(N::Int) = I-1/N*(ones(N)*ones(N)')
 ℌ=centeringMatrix # alias for function centeringMatrix
+
+
+
+"""
+```julia
+function car!(X::AbstractMatrix{T}; 
+    correction::Union{Int, Real} = 0) 
+where T<:Real 
+```
+
+Re-reference ``X`` to the *common average reference* (CAR), tht is, set the mean of the rows of ``X`` to zero.
+
+**Arguments**
+- `X`: the ``T×N`` EEG recording, where ``T`` and ``N`` denotes the number of samples and channels (sensors), respectively
+
+**Optional Keyword Arguments**
+- `correction`: zero by default. It can be a positive number, in which case, from the rows of ``X`` it is not subtracted their
+    sum divided by ``N``, but their sum divided by ``N``+`correction`.
+
+When ``correction`` is equal to zero (default) we obtain the usual car reference — see [`centeringMatrix`](@ref). When it is equal to 1, 
+we obtain the reference method "B" of [Kim2023GhostICs](@cite).
+
+It should be noted that the usual CAR yields data with rank ``N-1`` and zero row means, while the method of [Kim2023GhostICs](@cite) yields
+full-rank data, but non-zero row mean. A value of ``correction`` between 0 and 1 yields intermediate situations. 
+
+
+**Return** the re-referenced ``X`` matrix. Note that this function change the content of ``X``, does not generate another matrix.
+If you want to keep the original data, use 
+
+```julia
+car!(copy(X))
+```
+
+**See also** [`centeringMatrix`](@ref)
+
+**Examples**
+```julia
+using Eegle
+
+X=randn(128, 19)
+
+car!(X) # this also returns X
+
+Y = car!(copy(X)) # does not change X
+
+car!(X; correction = 1)
+```
+"""
+function car!(X::AbstractMatrix{T}; 
+    correction::Union{Int, Real} = 0) where T<:Real 
+
+    correction < 0 && throw(ArgumentError("Eegle.Processing module, function `!car`: the `correction` argument must be non-negative"))
+    avg = correction ≈ 0 ? (sum(X, dims=2) ./ size(X, 2)) : (sum(X, dims=2) ./ (size(X, 2) + correction))
+    return X .-= avg
+end
+
 
 """
 ```julia
