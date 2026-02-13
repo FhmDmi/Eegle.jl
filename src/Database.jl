@@ -641,7 +641,6 @@ wherein the `InfoDB.files` field lists the included sessions only.
     If a folder with the same name of the paradigm (for example: "MI") is found in `corpusDir`, the search starts therein
     and not in `corpusDir`. This way you can use the same `corpusDir` for all paradigms.
 
-    !!! note "Point to the FII BCI Corpus"
     If you have downloaded the [FII BCI corpus](@ref "FII BCI Corpus Overview") using the provided GUI — see [`downloadDB`](@ref) —, you can simply
     omit this argument; **Eegle** will automatically search within the FII BCI Corpus directory.
 
@@ -656,30 +655,17 @@ wherein the `InfoDB.files` field lists the included sessions only.
     In the FII BCI corpus, available **MI** class labels are: *left_hand*, *right_hand*, *feet*, *rest*, *both_hands*, and *tongue*.
     Available **P300** class labels are always the same two: *target* and *nontarget*.
 
-- `includeF`: tuple of custom filter conditions for advanced session filtering based on YAML metadata — see examples below
-- `summarize`: if true (default) a summary table of the selected databases is printed in the REPL.
+- `summarize`: if true (default), a summary table of the selected databases is printed in the REPL.
 
 !!! tip "Nice printing" 
     End the `selectDB` line with a semicolon to easily visualize the summary table (see the examples).
 
-- `verbose` : if true print some feedback (in addition to the summary table)
+- `verbose` : if true, print some feedback (in addition to the summary table).
 
-# Custom Filters (`includeF` argument)
+- `includeF`: tuple of custom filter conditions for advanced session filtering based on metadata fields present in [YAML files](@ref "NY Metadata (YAML)").
+    Each filter is a tuple with form `(field_path, predicate_function)`.
 
-The `includeF` argument enables comprehensive filtering on any metadata field present in YAML files.
-Each filter is a tuple: `(field_path, predicate_function)`.
-
-!!! warning "Avoid Redundant Filtering"
-    The `selectDB` function already filters by `paradigm` and `classes` arguments.
-    **Do not use `includeF` to filter these fields** to avoid conflicts and redundancy.
-
-## Path Shortcuts (Recommended)
-```julia
-# Using shortcuts for common paths
-includeF = (("sr", ==(256)),)                    # acquisition.samplingrate
-includeF = (("ref", ==("Fz")),)                  # acquisition.reference
-includeF = (("perfLHRH.MDM", x -> x >= 0.7),)    # perf.left_hand-right_hand.MDM
-```
+Shortcuts are available for some fields:
 
 **Available Shortcuts:**
 - `sr` → `acquisition.samplingrate`
@@ -687,29 +673,48 @@ includeF = (("perfLHRH.MDM", x -> x >= 0.7),)    # perf.left_hand-right_hand.MDM
 - `perfLHRH` → `perf.left_hand-right_hand`
 - `perfRHF` → `perf.right_hand-feet`
 
+!!! warning "Avoid Redundant Filtering"
+    The `selectDB` function already filters by `paradigm` and `classes` arguments.
+    **Do not use `includeF` to filter these fields** to avoid conflicts and redundancy.
+
+**Examples**
+
 ## Basic Filter Examples
 ```julia
 # Exact sampling rate
 includeF = (("sr", ==(256)),)
+
 # Minimum sampling rate
 includeF = (("sr", x -> x >= 128),)
+
 # Sampling rate range
 includeF = (("sr", x -> 128 <= x <= 512),)
+
+# Reference is Fz
+includeF = (("ref", ==("Fz")),)                  # acquisition.reference
+
+# MDM performance for left_hand vs. right_hand is above 0.7
+includeF = (("perfLHRH.MDM", x -> x >= 0.7),)    # perf.left_hand-right_hand.MDM
+
 # Must contain electrode Fz
 includeF = (("acquisition.sensors", x -> "Fz" ∈ x),)
+
 # At least 16 electrodes
 includeF = (("acquisition.sensors", x -> length(x) >= 16),)
+
 # Minimum trials per class
 includeF = (("trials_per_class", x -> minimum(values(x)) > 30),)
+
 # Performance threshold using shortcut
 includeF = (("perfLHRH.MDM", x -> x >= 0.6),)
+
 # Performance range
 includeF = (("perfLHRH.MDM", x -> 0.6 <= x <= 0.85),)
 ```
 
 ## Combined Filters (AND Logic)
 ```julia
-# High-quality sessions: SR ≥ 256 Hz + Fz electrode + good accuracy
+# SR ≥ 256 Hz + uses Fz electrode + good accuracy
 includeF = (
     ("sr", x -> x >= 256),
     ("acquisition.sensors", x -> "Fz" ∈ x),
@@ -717,7 +722,7 @@ includeF = (
 )
 ```
 
-## Complete Usage Examples
+## Select DB Complete Usage Examples
 ```julia
 # Basic selection with class filtering
 DB_MI = selectDB(:MI; classes = ["left_hand", "right_hand"]);
