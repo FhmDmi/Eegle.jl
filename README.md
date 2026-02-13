@@ -1,8 +1,10 @@
+<img src="docs/src/assets/header1.png" width="780" style="display:block; margin-left:0;">
+
+---
+
 | Logo | Unicode Symbol | Stable Documentation | Latest Documentation | Tutorials |
 |:-----:|:-----:|:-----:|:-----:|:-----:|
 |  <img src="docs/src/assets/logo_small.png" height="90">   | 🦅 | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/) |
-
----
 
 **Eegle** (EEG general library) is a pure-[**julia**](https://julialang.org/) 90%-human package for human EEG (Electroencephalography) data analysis and classification.
 It is the fundamental brick allowing the integration of several packages dedicated to human EEG.
@@ -10,6 +12,7 @@ It is the fundamental brick allowing the integration of several packages dedicat
 <img src="docs/src/assets/Fig1_index.png" width="780" style="display: block; margin: auto;">
 
 ---
+
 ## 🧩 Requirements
 
 **Julia**: version ≥ 1.10
