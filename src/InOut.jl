@@ -42,6 +42,8 @@ struct EEG
     subject         :: Int           
     session         :: Int           
     run             :: Int           
+    nTrials         :: Dict{Any,Any} 
+    perf            :: Dict{Any,Any}  
     sensors         :: Vector{String}
     sr              :: Int           
     ne              :: Int           
@@ -70,6 +72,8 @@ While conceived specifically for BCI sessions, the structure can be used also fo
 - `subject`: serial number of the present [subject](@ref) in the above database
 - `session`: serial number of the present [session](@ref) for the above subject
 - `run`: serial number of the present [run](@ref) of the above session
+- `nTrials`: a dictionary mapping each class label to a vector containing the number of trials per session for that class. 
+- `perf`: performance of the session obtained via the Eegle benchmark per task
 - `sensors`: labels of the scalp electrode leads in standard notation (10-20, 10-10,...)
 - `sr`: sampling rate in samples
 - `ne`: number of electrode leads
@@ -112,6 +116,8 @@ EEG(    X::Matrix{T},
     subject::Int = 0,
     session::Int = 1,
     run::Int = 1,
+    nTrials:: Dict{Any, Any},
+    perf:: Dict{Any, Any},
     wl::Int = sr,
     offset::Int = 0,
     nClasses::Int = 1,
@@ -146,6 +152,8 @@ struct EEG
     subject         :: Int           # serial number of the subject in database
     session         :: Int           # serial number of the session of this subject
     run             :: Int           # serial number of the run of this session
+    nTrials         :: Dict{Any,Any} # number of trials per class
+    perf            :: Dict{Any,Any}  # Eegle benchmark performance of the session by tasks
     sensors         :: Vector{String}# electrode leads on the scalp in standard 10-10 notation
     sr              :: Int           # sampling rate
     ne              :: Int           # number of electrodes (excluding reference and ground)
@@ -176,7 +184,7 @@ EEG(X::Matrix{T}, sr::Int, sensors::Vector{String};
     mark::Vector{Vector{Int}} = [[""]],
     y::Vector{Int} = [0]) where T<:Real =
     EEG(Dict(), Dict(), Dict(), "0.0.1", db, paradigm, subject,
-        session, run, sensors, sr, size(X, 2), size(X, 1), wl, offset,
+        session, run, Dict(), Dict(), sensors, sr, size(X, 2), size(X, 1), wl, offset,
         nClasses, clabels, stim, mark, y, X, nothing)
 
 # `_standardizeClasses` function is exclusively used within `readNY` (from the InOut.jl package) 
@@ -474,6 +482,8 @@ function readNY(filename    :: AbstractString;
      info["id"]["subject"],
      info["id"]["session"],
      info["id"]["run"],
+     info["stim"]["trials_per_class"],
+     info["perf"],
      info["acquisition"]["sensors"],
      sr,
      ne,
@@ -823,27 +833,28 @@ function Base.show(io::IO, ::MIME{Symbol("text/plain")}, o::EEG)
     println(io, titleFont, "∿ EEG Data type; $r x $c ")
     println(io, separatorFont, "∼∽∿∽∽∽∿∼∿∽∿∽∿∿∿∼∼∽∿∼∽∽∿∼∽∽∼∿∼∿∿∽∿∽∼∽∽∿∽∽∽∽∿∽∽∽∽∿∽∽∽∽∿", greyFont)
     println(io, "NY format version (.formatversion): $(o.formatversion)")
-    println(io, separatorFont, "∼∽∿∽∽∽∿∼∿∽∿∽∿∿∿∼∼∽∿∼∽∽∿∼∽∽∼∿∼∿∿∽∿∽∼∽∽∿∽∽", defaultFont)
-    println(io, ".db (database)   : $(o.db)")
-    println(io, ".paradigm        : $(":"*String(o.paradigm))")    
-    println(io, ".subject         : $(o.subject)")
-    println(io, ".session         : $(o.session)")
-    println(io, ".run             : $(o.run)")
-    println(io, ".sensors         : $(length(o.sensors))-Vector{String}")
-    println(io, ".sr(samp. rate)  : $(o.sr)")
-    println(io, ".ne(# electrodes): $(o.ne)")
-    println(io, ".ns(# samples)   : $(o.ns)")
-    println(io, ".wl(win. length) : $(o.wl)")
-    println(io, ".offset          : $(o.offset)")
-    println(io, ".nClasses        : $(o.nClasses)")
-    println(io, ".clabels(c=class): $(length(o.clabels))-Vector{String}")
-    println(io, ".stim(ulations)  : $(length(o.stim))-Vector{Int}")
-    println(io, ".mark(ers) : $([length(o.mark[i]) for i=1:length(o.mark)])-Vectors{Int}")
-    println(io, ".y (all c labels): $(length(o.y))-Vector{Int}")
-    println(io, ".X (EEG data)    : $(r)x$(c)-Matrix{$(type)}")
+    println(io, separatorFont, "∼∽∿∽∽∽∿∼∿∽∿∽∿∿∿∼∼∽∿∼∽∽∿∼∽∽∼∿∼∿∿∽∿∽∼∽∽∿∽∽∽∼∽∽∿∽∽∽∼∽∽∿∽", defaultFont)
+    println(io, ".db (database)      : $(o.db)")
+    println(io, ".paradigm           : $(":"*String(o.paradigm))")    
+    println(io, ".subject            : $(o.subject)")
+    println(io, ".session            : $(o.session)")
+    println(io, ".run                : $(o.run)")
+    println(io, ".sensors            : $(length(o.sensors))-Vector{String}")
+    println(io, ".sr(samp. rate)     : $(o.sr)")
+    println(io, ".ne(# electrodes)   : $(o.ne)")
+    println(io, ".ns(# samples)      : $(o.ns)")
+    println(io, ".wl(win. length)    : $(o.wl)")
+    println(io, ".offset             : $(o.offset)")
+    println(io, ".nClasses           : $(o.nClasses)")
+    println(io, ".nTrials(per class) : $(length(o.nTrials))-Dict{String, Int}")
+    println(io, ".clabels(c=class)   : $(length(o.clabels))-Vector{String}")
+    println(io, ".stim(ulations)     : $(length(o.stim))-Vector{Int}")
+    println(io, ".mark(ers)          : $([length(o.mark[i]) for i=1:length(o.mark)])-Vectors{Int}")
+    println(io, ".y (all c labels)   : $(length(o.y))-Vector{Int}")
+    println(io, ".X (EEG data)       : $(r)x$(c)-Matrix{$(type)}")
     isnothing(o.trials) ? println("                : nothing") :
-                        println(io, ".trials          : $(length(o.trials))-Vector{Matrix{$(type)}}")
-    println(io, "Dict: .id, .acquisition, .documentation")
+                        println(io, ".trials             : $(length(o.trials))-Vector{Matrix{$(type)}}")
+    println(io, "Dict: .id, .acquisition, .documentation, .perf")
     r≠l && @warn "number of class labels in y does not match the data size in X" l r
 end
 
