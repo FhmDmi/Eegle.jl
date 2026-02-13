@@ -2,9 +2,9 @@
 
 ---
 
-| Logo | Unicode Symbol | Stable Documentation | Latest Documentation | Tutorials |
+| Tutorials | Unicode Symbol  | Documentation | Documentation | Logo |
 |:-----:|:-----:|:-----:|:-----:|:-----:|
-|  <img src="docs/src/assets/logo_verysmall.png" height="90">   | 🦅 | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/) |
+| [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/)   | 🦅 | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | <img src="docs/src/assets/logo_verysmall.png" height="48"> |
 
 # Eegle (EEG general library) 
 
