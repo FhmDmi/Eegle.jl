@@ -65,6 +65,7 @@ include("Database.jl");         @reexport using .Database
 @precompile_signatures(Eegle)
 
 # Welcome Message
+println()
 print("                      🦅")
 println("\x1b[0m","
 ⣴⣿⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛","\x1b[95m","⠛⠛⠛⠛⠛⠛","\x1b[0m","⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⣿⣦","\x1b[35m", "
