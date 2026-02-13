@@ -84,22 +84,22 @@ X = o.X[55*o.sr:59*o.sr, :]
 ```
 
 For plotting the data we will use the [EEEPlot](https://github.com/Marco-Congedo/EEGPlot.jl) package,
-which allows to plot several time series at the same time. Let us define a function to avoid calling the
-plotting function twice:
+which allows to plot several time series at the same time.
 
-```julia
-plot_data(title) =
-    eegplot(X, o.sr, o.sensors;
-        fig_size = (920, 1100),
-        X_title =title * ": Data (grey) and filtered data (brick red)",
-        X_labels_font_size = 16,
-        X_title_font_size = 16,
-        Y,
-        Y_title ="Filter Components",
-        Y_labels_font_size = 16,
-        Y_title_font_size = 18,
-        overlay = Z)
-```
+!!! details "show the plotting function wi will be using"
+    ```julia
+    plot_data(title) =
+        eegplot(X, o.sr, o.sensors;
+            fig_size = (920, 1100),
+            X_title =title * ": Data (grey) and filtered data (brick red)",
+            X_labels_font_size = 16,
+            X_title_font_size = 16,
+            Y,
+            Y_title ="Filter Components",
+            Y_labels_font_size = 16,
+            Y_title_font_size = 18,
+            overlay = Z)
+    ```
 
 ## SFA
 

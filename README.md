@@ -15,7 +15,7 @@ It is the fundamental brick allowing the integration of several packages dedicat
 **Julia**: version ≥ 1.10
 
 ---
-## ⚙️ Installation
+## 📦 Installation
 
 Execute the following command in julia's REPL:
 
