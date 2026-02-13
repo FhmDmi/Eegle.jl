@@ -394,7 +394,7 @@ Supports shortcuts for common paths and automatic nested search.
 - `perfLHRH` → `perf.left_hand-right_hand`
 - `perfRHF` → `perf.right_hand-feet`
 =#
-function _get_nested_value(data::Dict, path::String)
+function _getNestedValue(data::Dict, path::String)
     # Define shortcuts mapping
     shortcuts = Dict(
         "sr"        => "acquisition.samplingrate",
@@ -566,13 +566,13 @@ includeF = (
 function _filter(files::Vector{String}, 
                  includeF::Union{Tuple, Nothing};
                  verbose::Bool=false,
-                 show_progress::Bool=false)  # nouveau paramètre
+                 show_progress::Bool=false)  
     
     # Early return if no filters
     (isnothing(includeF) || isempty(includeF)) && return collect(1:length(files)), Tuple{String, String, Bool}[]
     
     valid_indices = Int[]
-    # Maintenant on retourne : (filename, reason/status, passed::Bool)
+    # Return info : (filename, reason/status, passed::Bool)
     files_info = Tuple{String, String, Bool}[]
     
     show_progress && println("\n$(repeat("─", 65))\n🔍 Applying $(length(includeF)) filter(s) to $(length(files)) session(s)...")
@@ -593,7 +593,7 @@ function _filter(files::Vector{String},
         # Apply all filters with early exit on failure
         @inbounds for (filter_idx, (field_path, predicate)) ∈ enumerate(includeF)
             try
-                value = _get_nested_value(yaml_data, field_path)
+                value = _getNestedValue(yaml_data, field_path)
                 
                 if !predicate(value)
                     session_valid = false
