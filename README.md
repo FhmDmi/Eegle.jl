@@ -1,4 +1,4 @@
-<img src="docs/src/assets/header1.png" width="800" style="display:block; margin-left:0;">
+<img src="docs/src/assets/header1.png" width="820" style="display:block; margin-left:0;">
 
 ---
 
