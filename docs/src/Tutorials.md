@@ -10,14 +10,11 @@
 ### Things to know
 - We fully-qualify the name of functions (e.g., `FourierAnalysis.spectra`) or report in the text the package where they can be found. This is just to help you find the documentation of these functions if needed. In your code, you don't need to fully-qualify functions at all.
 
-- For producing figures in these tutorials we use `Makie.jl` and some other useful packages. Install them first by executing in the REPL:
+- For producing figures in these tutorials we use `Makie.jl` backends and some other useful packages. Install them first by executing in the REPL:
 
 ```julia
 ]add CairoMakie, GLMakie, ColorSchemes, Colors
 ```
-
-!!! note
-    For plotting EEG traces we use a dedicated application. A dedicated plotting package for **Eegle** is to come.
 
 ---------------------------------------------------------------------------------------------------------------
 
