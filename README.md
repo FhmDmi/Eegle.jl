@@ -1,6 +1,6 @@
-| Logo | Stable Documentation | Latest Documentation | Tutorials |
-|:-----:|:-----:|:-----:|:-----:|
-|  <img src="docs/src/assets/logo_small.png" height="90">   | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/) |
+| Logo | Unicode Symbol | Stable Documentation | Latest Documentation | Tutorials |
+|:-----:|:-----:|:-----:|:-----:|:-----:|
+|  <img src="docs/src/assets/logo_small.png" height="90">   | 🦅 | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/) |
 
 ---
 
@@ -48,7 +48,7 @@ A large collection of [tutorials](https://marco-congedo.github.io/Eegle.jl/stabl
 Please contact the authors if you are interested in contributing.
 
 ---
-| 🎓 **Documentation**  | 
+| 📖 **Documentation**  | 
 |:-------------------------------------:|
 | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl/stable) | 
 | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | 
