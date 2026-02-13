@@ -116,6 +116,8 @@ EEG(    X::Matrix{T},
     subject::Int = 0,
     session::Int = 1,
     run::Int = 1,
+    nTrials:: Dict{Any, Any},
+    perf:: Dict{Any, Any},
     wl::Int = sr,
     offset::Int = 0,
     nClasses::Int = 1,
@@ -182,7 +184,7 @@ EEG(X::Matrix{T}, sr::Int, sensors::Vector{String};
     mark::Vector{Vector{Int}} = [[""]],
     y::Vector{Int} = [0]) where T<:Real =
     EEG(Dict(), Dict(), Dict(), "0.0.1", db, paradigm, subject,
-        session, run, sensors, sr, size(X, 2), size(X, 1), wl, offset,
+        session, run, Dict(), Dict(), sensors, sr, size(X, 2), size(X, 1), wl, offset,
         nClasses, clabels, stim, mark, y, X, nothing)
 
 # `_standardizeClasses` function is exclusively used within `readNY` (from the InOut.jl package) 
