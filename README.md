@@ -4,7 +4,7 @@
 
 | Documentation | Documentation | Tutorials | Unicode | Logo |
 |:-----:|:-----:|:-----:|:-----:|:-----:|
-| [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/)   | \:eagle: 🦅 | <img src="docs/src/assets/logo_verysmall.png" height="48"> |
+| [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/)   | 🦅 | <img src="docs/src/assets/logo_verysmall.png" height="48"> |
 
 # Eegle (EEG general library) 
 
