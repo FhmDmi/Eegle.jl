@@ -382,15 +382,251 @@ function infoDB(dbDir)
     )
 end
 
+#=
+_get_nested_value(data::Dict, path::String)
+
+Extract value from nested dictionary using dot-separated path.
+Supports shortcuts for common paths and automatic nested search.
+
+**Shortcuts:**
+- `sr` → `acquisition.samplingrate`
+- `ref` → `acquisition.reference`
+- `perfLHRH` → `perf.left_hand-right_hand`
+- `perfRHF` → `perf.right_hand-feet`
+=#
+function _get_nested_value(data::Dict, path::String)
+    # Define shortcuts mapping
+    shortcuts = Dict(
+        "sr"        => "acquisition.samplingrate",
+        "ref"       => "acquisition.reference",
+        "perfLHRH"  => "perf.left_hand-right_hand",
+        "perfRHF"   => "perf.right_hand-feet"
+    )
+    
+    # Replace shortcuts if applicable
+    resolved_path = get(shortcuts, path, path)
+    
+    # Check if path contains shortcut at start (e.g., "perfLHRH.MDM")
+    for (shortcut, full_path) in shortcuts
+        if startswith(path, shortcut * ".")
+            resolved_path = replace(path, shortcut => full_path, count=1)
+            break
+        end
+    end
+    
+    keys_path = split(resolved_path, '.')
+    
+    # Single key: direct access or recursive search
+    if length(keys_path) == 1
+        key = keys_path[1]
+        haskey(data, key) && return data[key]
+        
+        # Recursive search in nested dictionaries
+        for v in values(data)
+            v isa Dict && haskey(v, key) && return v[key]
+        end
+        
+        throw(ErrorException("Key '$key' not found in YAML (searched at root and nested levels)"))
+    end
+    
+    # Navigate nested structure with dot notation
+    current = data
+    for key in keys_path
+        haskey(current, key) || throw(ErrorException("Key '$key' not found in path '$resolved_path'"))
+        current = current[key]
+    end
+    
+    return current
+end
+
+#=
+_filter(files::Vector{String}, 
+        includeF::Union{Tuple, Nothing};
+        verbose::Bool=false)
+
+Internal function to filter session files based on YAML metadata criteria.
+
+This function allows filtering on virtually any field present in the YAML files,
+as long as it's not a unique identifier for a single session.
+
+**Arguments**
+- `files`: Vector of .npz file paths (each has corresponding .yml)
+- `includeF`: Tuple of (field_path, predicate) conditions
+- `verbose`: If true, print detailed filtering info
+
+**Returns**
+- `valid_indices`: Indices of files passing all filters
+- `excluded_files_info`: Vector of (filename, reason) tuples
+
+**Filter Syntax Extensive Examples**
+
+**Path Notation**
+```julia
+# Shortcut notation (recommended for common paths)
+includeF = (("sr", ==(256)),)                    # acquisition.samplingrate
+includeF = (("ref", ==("Fz")),)                  # acquisition.reference
+includeF = (("perfLHRH.MDM", x -> x >= 0.7),)   # perf.left_hand-right_hand.MDM
+# Short form (automatic nested search)
+includeF = (("samplingrate", ==(256)),)          # Searches nested dicts
+# Explicit dot notation
+includeF = (("acquisition.samplingrate", ==(256)),)  # Direct path
+# Deep nesting
+includeF = (("perf.left_hand-right_hand.MDM", x -> x >= 0.7),)
+```
+
+# Available Shortcuts:
+- `sr` → `acquisition.samplingrate`
+- `ref` → `acquisition.reference`
+- `perfLHRH` → `perf.left_hand-right_hand`
+- `perfRHF` → `perf.right_hand-feet`
+
+**Basic Filters (Exact Match)**
+```julia
+# Sampling rate exactly 256 Hz (using shortcut)
+includeF = (("sr", ==(256)),)
+# Specific reference (using shortcut)
+includeF = (("ref", ==("Fz")),)  
+# Specific hardware
+includeF = (("hardware", ==("g.tec EEG - g.USBamp")),)
+```
+
+**Comparison Filters (>, <, >=, <=)**
+
+# Sampling rate at least 128 Hz
+includeF = (("sr", x -> x >= 128),)
+# Balanced accuracy at least 60% (using shortcut)
+includeF = (("perfLHRH.MDM", x -> x >= 0.6),)
+# Window length greater than 500 samples
+includeF = (("windowlength", x -> x > 500),)
+
+
+**Range Filters (Interval)**
+
+# Sampling rate between 128 and 512 Hz
+includeF = (("sr", x -> 128 <= x <= 512),)
+# Balanced accuracy between 60% and 80%
+includeF = (("perfLHRH.MDM", x -> 0.6 <= x <= 0.8),)
+# Window length between 100 and 800 samples
+includeF = (("windowlength", x -> 100 <= x <= 800),)
+
+**Array/Vector Filters**
+
+# Must contain electrode Fz
+includeF = (("acquisition.sensors", x -> "Fz" ∈ x),)
+# Must contain multiple electrodes
+includeF = (("acquisition.sensors", x -> all(e ∈ x for e in ["Fz", "Cz", "Pz"])),)
+# At least 16 electrodes
+includeF = (("acquisition.sensors", x -> length(x) >= 16),)
+# Specific number of electrodes
+includeF = (("acquisition.sensors", x -> length(x) == 64),)
+
+**Dictionary Filters (trials_per_class, labels, perf)**
+
+# Minimum trials across all classes > 30
+includeF = (("trials_per_class", x -> minimum(values(x)) > 30),)
+# Specific class has enough trials
+includeF = (("trials_per_class", x -> haskey(x, "left_hand") && x["left_hand"] >= 50),)
+# Total trials across all classes >= 200
+includeF = (("trials_per_class", x -> sum(values(x)) >= 200),)
+# Performance metrics for specific task and classifier (using shortcuts)
+includeF = (("perfLHRH.MDM", x -> x >= 0.7),)    # MI
+includeF = (("perf.ENLR", x -> x >= 0.7),)       # P300
+
+**String Filters**
+
+# Specific reference (using shortcut)
+includeF = (("ref", ==("Fz")),)
+# Reference is not N/A
+includeF = (("ref", !=("N/A")),)
+# Filter contains keyword (case-sensitive)
+includeF = (("filter", x -> occursin("Butterworth", x)),)
+# Specific sensor type
+includeF = (("sensortype", x -> occursin("Wet", x)),)
+
+**Combined Filters (Multiple Conditions - AND Logic)**
+
+# Sampling rate + specific electrodes + good performance
+includeF = (
+    ("sr", x -> x >= 256),
+    ("acquisition.sensors", x -> "Fz" ∈ x),
+    ("perfLHRH.MDM", x -> 0.6 <= x <= 0.85)
+)
+# Sufficient trials + specific reference
+includeF = (
+    ("trials_per_class", x -> minimum(values(x)) >= 40),
+    ("ref", !=("N/A"))
+)
+# Sampling rate + electrode count + trial count
+includeF = (
+    ("sr", x -> 128 <= x <= 512),
+    ("acquisition.sensors", x -> length(x) >= 16),
+    ("trials_per_class", x -> sum(values(x)) >= 150)
+)
+=#
+function _filter(files::Vector{String}, 
+                 includeF::Union{Tuple, Nothing};
+                 verbose::Bool=false,
+                 show_progress::Bool=false)  # nouveau paramètre
+    
+    # Early return if no filters
+    (isnothing(includeF) || isempty(includeF)) && return collect(1:length(files)), Tuple{String, String, Bool}[]
+    
+    valid_indices = Int[]
+    # Maintenant on retourne : (filename, reason/status, passed::Bool)
+    files_info = Tuple{String, String, Bool}[]
+    
+    show_progress && println("\n$(repeat("─", 65))\n🔍 Applying $(length(includeF)) filter(s) to $(length(files)) session(s)...")
+    
+    @inbounds for (file_idx, file_path) ∈ enumerate(files)
+        yml_path = splitext(file_path)[1] * ".yml"
+        
+        # Check YAML existence
+        if !isfile(yml_path)
+            push!(files_info, (file_path, "Missing YAML file", false))
+            show_progress && println("  ✗ $(basename(file_path)): Missing YAML file")
+            continue
+        end
+        
+        yaml_data = YAML.load(open(yml_path))
+        session_valid, status_msg = true, ""
+        
+        # Apply all filters with early exit on failure
+        @inbounds for (filter_idx, (field_path, predicate)) ∈ enumerate(includeF)
+            try
+                value = _get_nested_value(yaml_data, field_path)
+                
+                if !predicate(value)
+                    session_valid = false
+                    status_msg = "Filter #$filter_idx failed: '$field_path' = $value"
+                    break
+                elseif filter_idx == length(includeF)
+                    status_msg = "Passed all $(length(includeF)) filter(s)"
+                end
+            catch e
+                session_valid = false
+                status_msg = "Error in filter #$filter_idx on '$field_path': $(e.msg)"
+                break
+            end
+        end
+        
+        push!(files_info, (file_path, status_msg, session_valid))
+        show_progress && println("  $(session_valid ? "✓" : "✗") $(basename(file_path)): $status_msg")
+        session_valid && push!(valid_indices, file_idx)
+    end
+    
+    show_progress && println("$(repeat("─", 65))\n✓ Result: $(length(valid_indices))/$(length(files)) session(s) passed all filters\n")
+    
+    return valid_indices, files_info
+end
+
 """
 ```julia
 function selectDB(<corpusDir    :: String,> 
                   paradigm      :: Symbol;
-        classes     :: Union{Vector{String}, Nothing} = 
-                        paradigm == :P300 ? ["target", "nontarget"] : nothing,
-        minTrials   :: Union{Int, Nothing} = nothing,
-        summarize   :: Bool = true,
-        verbose     :: Bool = false)
+                  classes       :: Union{Vector{String}, Nothing} = paradigm == :P300 ? ["target", "nontarget"] : nothing,
+                  includeF      :: Union{Tuple, Nothing} = nothing,
+                  summarize     :: Bool = true,
+                  verbose       :: Bool = false)
 ```
 Select BCI databases pertaining to the given BCI `paradigm` and all [sessions](@ref "session") therein 
 meeting the provided inclusion criteria. 
@@ -420,43 +656,99 @@ wherein the `InfoDB.files` field lists the included sessions only.
     In the FII BCI corpus, available **MI** class labels are: *left_hand*, *right_hand*, *feet*, *rest*, *both_hands*, and *tongue*.
     Available **P300** class labels are always the same two: *target* and *nontarget*.
 
-- `minTrials`: the minimum number of trials for all classes in the sessions to be included. 
+- `includeF`: tuple of custom filter conditions for advanced session filtering based on YAML metadata — see examples below
 - `summarize`: if true (default) a summary table of the selected databases is printed in the REPL.
 
 !!! tip "Nice printing" 
-    End the `SelectDB` line with a semicolon to easily visualize the summary table (see the examples).
+    End the `selectDB` line with a semicolon to easily visualize the summary table (see the examples).
 
 - `verbose` : if true print some feedback (in addition to the summary table)
 
-**See Also** 
+# Custom Filters (`includeF` argument)
 
-[`selectDB`](@ref), [`infoDB`](@ref), [`loadDB`](@ref) 
+The `includeF` argument enables comprehensive filtering on any metadata field present in YAML files.
+Each filter is a tuple: `(field_path, predicate_function)`.
 
-**Examples**
+!!! warning "Avoid Redundant Filtering"
+    The `selectDB` function already filters by `paradigm` and `classes` arguments.
+    **Do not use `includeF` to filter these fields** to avoid conflicts and redundancy.
+
+## Path Shortcuts (Recommended)
 ```julia
+# Using shortcuts for common paths
+includeF = (("sr", ==(256)),)                    # acquisition.samplingrate
+includeF = (("ref", ==("Fz")),)                  # acquisition.reference
+includeF = (("perfLHRH.MDM", x -> x >= 0.7),)    # perf.left_hand-right_hand.MDM
+```
 
-# To point automatically to the FII BCI Corpus
-DB_P300 = selectDB(:P300);
+**Available Shortcuts:**
+- `sr` → `acquisition.samplingrate`
+- `ref` → `acquisition.reference`
+- `perfLHRH` → `perf.left_hand-right_hand`
+- `perfRHF` → `perf.right_hand-feet`
 
+## Basic Filter Examples
+```julia
+# Exact sampling rate
+includeF = (("sr", ==(256)),)
+# Minimum sampling rate
+includeF = (("sr", x -> x >= 128),)
+# Sampling rate range
+includeF = (("sr", x -> 128 <= x <= 512),)
+# Must contain electrode Fz
+includeF = (("acquisition.sensors", x -> "Fz" ∈ x),)
+# At least 16 electrodes
+includeF = (("acquisition.sensors", x -> length(x) >= 16),)
+# Minimum trials per class
+includeF = (("trials_per_class", x -> minimum(values(x)) > 30),)
+# Performance threshold using shortcut
+includeF = (("perfLHRH.MDM", x -> x >= 0.6),)
+# Performance range
+includeF = (("perfLHRH.MDM", x -> 0.6 <= x <= 0.85),)
+```
+
+## Combined Filters (AND Logic)
+```julia
+# High-quality sessions: SR ≥ 256 Hz + Fz electrode + good accuracy
+includeF = (
+    ("sr", x -> x >= 256),
+    ("acquisition.sensors", x -> "Fz" ∈ x),
+    ("perfLHRH.MDM", x -> 0.6 <= x <= 0.85)
+)
+```
+
+## Complete Usage Examples
+```julia
+# Basic selection with class filtering
 DB_MI = selectDB(:MI; classes = ["left_hand", "right_hand"]);
 
-# To point to any corpus in any directory
-selectedDB = selectDB(.../directory_to_start_searching/, :P300);
+# Advanced selection with custom filters
+DB_MI = selectDB(:MI;
+                 classes = ["left_hand", "right_hand"],
+                 includeF = (
+                     ("sr", x -> x >= 256),
+                     ("acquisition.sensors", x -> length(x) >= 16),
+                     ("perfLHRH.MDM", x -> 0.6 <= x <= 0.85)
+                 ),
+                 verbose = true);
 
-selectedDB = selectDB(.../directory_to_start_searching/, :MI;
-                      classes = ["left_hand", "right_hand"]);
-
-selectedDB = selectDB(.../directory_to_start_searching/, :MI;
-                      classes = ["rest", "both_hands", "feet"],
-                      minTrials = 50,
-                      summarize = false,
-                      verbose = true)
+# P300 with performance filtering
+DB_P300 = selectDB(:P300;
+                   includeF = (
+                       ("sr", ==(128)),
+                       ("perf.ENLR", x -> x >= 0.75)
+                   ));
 ```
+
+**See Also** 
+
+[`infoDB`](@ref), [`loadDB`](@ref), [`weightsDB`](@ref)
+
 """
 function selectDB(corpusDir     :: String,
                   paradigm      :: Symbol;
                   classes       :: Union{Vector{String}, Nothing} = paradigm == :P300 ? ["target", "nontarget"] : nothing,
-                  minTrials     :: Union{Int, Nothing} = nothing,
+                  includeF      :: Union{Tuple, Nothing} = nothing,
                   summarize     :: Bool = true,
                   verbose       :: Bool = false)
     
@@ -476,9 +768,10 @@ function selectDB(corpusDir     :: String,
         @info "If you plan to train machine learning models, specify the `classes` argument to ensure consistent class selection across databases."
     end
 
-    selectedDB = InfoDB[]  # List of InfoDB structures
-    all_cLabels = Set{String}()  # To collect all available classes for ERP/MI paradigm
-    excluded_files_info = Tuple{String, Vector{String}}[]  # (database_name, excluded_files)
+    selectedDB = InfoDB[]
+    all_cLabels = Set{String}()
+    # Database-level filtering information collection structure
+    db_filtering_info = Vector{Tuple{String, Vector{Tuple{String, String, Bool}}}}()
    
     # Normalize classes to lowercase for comparison
     norm_classes = isnothing(classes) ? nothing : lowercase.(classes)
@@ -498,46 +791,23 @@ function selectDB(corpusDir     :: String,
             all(required_class ∈ lowercase.(info.cLabels) for required_class ∈ norm_classes) || continue
         end
 
-        # Handle minTrials filtering
-        if !isnothing(minTrials)
-            excluded_files, valid_indices = String[], Int[]
-            classes_to_check = isnothing(classes) ? info.cLabels : classes
+        # Apply custom filters if provided
+        if !isnothing(includeF)
+            # Skip progress display; defer until verbose=true
+            valid_indices, files_info = _filter(info.files, includeF; verbose=false, show_progress=false)
             
-            @inbounds for (file_idx, file_path) ∈ enumerate(info.files)
-                session_valid = true
-                @inbounds for class_name ∈ classes_to_check
-                    # Find the actual class name in the database (case-sensitive)
-                    actual_class_idx = isnothing(classes) ? 
-                                    findfirst(==(class_name), info.cLabels) :
-                                    findfirst(db_class -> lowercase(db_class) == lowercase(class_name), info.cLabels)
-                    actual_class = info.cLabels[actual_class_idx]
-                
-                    if haskey(info.nTrials, actual_class) &&
-                    info.nTrials[actual_class][file_idx] < minTrials
-                        session_valid = false
-                        break
-                    end
-                end
-                session_valid ? push!(valid_indices, file_idx) : push!(excluded_files, file_path)
-            end
+            # Store info for later output
+            !isempty(files_info) && push!(db_filtering_info, (info.dbName, files_info))
             
             # Skip database if no valid files
-            if isempty(valid_indices)
-                !isempty(excluded_files) && push!(excluded_files_info, (info.dbName, excluded_files))
-                continue
-            end
+            isempty(valid_indices) && continue
             
-             # Create filtered InfoDB if files were excluded
-            if !isempty(excluded_files)
-                push!(excluded_files_info, (info.dbName, excluded_files))
-                
-                # Modify existing vectors to exclude files not respecting minTrials
-                valid_files = info.files[valid_indices]
-                empty!(info.files)
-                append!(info.files, valid_files)
-                
-            end
+            # Filter info.files to keep only valid ones
+            valid_files = info.files[valid_indices]
+            empty!(info.files)
+            append!(info.files, valid_files)
         end
+        
         push!(selectedDB, info)
     end
 
@@ -545,15 +815,52 @@ function selectDB(corpusDir     :: String,
         "contains all selected classes: $(join(classes, ", "))" *
         (!isempty(all_cLabels) ? ".\nAll available classes: " * join(sort(collect(all_cLabels)), ", ") : ""))
 
-    # Print excluded files information
-    !isempty(excluded_files_info) && println("\n$(repeat("─", 65))\n⚠️  Files excluded due to insufficient trials per class (< $minTrials):", 
-    join(["\n  Database: $dbName" * join(["\n    • $(basename(file))" for file in files], "") 
-          for (dbName, files) in excluded_files_info], ""))
+    # Show filtering results
+    if !isempty(db_filtering_info)
+        if verbose
+            # Verbose output mode
+            println("\n$(repeat("═", 65))")
+            println("⚠️  FILTERING RESULTS BY DATABASE")
+            println(repeat("═", 65))
+            
+            for (dbName, files_info) in db_filtering_info
+                # Track pass/fail counts
+                n_passed = count(x -> x[3], files_info)
+                n_total = length(files_info)
+                
+                println("\nDatabase: $dbName")
+                println(repeat("─", 65))
+                
+                for (file_path, status, passed) in files_info
+                    symbol = passed ? "✓" : "✗"
+                    println("  $symbol $(basename(file_path)): $status")
+                end
+                
+                println(repeat("─", 65))
+                println("✓ Result: $n_passed/$n_total session(s) passed all filters")
+            end
+        else
+            # Compact output when verbose=false (legacy style, simplified)
+            println("\n$(repeat("─", 65))")
+            println("⚠️  Files excluded by custom filters:")
+            
+            for (dbName, files_info) in db_filtering_info
+                excluded_files = [basename(f) for (f, _, passed) in files_info if !passed]
+                if !isempty(excluded_files)
+                    println("  Database: $dbName")
+                    for file in excluded_files
+                        println("    • $file")
+                    end
+                end
+            end
+            println(repeat("─", 65), "\n")
+        end
+    end
    
     println()
 
     if verbose
-        println("\n$(repeat("═", 50))")
+        println("$(repeat("═", 50))")
         println("✓ $(length(selectedDB)) database(s) selected (Database - Condition):")
         for db in selectedDB
             println("  • $(db.dbName) - $(db.condition)")
@@ -596,7 +903,7 @@ end
 
 function selectDB(paradigm      :: Symbol;
                   classes       :: Union{Vector{String}, Nothing} = paradigm == :P300 ? ["target", "nontarget"] : nothing,
-                  minTrials     :: Union{Int, Nothing} = nothing,
+                  includeF       :: Union{Tuple, Nothing} = nothing,
                   summarize     :: Bool = true,
                   verbose       :: Bool = false)
 
@@ -604,10 +911,9 @@ function selectDB(paradigm      :: Symbol;
     if isnothing(corpusDir)
         throw(ArgumentError("Eegle.Database.selectDB: the default directory of the FII BCI Corpus has not been found. Please install the corpus running `downloadDB()`. Looking into $corpusDir"))
     else
-        selectDB(corpusDir, paradigm; classes, minTrials, summarize, verbose)
+        selectDB(corpusDir, paradigm; classes, includeF, summarize, verbose)
     end
 end
-
 
 function _weightsDB(subject, n)
     usub = unique(subject)
