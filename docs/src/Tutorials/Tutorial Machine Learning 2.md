@@ -5,7 +5,7 @@
 A common task in [BCI](@ref "Acronyms") research is to test a *machine learning model* (MLM) on a large amount of real data.
 This tutorial uses the [FII BCI corpus](@ref "FII BCI Corpus Overview") to carry out such a task.
 
-If you did not download the corpus yet, do so before running this tutorial using the [`downloadDB`](@ref) function.
+> ❗If you did not download the corpus yet, do so before running this tutorial using the [`downloadDB`](@ref) function.
 
 The tutorial shows how to
 

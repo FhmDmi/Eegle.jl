@@ -60,7 +60,10 @@ maxb = f2b(maxf, sr, sr*fr)
 S_ = S.y[minb:maxb, :]
 ```
 
-Plot the spectra using **GLMakie**. The figure will open in a new window. It is resizable and can be inspected, by zooming and panning (right mouse click). Use CTRL+click to reset the plot. Click on a legend element to toggle its visibility.
+Plot the spectra using **GLMakie**. 
+
+!!! note 
+    The figure will open in a new window. It is resizable and can be inspected, by zooming and panning (right mouse click). Use CTRL+click to reset the plot. Click on a legend element to toggle its visibility.
 
 ```julia
 begin  
