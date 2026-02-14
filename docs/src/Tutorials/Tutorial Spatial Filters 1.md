@@ -1,3 +1,5 @@
+![](../assets/banner_SF.png)
+
 # Tutorial SF 1
 
 [💻 Full Code](@ref "Code for Tutorial SF 1")
