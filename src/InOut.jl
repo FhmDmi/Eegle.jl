@@ -42,8 +42,8 @@ struct EEG
     subject         :: Int           
     session         :: Int           
     run             :: Int           
-    nTrials         :: Dict{Any,Any} 
-    perf            :: Dict{Any,Any}  
+    nTrials         :: Dict{String, Int64}
+    perf            :: Union{Dict{String, Float64}, Dict{String, Dict{String, Float64}}}
     sensors         :: Vector{String}
     sr              :: Int           
     ne              :: Int           
@@ -116,8 +116,8 @@ EEG(    X::Matrix{T},
     subject::Int = 0,
     session::Int = 1,
     run::Int = 1,
-    nTrials:: Dict{Any, Any},
-    perf:: Dict{Any, Any},
+    nTrials::Dict{String, Int},
+    perf::Union{Dict{String, Float64}, Dict{String, Dict{String, Float64}}},
     wl::Int = sr,
     offset::Int = 0,
     nClasses::Int = 1,
@@ -152,8 +152,8 @@ struct EEG
     subject         :: Int           # serial number of the subject in database
     session         :: Int           # serial number of the session of this subject
     run             :: Int           # serial number of the run of this session
-    nTrials         :: Dict{Any,Any} # number of trials per class
-    perf            :: Dict{Any,Any}  # Eegle benchmark performance of the session by tasks
+    nTrials         :: Dict{String, Int64} # number of trials per class
+    perf            :: Union{Dict{String, Float64}, Dict{String, Dict{String, Float64}}}  # Eegle benchmark performance of the session by tasks
     sensors         :: Vector{String}# electrode leads on the scalp in standard 10-10 notation
     sr              :: Int           # sampling rate
     ne              :: Int           # number of electrodes (excluding reference and ground)
@@ -354,6 +354,20 @@ function readNY(filename    :: AbstractString;
   
   paradigm = Symbol(info["id"]["paradigm"]) # June 2025, added for stdClass
 
+  # Perf field management according to the paradigm
+  if haskey(info, "perf")
+    if paradigm == :P300
+    perf = Dict{String, Float64}(String(k) => Float64(v) for (k, v) in info["perf"])
+    elseif paradigm == :MI
+    perf = Dict{String, Dict{String, Float64}}(
+        String(k) => Dict{String, Float64}(String(k2) => Float64(v2) for (k2, v2) in v)
+        for (k, v) in info["perf"]
+    )
+    end
+  else
+    perf = Dict{String, Float64}("N/A" => 0.0)
+  end
+
   (ns, ne) = size(data["data"])       # of sample, # of electrodes)
   
   os = info["stim"]["offset"]        # offset for trial starting sample
@@ -483,7 +497,7 @@ function readNY(filename    :: AbstractString;
      info["id"]["session"],
      info["id"]["run"],
      info["stim"]["trials_per_class"],
-     info["perf"],
+     perf,
      info["acquisition"]["sensors"],
      sr,
      ne,
