@@ -1,10 +1,10 @@
-<img src="docs/src/assets/header1.png" width="780" style="display:block; margin-left:0;">
+<img src="docs/src/assets/header1.png" width="820" style="display:block; margin-left:0;">
 
 ---
 
-| Logo | Unicode Symbol | Stable Documentation | Latest Documentation | Tutorials |
-|:-----:|:-----:|:-----:|:-----:|:-----:|
-|  <img src="docs/src/assets/logo_verysmall.png" height="90">   | 🦅 | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) | [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/) |
+| Documentation & Tutorials | Unicode Symbol | Official Logo |
+|:-----:|:-----:|:-----:|
+| [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/)   | 🦅 `\:eagle:`| <img src="docs/src/assets/logo_verysmall.png" height="48"> |
 
 # Eegle (EEG general library) 
 
