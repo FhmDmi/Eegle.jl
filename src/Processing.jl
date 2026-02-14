@@ -257,24 +257,21 @@ end
 
 
 
-# Given EEG data in `X` and its sampling rate `sr`, computes the global field root mean square (GFRMS), 
-# low-pass filter it using limit lowPass and find all local minima. 
+# Given EEG data in `X` and its sampling rate `sr`, computes the global field root mean square (GFRMS) 
+# on data X that is low-pass filtered it using limit lowPass. Then find all local minima of the GFRMS. 
 # Return a 3-tuple holding:
 # - the vector of unitrange in samples unit delimiting successive minima, 
 # where no two successive minima can comprise less than `minsamples` samples. These UnitRange delimits
 # the epochs and determine a 1-sample overlapping. For example: [1:128, 128:350, 350:461,...]
-# - the filtered GFRMS and 
+# - the GFRMS computed on the low-pass filtered data and 
 # - the vector of lengths of the intervals between all successive minima (to make an histogram, for example) 
 # see [global field root mean square](@ref globalFieldRMS)
 function _adaptiveEpochs(X::AbstractMatrix{T}, sr, minsamples::S, lowPass::Union{S, T}) where {T<:Real, S<:Int}
 
-    gfrms=globalFieldRMS(X)
-    # plot(gfrms[range])
     # if low-pass limit is the Nyquist frequency do not filter
-    gfrmsFilt = lowPass≥sr/2 ? gfrms : filtfilt(gfrms, sr, Lowpass(lowPass))
-    # plot!(gfrmsFilt[range])
+    gfrmsFilt = lowPass≥sr/2 ? globalFieldRMS(X) : globalFieldRMS(filtfilt(X, sr, Lowpass(lowPass)))
 
-    mina, value=Eegle.Miscellaneous.minima(gfrmsFilt)
+    mina, value = Eegle.Miscellaneous.minima(gfrmsFilt)
     #d=[(mina[i]-mina[i-1])/sr for i=2:length(mina)]
     #histogram(d)
 
@@ -314,14 +311,14 @@ This is used to extract epochs from spontaneous EEG recording. For tagged data (
 use [`Eegle.ERPs.trials`](@ref) instead.
 
 Two segmentation methods are possible, the *standard* fixed-length epoching and the *adaptive* epoching based on the
-local minima of the low-pass filtered [global field root mean square](@ref globalFieldRMS) (GFRMS).
+local minima of the [global field root mean square](@ref globalFieldRMS) (GFRMS) computed on low-pass filtered data.
 
 - *Standard (default):* `wl` is set to a positive integer (by default is `sr`*1.5), which determines the length in samples of the epochs.
     A positive value of `slide` (default=0) determines the number of overlapping 
     samples. By default there will be no overlapping. 
-- *Adaptive:* if `wl`= 0, the GFRMS is computed, low-pass filtered 
-    using `lowPass` (in Hz) as the cut-off (default = 14 Hz) and segmented ensuring that the minimum epoch size (in samples) is `minSize`, 
-    which default is the nuber of samples covering 1.5s. Set `LowPass` to `sr`/2 (Nyquist frequency) for no low-pass filtering of the GFRMS.
+- *Adaptive:* if `wl`= 0, the GFRMS is computed on data that is low-pass filtered 
+    using `lowPass` (in Hz) as the cut-off (default = 14 Hz), and segmented ensuring that the minimum epoch size (in samples) is `minSize`, 
+    which default is the number of samples covering 1.5s. Set `LowPass` to `sr`/2 (Nyquist frequency) for no low-pass filtering of the GFRMS.
 
 **Return**
 
@@ -329,7 +326,7 @@ local minima of the low-pass filtered [global field root mean square](@ref globa
 - *Adaptive:* if `richReturn=false` (default) ``r``, else the 3-tuple (``r``, ``m``, ``l``),
 
 where ``r`` is the computed vector of unit ranges (a `Vector{UnitRange{Int64}}` type), 
-``m`` the vector with the low-pass filtered GFMRS and ``l`` the vector of epoch lengths.
+``m`` the vector with the GFMRS of the low-pass filtered data and ``l`` the vector of epoch lengths.
 
 !!! note "Epochs definition"
     With the *adaptive* method, the last sample of an epoch coincides with the first sample of the successive epoch,
@@ -357,6 +354,7 @@ ranges = epoching(X, sr;
 # adaptive epoching of θ (Theta: 4Hz-7.5Hz) oscillations
 Xθ = filtfilt(X, sr, Bandpass(4, 7.5))
 rangesθ = epoching(Xθ, sr;
+        wl = 0, # do not forget this
         minSize = round(Int, sr ÷ 4), # at least one θ cycle
         lowPass = 7.5)  # ignore minima due to higher frequencies
 
