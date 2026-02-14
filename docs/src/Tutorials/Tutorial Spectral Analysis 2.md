@@ -1,3 +1,5 @@
+![](../assets/banner_SA.png)
+
 # Tutorial SA 2
 
 [💻 Full Code](@ref "Code for Tutorial SA 2")

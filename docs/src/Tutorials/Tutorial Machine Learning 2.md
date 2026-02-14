@@ -1,3 +1,5 @@
+![](../assets/banner_ML.png)
+
 # Tutorial ML 2
 
 [💻 Full Code](@ref "Code for Tutorial ML 2")

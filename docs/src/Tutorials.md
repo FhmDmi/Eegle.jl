@@ -27,17 +27,26 @@
 ---------------------------------------------------------------------------------------------------------------
 
 ### Spectral Analysis
+
+![](assets/banner_SA.png)
+
 |Tutorial  | Description|
 |:----|:----|
 |[Tutorial SA 1](@ref) | compute and plot power spectra on continuous EEG recording |
 |[Tutorial SA 2](@ref) | compute and plot power spectra on particular EEG epochs (e.g., experimental trials) |
 
 ### Spatial Filters
+
+![](assets/banner_SF.png)
+
 |Tutorial  | Description|
 |:----|:----|
 |[Tutorial SF 1](@ref) | construct new filters based on joint diagonalization (GEVD) |
 
 ### Machine Learning
+
+![](assets/banner_ML.png)
+
 |Tutorial  | Description|
 |:----|:----|
 |[Tutorial ML 1](@ref) | run a cross-validation comparing two Riemannian classifiers |
