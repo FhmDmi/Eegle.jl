@@ -2,9 +2,9 @@
 
 ---
 
-| Documentation & Tutorials | Unicode Symbol | Official Logo |
-|:-----:|:-----:|:-----:|
-| [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/)   | 🦅 `\:eagle:`| <img src="docs/src/assets/logo_verysmall.png" height="48"> |
+| Documentation & Tutorials | Unicode Symbol | Official Logo | Python Clone | FII BCI Corpus |
+|:-----:|:-----:|:-----:|:-----:|:-----:|
+| [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Marco-Congedo.github.io/Eegle.jl) [![](https://img.shields.io/badge/tutorials-blue.svg)](https://marco-congedo.github.io/Eegle.jl/stable/Tutorials/)   | 🦅 `\:eagle:`| <img src="docs/src/assets/logo_verysmall.png" height="48"> | <img src="docs/src/assets/py_logo_verysmall.png" height="48"> | [![](https://img.shields.io/badge/Motor_Imagery-blue.svg)](https://zenodo.org/records/17801878) [![](https://img.shields.io/badge/P300-blue.svg)](https://zenodo.org/records/18379398) |
 
 # Eegle (EEG general library) 
 
