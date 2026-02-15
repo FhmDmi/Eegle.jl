@@ -4,7 +4,13 @@ CurrentModule = Eegle
 
 # Eegle
 
-**Eegle** is organized as a collection of independent modules. They are all re-exported, along with fundamental external packages,
+Is the foundational building block that enables the integration of diverse
+state-of-the-art packages specifically conceived for EEG data, 
+and leveraging the powerful [Julia](https://julialang.org/) scientific eco-system.
+
+![Figure 1](assets/Fig1_index.png)
+
+It is organized as a collection of independent modules forming the core. They are all re-exported, along with fundamental external packages,
 forming an integrated library. Thus, if you state
 
 ```julia

@@ -1,5 +1,3 @@
-![](../assets/banner_SA.png)
-
 # Tutorial SA 2
 
 [💻 Full Code](@ref "Code for Tutorial SA 2")
@@ -16,7 +14,7 @@ This tutorial uses the [`EXAMPLE_MI_1`](@ref) Motor Imagery (MI) Brain-Computer 
     For all options in computing spectra see the 
     [spectra](https://marco-congedo.github.io/FourierAnalysis.jl/dev/spectra/#FourierAnalysis.spectra) function. 
 
----
+![](../assets/banner_SA.png)
 
 Tell julia the package to be used
 
@@ -129,4 +127,5 @@ using Eegle # hide
 parseTutorial("Tutorial Spectral Analysis 2") # hide
 ```
 
-[⬆️ Go to Top](@ref "Tutorial SA 2")
+[⬆️ Go to Top  ](@ref "Tutorial SA 2")
+[🥳 More Tutorials](@ref "Tutorials")

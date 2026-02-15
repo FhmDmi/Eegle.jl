@@ -1,5 +1,3 @@
-![](../assets/banner_ML.png)
-
 # Tutorial ML 2
 
 [💻 Full Code](@ref "Code for Tutorial ML 2")
@@ -25,7 +23,7 @@ The tutorial shows how to
 
     For each session, an 8-fold stratified cross-validation is run. While doing computations, summary results per session will be printed, including the mean and standard deviation of the balanced accuracy obtained across the folds as well as the p-value of the cross-validation test-statistic.
 
----
+![](../assets/banner_ML.png)
 
 Tell julia to use **Eegle**
 
@@ -108,4 +106,5 @@ using Eegle # hide
 parseTutorial("Tutorial Machine Learning 2") # hide
 ```
 
-[⬆️ Go to Top](@ref "Tutorial ML 2")
+[⬆️ Go to Top  ](@ref "Tutorial ML 2")
+[🥳 More Tutorials](@ref "Tutorials")
