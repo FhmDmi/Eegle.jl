@@ -1,5 +1,3 @@
-![](../assets/banner_ML.png)
-
 # Tutorial ML 1
 
 [💻 Full Code](@ref "Code for Tutorial ML 1")
@@ -16,6 +14,8 @@ For this example, we will use trials pertaining to classes "feet" and "right_han
     1. resampling the data from 256 to 128 samples per second (`rate = 1//2`)
     2. filtering the EEG data in the band-pass region 8-32 Hz (`bandPass = (8, 32)`)
     3. rejecting trials featuring abnormal amplitude (`upperLimit = 1`). 
+
+![](../assets/banner_ML.png)
 
 First, let us perform the cross validation for the MDM classifier:
 
@@ -147,4 +147,5 @@ using Eegle # hide
 parseTutorial("Tutorial Machine Learning 1") # hide
 ```
 
-[⬆️ Go to Top](@ref "Tutorial ML 1")
+[⬆️ Go to Top  ](@ref "Tutorial ML 1")
+[🥳 More Tutorials](@ref "Tutorials")

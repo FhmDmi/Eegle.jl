@@ -1,5 +1,3 @@
-![](../assets/banner_SF.png)
-
 # Tutorial SF 1
 
 [💻 Full Code](@ref "Code for Tutorial SF 1")
@@ -77,6 +75,8 @@ As we will show, these two filters tends in general to give similar results, sin
 
 As a data example we use the [`EXAMPLE_P300_1`](@ref) example P300 BCI example file provided with **Eegle**, selecting 4s from second 55 to second 59. 
 
+![](../assets/banner_SF.png)
+
 Let as tell Julia the package we will need and load the data
 
 ```julia
@@ -88,7 +88,7 @@ X = o.X[55*o.sr:59*o.sr, :]
 For plotting the data we will use the [EEEPlot](https://github.com/Marco-Congedo/EEGPlot.jl) package,
 which allows to plot several time series at the same time.
 
-!!! details "show the plotting function wi will be using"
+!!! details "show the plotting function we will be using"
     ```julia
     plot_data(title) =
         eegplot(X, o.sr, o.sensors;
@@ -247,5 +247,5 @@ using Eegle # hide
 parseTutorial("Tutorial Spatial Filters 1") # hide
 ```
 
-[⬆️ Go to Top](@ref "Tutorial SF 1")
-
+[⬆️ Go to Top  ](@ref "Tutorial SF 1")
+[🥳 More Tutorials](@ref "Tutorials")
