@@ -13,7 +13,6 @@ This module implements **Processing** for EEG data.
 |  Function      |           Description             |
 |:-----------------------|:----------------------------------|
 | [`Eegle.Processing.filtfilt`](@ref) | digital filetring of EEG data |
-| [`Eegle.Processing.centeringMatrix`](@ref) | the centering matrix (for computing the common average reference) |
 | [`Eegle.Processing.car!`](@ref) | re-reference EEG data to the common average reference |
 | [`Eegle.Processing.globalFieldPower`](@ref) | global field power |
 | [`Eegle.Processing.globalFieldRMS`](@ref) | global field root mean square |
@@ -22,7 +21,6 @@ This module implements **Processing** for EEG data.
 
 ```@docs
     Eegle.Processing.filtfilt
-    Eegle.Processing.centeringMatrix
     Eegle.Processing.car!
     Eegle.Processing.globalFieldPower
     Eegle.Processing.globalFieldRMS
