@@ -17,7 +17,6 @@ const greyFont      = "\x1b[90m"
 
 export
     filtfilt,
-    centeringMatrix, ℌ,
     globalFieldPower,
     globalFieldRMS,
     minima,
@@ -71,51 +70,6 @@ function filtfilt(  X::Matrix, sr::Int, responseType::DSP.FilterType;
 end
 
 
-"""
-```julia
-function centeringMatrix(N::Int)
-```
-
-The common average reference (CAR) operator for referencing EEG data 
-potentials so that their mean across sensors (space) is zero at all samples.
-
-Let ``X`` be the ``T×N`` EEG recording, where ``T`` and ``N`` denotes the number of samples and channels (sensors), respectively,
-and let ``H_N`` be the ``N×N`` centering matrix, then 
-
-``Y=XH`` 
-
-is the CAR (or *centered*) data.
-
-``H_N`` is named the *common average reference operator*. It is given at p.67 by [Searle1982book](@cite), as
-
-``H_N = I_N - \\frac{1}{N} \\left( \\mathbf{1}_N \\mathbf{1}_N^\\top \\right)``
-
-where ``I_N`` is the N-dimensional identity matrix and ``\\mathbf{1}_N`` is the ``N``-dimensional vector of ones.
-
-**Alias** ℌ (U+0210C, with escape sequence "frakH")
-
-**Return** the ``N×N`` centering matrix.
-
-**See**[`car!`](@ref)
-
-**Examples**
-```julia
-using Eegle
-
-X = randn(128, 19)
-
-# CAR
-X_car = X * centeringMatrix(size(X, 2))
-# or
-X_car = X * ℌ(size(X, 2))
-
-# double-centered data: zero mean across time and space
-X_dc = ℌ(size(X, 1)) * X * ℌ(size(X, 2))
-```
-"""
-centeringMatrix(N::Int) = I-1/N*(ones(N)*ones(N)')
-ℌ=centeringMatrix # alias for function centeringMatrix
-
 
 
 """
@@ -134,8 +88,8 @@ Re-reference ``X`` to the *common average reference* (CAR), tht is, set the mean
 - `correction`: zero by default. It can be a positive number, in which case, from the rows of ``X`` it is not subtracted their
     sum divided by ``N``, but their sum divided by ``N``+`correction`.
 
-When ``correction`` is equal to zero (default) we obtain the usual car reference — see [`centeringMatrix`](@ref). When it is equal to 1, 
-we obtain the reference method "B" of [Kim2023GhostICs](@cite).
+When ``correction`` is equal to zero (default) we obtain the usual car reference — see [centeringMatrix](https://github.com/Marco-Congedo/Xloreta.jl?tab=readme-ov-file#centeringmatrix). 
+When it is equal to 1, we obtain the reference method "B" of [Kim2023GhostICs](@cite).
 
 It should be noted that the usual CAR yields data with rank ``N-1`` and zero row means, while the method of [Kim2023GhostICs](@cite) yields
 full-rank data, but non-zero row mean. A value of ``correction`` between 0 and 1 yields intermediate situations. 
@@ -147,8 +101,6 @@ If you want to keep the original data, use
 ```julia
 car!(copy(X))
 ```
-
-**See also** [`centeringMatrix`](@ref)
 
 **Examples**
 ```julia
@@ -189,7 +141,7 @@ Function `func` can be applied element-wise to the output (none by default).
 [Anonymous functions](https://docs.julialang.org/en/v1/manual/functions/#man-anonymous-functions)
 can be used.
 
-Usually the GFP is computed on common average reference data — see [`centeringMatrix`](@ref).
+Usually the GFP is computed on common average reference data — see [`car!`](@ref).
 
 **Return** the vector comprising the ``T`` GFP values.
 
@@ -197,12 +149,12 @@ Usually the GFP is computed on common average reference data — see [`centering
 
 **Examples**
 ```julia
-using Eegle
+using Eegle, Xloreta
 
 X=randn(128, 19)
 
 # using an anonymous function
-# ℌ is an alias for centeringMatrix
+# ℌ is an alias for centeringMatrix, exported from the Xloreta package
 g = globalFieldPower(X * ℌ(size(X, 2)); func=x->sqrt(x/size(X, 2)))
 
 ```
@@ -230,7 +182,7 @@ Function `func` can be applied element-wise to the output (none by default).
 [Anonymous functions](https://docs.julialang.org/en/v1/manual/functions/#man-anonymous-functions)
 can be used.
 
-Usually the GFRMS is computed on common average reference data — see [`centeringMatrix`](@ref).
+Usually the GFRMS is computed on common average reference data — see [`car!`](@ref).
 
 **Return** the vector comprising the ``T`` GFRMS values.
 
@@ -238,12 +190,13 @@ Usually the GFRMS is computed on common average reference data — see [`centeri
 
 **Examples**
 ```julia
-using Eegle
+using Eegle, Xloreta
 
 X=randn(128, 19)
 
+# ℌ is an alias for centeringMatrix, exported from Xloreta package
 g = globalFieldRMS(X * ℌ(size(X, 2)))
-# ℌ is an alias for centeringMatrix
+
 
 # return the natural log of the GFRMS
 g = globalFieldRMS(X * ℌ(size(X, 2)); func=log)
