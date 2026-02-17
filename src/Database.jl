@@ -17,6 +17,7 @@ const separatorFont = "\x1b[35m"
 const defaultFont   = "\x1b[0m"
 const greyFont      = "\x1b[90m"
 
+
 export
     InfoDB,
     loadDB, 
@@ -383,7 +384,7 @@ function infoDB(dbDir)
 end
 
 #=
-_get_nested_value(data::Dict, path::String)
+_getNestedValue(data::Dict, path::String)
 
 Extract value from nested dictionary using dot-separated path.
 Supports shortcuts for common paths and automatic nested search.
@@ -391,6 +392,7 @@ Supports shortcuts for common paths and automatic nested search.
 **Shortcuts:**
 - `sr` → `acquisition.samplingrate`
 - `ref` → `acquisition.reference`
+- `tpc` → `stim.trials_per_class`
 - `perfLHRH` → `perf.left_hand-right_hand`
 - `perfRHF` → `perf.right_hand-feet`
 =#
@@ -399,6 +401,7 @@ function _getNestedValue(data::Dict, path::String)
     shortcuts = Dict(
         "sr"        => "acquisition.samplingrate",
         "ref"       => "acquisition.reference",
+        "tpc"       => "stim.trials_per_class",
         "perfLHRH"  => "perf.left_hand-right_hand",
         "perfRHF"   => "perf.right_hand-feet"
     )
@@ -439,9 +442,15 @@ function _getNestedValue(data::Dict, path::String)
     return current
 end
 
+# Helper function to extract all numeric values from nested perf dictionary
+function _getAllPerfValues(perf_dict::Dict)
+    return vcat([v isa Number ? Float64(v) : v isa Dict ? _getAllPerfValues(v) : Float64[] 
+                 for v in values(perf_dict)]...)
+end
+
 #=
 _filter(files::Vector{String}, 
-        includeF::Union{Tuple, Nothing};
+        inclusion::Union{Tuple, Nothing};
         verbose::Bool=false)
 
 Internal function to filter session files based on YAML metadata criteria.
@@ -451,7 +460,7 @@ as long as it's not a unique identifier for a single session.
 
 **Arguments**
 - `files`: Vector of .npz file paths (each has corresponding .yml)
-- `includeF`: Tuple of (field_path, predicate) conditions
+- `inclusion`: Tuple of (field_path, predicate) conditions
 - `verbose`: If true, print detailed filtering info
 
 **Returns**
@@ -463,121 +472,131 @@ as long as it's not a unique identifier for a single session.
 **Path Notation**
 ```julia
 # Shortcut notation (recommended for common paths)
-includeF = (("sr", ==(256)),)                    # acquisition.samplingrate
-includeF = (("ref", ==("Fz")),)                  # acquisition.reference
-includeF = (("perfLHRH.MDM", x -> x >= 0.7),)   # perf.left_hand-right_hand.MDM
+inclusion = (("sr", ==(256)),)                    # acquisition.samplingrate
+inclusion = (("ref", ==("Fz")),)                  # acquisition.reference
+inclusion = (("perfLHRH.MDM", x -> x >= 0.7),)   # perf.left_hand-right_hand.MDM
 # Short form (automatic nested search)
-includeF = (("samplingrate", ==(256)),)          # Searches nested dicts
+inclusion = (("samplingrate", ==(256)),)          # Searches nested dicts
 # Explicit dot notation
-includeF = (("acquisition.samplingrate", ==(256)),)  # Direct path
+inclusion = (("acquisition.samplingrate", ==(256)),)  # Direct path
 # Deep nesting
-includeF = (("perf.left_hand-right_hand.MDM", x -> x >= 0.7),)
+inclusion = (("perf.left_hand-right_hand.MDM", x -> x >= 0.7),)
 ```
 
 # Available Shortcuts:
 - `sr` → `acquisition.samplingrate`
 - `ref` → `acquisition.reference`
+- `tpc` → `stim.trials_per_class`
 - `perfLHRH` → `perf.left_hand-right_hand`
 - `perfRHF` → `perf.right_hand-feet`
 
 **Basic Filters (Exact Match)**
 ```julia
 # Sampling rate exactly 256 Hz (using shortcut)
-includeF = (("sr", ==(256)),)
+inclusion = (("sr", ==(256)),)
 # Specific reference (using shortcut)
-includeF = (("ref", ==("Fz")),)  
+inclusion = (("ref", ==("Fz")),)  
 # Specific hardware
-includeF = (("hardware", ==("g.tec EEG - g.USBamp")),)
+inclusion = (("hardware", ==("g.tec EEG - g.USBamp")),)
 ```
 
 **Comparison Filters (>, <, >=, <=)**
 
 # Sampling rate at least 128 Hz
-includeF = (("sr", x -> x >= 128),)
+inclusion = (("sr", x -> x >= 128),)
 # Balanced accuracy at least 60% (using shortcut)
-includeF = (("perfLHRH.MDM", x -> x >= 0.6),)
+inclusion = (("perfLHRH.MDM", x -> x >= 0.6),)
 # Window length greater than 500 samples
-includeF = (("windowlength", x -> x > 500),)
+inclusion = (("windowlength", x -> x > 500),)
 
 
 **Range Filters (Interval)**
 
 # Sampling rate between 128 and 512 Hz
-includeF = (("sr", x -> 128 <= x <= 512),)
+inclusion = (("sr", x -> 128 <= x <= 512),)
 # Balanced accuracy between 60% and 80%
-includeF = (("perfLHRH.MDM", x -> 0.6 <= x <= 0.8),)
+inclusion = (("perfLHRH.MDM", x -> 0.6 <= x <= 0.8),)
 # Window length between 100 and 800 samples
-includeF = (("windowlength", x -> 100 <= x <= 800),)
+inclusion = (("windowlength", x -> 100 <= x <= 800),)
 
 **Array/Vector Filters**
 
 # Must contain electrode Fz
-includeF = (("acquisition.sensors", x -> "Fz" ∈ x),)
+inclusion = (("acquisition.sensors", x -> "Fz" ∈ x),)
 # Must contain multiple electrodes
-includeF = (("acquisition.sensors", x -> all(e ∈ x for e in ["Fz", "Cz", "Pz"])),)
+inclusion = (("acquisition.sensors", x -> all(e ∈ x for e in ["Fz", "Cz", "Pz"])),)
 # At least 16 electrodes
-includeF = (("acquisition.sensors", x -> length(x) >= 16),)
+inclusion = (("acquisition.sensors", x -> length(x) >= 16),)
 # Specific number of electrodes
-includeF = (("acquisition.sensors", x -> length(x) == 64),)
+inclusion = (("acquisition.sensors", x -> length(x) == 64),)
 
 **Dictionary Filters (trials_per_class, labels, perf)**
 
 # Minimum trials across all classes > 30
-includeF = (("trials_per_class", x -> minimum(values(x)) > 30),)
+inclusion = (("trials_per_class", x -> minimum(values(x)) > 30),)
 # Specific class has enough trials
-includeF = (("trials_per_class", x -> haskey(x, "left_hand") && x["left_hand"] >= 50),)
+inclusion = (("trials_per_class", x -> haskey(x, "left_hand") && x["left_hand"] >= 50),)
 # Total trials across all classes >= 200
-includeF = (("trials_per_class", x -> sum(values(x)) >= 200),)
+inclusion = (("trials_per_class", x -> sum(values(x)) >= 200),)
 # Performance metrics for specific task and classifier (using shortcuts)
-includeF = (("perfLHRH.MDM", x -> x >= 0.7),)    # MI
-includeF = (("perf.ENLR", x -> x >= 0.7),)       # P300
+inclusion = (("perfLHRH.MDM", x -> x >= 0.7),)    # MI
+inclusion = (("perf.ENLR", x -> x >= 0.7),)       # P300
 
 **String Filters**
 
 # Specific reference (using shortcut)
-includeF = (("ref", ==("Fz")),)
+inclusion = (("ref", ==("Fz")),)
 # Reference is not N/A
-includeF = (("ref", !=("N/A")),)
+inclusion = (("ref", !=("N/A")),)
 # Filter contains keyword (case-sensitive)
-includeF = (("filter", x -> occursin("Butterworth", x)),)
+inclusion = (("filter", x -> occursin("Butterworth", x)),)
 # Specific sensor type
-includeF = (("sensortype", x -> occursin("Wet", x)),)
+inclusion = (("sensortype", x -> occursin("Wet", x)),)
 
 **Combined Filters (Multiple Conditions - AND Logic)**
 
 # Sampling rate + specific electrodes + good performance
-includeF = (
+inclusion = (
     ("sr", x -> x >= 256),
     ("acquisition.sensors", x -> "Fz" ∈ x),
     ("perfLHRH.MDM", x -> 0.6 <= x <= 0.85)
 )
 # Sufficient trials + specific reference
-includeF = (
+inclusion = (
     ("trials_per_class", x -> minimum(values(x)) >= 40),
     ("ref", !=("N/A"))
 )
 # Sampling rate + electrode count + trial count
-includeF = (
+inclusion = (
     ("sr", x -> 128 <= x <= 512),
     ("acquisition.sensors", x -> length(x) >= 16),
     ("trials_per_class", x -> sum(values(x)) >= 150)
 )
 =#
 function _filter(files::Vector{String}, 
-                 includeF::Union{Tuple, Nothing};
+                 inclusion::Union{Tuple, Nothing};
                  verbose::Bool=false,
                  show_progress::Bool=false)  
     
     # Early return if no filters
-    (isnothing(includeF) || isempty(includeF)) && return collect(1:length(files)), Tuple{String, String, Bool}[]
+    (isnothing(inclusion) || isempty(inclusion)) && return collect(1:length(files)), Tuple{String, String, Bool}[]
     
-    valid_indices = Int[]
-    # Return info : (filename, reason/status, passed::Bool)
-    files_info = Tuple{String, String, Bool}[]
+    # Pre-allocate with estimated capacity
+    n_files = length(files)
+    valid_indices = sizehint!(Int[], n_files)
+    files_info = sizehint!(Tuple{String, String, Bool}[], n_files)
     
-    show_progress && println("\n$(repeat("─", 65))\n🔍 Applying $(length(includeF)) filter(s) to $(length(files)) session(s)...")
+    # Define shortcuts once outside loop
+    shortcuts = Dict("sr" => "acquisition.samplingrate", "ref" => "acquisition.reference", 
+                     "perfLHRH" => "perf.left_hand-right_hand", "perfRHF" => "perf.right_hand-feet")
     
-    @inbounds for (file_idx, file_path) ∈ enumerate(files)
+    # Detect perf filters once
+    perf_filters_present = any(fp -> startswith(fp, "perf") || startswith(get(shortcuts, fp, ""), "perf"), 
+                               (fp for (fp, _) in inclusion))
+    
+    show_progress && println("\n$(repeat("─", 65))\n🔍 Applying $(length(inclusion)) filter(s) to $n_files session(s)...")
+    
+    @inbounds for (file_idx, file_path) in enumerate(files)
         yml_path = splitext(file_path)[1] * ".yml"
         
         # Check YAML existence
@@ -588,23 +607,35 @@ function _filter(files::Vector{String},
         end
         
         yaml_data = YAML.load(open(yml_path))
+        
+        # Auto-reject files without perf section or with perf ∈ [0, 0.2] when perf filter is used
+        if perf_filters_present
+            if !haskey(yaml_data, "perf")
+                push!(files_info, (file_path, "Auto-rejected: no 'perf' section in YAML", false))
+                show_progress && println("  ✗ $(basename(file_path)): Auto-rejected: no 'perf' section")
+                continue
+            end
+            
+            perf_values = _getAllPerfValues(yaml_data["perf"])
+            if all(v -> 0 ≤ v ≤ 0.2, perf_values)
+                push!(files_info, (file_path, "Auto-rejected: all perf values ∈ [0, 0.2]", false))
+                show_progress && println("  ✗ $(basename(file_path)): Auto-rejected: all perf values ∈ [0, 0.2]")
+                continue
+            end
+        end
+        
         session_valid, status_msg = true, ""
         
         # Apply all filters with early exit on failure
-        @inbounds for (filter_idx, (field_path, predicate)) ∈ enumerate(includeF)
+        @inbounds for (filter_idx, (field_path, predicate)) in enumerate(inclusion)
             try
                 value = _getNestedValue(yaml_data, field_path)
-                
-                if !predicate(value)
-                    session_valid = false
-                    status_msg = "Filter #$filter_idx failed: '$field_path' = $value"
-                    break
-                elseif filter_idx == length(includeF)
-                    status_msg = "Passed all $(length(includeF)) filter(s)"
-                end
+                session_valid, status_msg = predicate(value) ? 
+                    (filter_idx == length(inclusion) ? (true, "Passed all $(length(inclusion)) filter(s)") : (true, "")) :
+                    (false, "Filter #$filter_idx failed: '$field_path' = $value")
+                !session_valid && break
             catch e
-                session_valid = false
-                status_msg = "Error in filter #$filter_idx on '$field_path': $(e.msg)"
+                session_valid, status_msg = false, "Error in filter #$filter_idx on '$field_path': $(e.msg)"
                 break
             end
         end
@@ -614,7 +645,7 @@ function _filter(files::Vector{String},
         session_valid && push!(valid_indices, file_idx)
     end
     
-    show_progress && println("$(repeat("─", 65))\n✓ Result: $(length(valid_indices))/$(length(files)) session(s) passed all filters\n")
+    show_progress && println("$(repeat("─", 65))\n✓ Result: $(length(valid_indices))/$n_files session(s) passed all filters\n")
     
     return valid_indices, files_info
 end
@@ -624,7 +655,7 @@ end
 function selectDB(<corpusDir    :: String,> 
                   paradigm      :: Symbol;
                   classes       :: Union{Vector{String}, Nothing} = paradigm == :P300 ? ["target", "nontarget"] : nothing,
-                  includeF      :: Union{Tuple, Nothing} = nothing,
+                  inclusion     :: Union{Tuple, Nothing} = nothing,
                   summarize     :: Bool = true,
                   verbose       :: Bool = false)
 ```
@@ -662,7 +693,7 @@ wherein the `InfoDB.files` field lists the included sessions only.
 
 - `verbose` : if true, print some feedback (in addition to the summary table).
 
-- `includeF`: tuple of custom filter conditions for advanced session filtering based on metadata fields present in [YAML files](@ref "NY Metadata (YAML)").
+- `inclusion`: tuple of custom filter conditions for advanced session filtering based on metadata fields present in [YAML files](@ref "NY Metadata (YAML)").
     Each filter is a tuple with form `(field_path, predicate_function)`.
 
 Shortcuts are available for some fields:
@@ -670,52 +701,50 @@ Shortcuts are available for some fields:
 **Available Shortcuts:**
 - `sr` → `acquisition.samplingrate`
 - `ref` → `acquisition.reference`
+- `tpc` → `stim.trials_per_class`
 - `perfLHRH` → `perf.left_hand-right_hand`
 - `perfRHF` → `perf.right_hand-feet`
 
-!!! warning "Avoid Redundant Filtering"
-    The `selectDB` function already filters by `paradigm` and `classes` arguments.
-    **Do not use `includeF` to filter these fields** to avoid conflicts and redundancy.
 
 **Examples**
 
 ## Basic Filter Examples
 ```julia
 # Exact sampling rate
-includeF = (("sr", ==(256)),)
+inclusion = (("sr", ==(256)),)
 
 # Minimum sampling rate
-includeF = (("sr", x -> x >= 128),)
+inclusion = (("sr", x -> x >= 128),)
 
 # Sampling rate range
-includeF = (("sr", x -> 128 <= x <= 512),)
+inclusion = (("sr", x -> 128 <= x <= 512),)
 
 # Reference is Fz
-includeF = (("ref", ==("Fz")),)                  # acquisition.reference
+inclusion = (("ref", ==("Fz")),)                  # acquisition.reference
 
 # MDM performance for left_hand vs. right_hand is above 0.7
-includeF = (("perfLHRH.MDM", x -> x >= 0.7),)    # perf.left_hand-right_hand.MDM
+inclusion = (("perfLHRH.MDM", x -> x >= 0.7),)    # perf.left_hand-right_hand.MDM
 
 # Must contain electrode Fz
-includeF = (("acquisition.sensors", x -> "Fz" ∈ x),)
+inclusion = (("acquisition.sensors", x -> "Fz" ∈ x),)
 
 # At least 16 electrodes
-includeF = (("acquisition.sensors", x -> length(x) >= 16),)
+inclusion = (("sensors", x -> length(x) >= 16),)
 
 # Minimum trials per class
-includeF = (("trials_per_class", x -> minimum(values(x)) > 30),)
+inclusion = (("tpc", x -> minimum(values(x)) > 30),)
 
 # Performance threshold using shortcut
-includeF = (("perfLHRH.MDM", x -> x >= 0.6),)
+inclusion = (("perfLHRH.MDM", x -> x >= 0.6),)
 
 # Performance range
-includeF = (("perfLHRH.MDM", x -> 0.6 <= x <= 0.85),)
+inclusion = (("perfLHRH.ENLR", x -> 0.6 <= x <= 0.85),)
 ```
 
 ## Combined Filters (AND Logic)
 ```julia
 # SR ≥ 256 Hz + uses Fz electrode + good accuracy
-includeF = (
+inclusion = (
     ("sr", x -> x >= 256),
     ("acquisition.sensors", x -> "Fz" ∈ x),
     ("perfLHRH.MDM", x -> 0.6 <= x <= 0.85)
@@ -730,7 +759,7 @@ DB_MI = selectDB(:MI; classes = ["left_hand", "right_hand"]);
 # Advanced selection with custom filters
 DB_MI = selectDB(:MI;
                  classes = ["left_hand", "right_hand"],
-                 includeF = (
+                 inclusion = (
                      ("sr", x -> x >= 256),
                      ("acquisition.sensors", x -> length(x) >= 16),
                      ("perfLHRH.MDM", x -> 0.6 <= x <= 0.85)
@@ -739,7 +768,7 @@ DB_MI = selectDB(:MI;
 
 # P300 with performance filtering
 DB_P300 = selectDB(:P300;
-                   includeF = (
+                   inclusion = (
                        ("sr", ==(128)),
                        ("perf.ENLR", x -> x >= 0.75)
                    ));
@@ -753,7 +782,7 @@ DB_P300 = selectDB(:P300;
 function selectDB(corpusDir     :: String,
                   paradigm      :: Symbol;
                   classes       :: Union{Vector{String}, Nothing} = paradigm == :P300 ? ["target", "nontarget"] : nothing,
-                  includeF      :: Union{Tuple, Nothing} = nothing,
+                  inclusion     :: Union{Tuple, Nothing} = nothing,
                   summarize     :: Bool = true,
                   verbose       :: Bool = false)
     
@@ -797,9 +826,18 @@ function selectDB(corpusDir     :: String,
         end
 
         # Apply custom filters if provided
-        if !isnothing(includeF)
+        if !isnothing(inclusion)
+
+            # Remove paradigm and classes filters from inclusion if present
+            forbidden = [f for (f, _) in inclusion if f ∈ ("paradigm", "classes")]
+            if !isempty(forbidden)
+                @warn "Eegle.Database, function `selectDB`: Filters automatically removed (conflict with function arguments): $(join(forbidden, ", "))"
+                inclusion = Tuple(filter(x -> x[1] ∉ ("paradigm", "classes"), collect(inclusion)))
+                isempty(inclusion) && (inclusion = nothing)
+            end
+
             # Skip progress display; defer until verbose=true
-            valid_indices, files_info = _filter(info.files, includeF; verbose=false, show_progress=false)
+            valid_indices, files_info = _filter(info.files, inclusion; verbose=false, show_progress=false)
             
             # Store info for later output
             !isempty(files_info) && push!(db_filtering_info, (info.dbName, files_info))
@@ -908,7 +946,7 @@ end
 
 function selectDB(paradigm      :: Symbol;
                   classes       :: Union{Vector{String}, Nothing} = paradigm == :P300 ? ["target", "nontarget"] : nothing,
-                  includeF       :: Union{Tuple, Nothing} = nothing,
+                  inclusion     :: Union{Tuple, Nothing} = nothing,
                   summarize     :: Bool = true,
                   verbose       :: Bool = false)
 
@@ -916,7 +954,7 @@ function selectDB(paradigm      :: Symbol;
     if isnothing(corpusDir)
         throw(ArgumentError("Eegle.Database.selectDB: the default directory of the FII BCI Corpus has not been found. Please install the corpus running `downloadDB()`. Looking into $corpusDir"))
     else
-        selectDB(corpusDir, paradigm; classes, includeF, summarize, verbose)
+        selectDB(corpusDir, paradigm; classes, inclusion, summarize, verbose)
     end
 end
 
