@@ -17,6 +17,7 @@ const greyFont      = "\x1b[90m"
 
 export
     filtfilt,
+    car!,
     globalFieldPower,
     globalFieldRMS,
     minima,

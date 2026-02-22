@@ -562,7 +562,11 @@ samples and channels, respectively.
 
 **Examples**
 
-xxx
+# collect all .hdf5 in directory `filesDir`
+files=getFilesInDir(filesDir; ext=(".hdf5",))
+
+# read first file and return the EEG data matrix
+X = readgTec(files[1]; dataType=Float64, skipFirstSamples=skipsamples, chRange=1:ne)
 """
 function readgTec(fileName::AbstractString;
                     dataType::Type=Float32,
@@ -766,7 +770,15 @@ Write a vector of strings into an ASCII text file.
 
 **Examples**
 
-xxx
+# write a matrix of reals as an ASCII file
+writeASCII(randn(3, 3), "temp.txt")
+
+# write a matrix of strings as an ASCII file
+writeASCII(string.(randn(3, 3)), "temp.txt")
+
+# write a vector of strings as an ASCII file
+writeASCII(string.(randn(3)), "temp.txt")
+
 """
 function writeASCII(X::Matrix{T}, fileName::String;
     samplesRange::UnitRange = 1:size(X, 1),
