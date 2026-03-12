@@ -80,7 +80,7 @@ function car!(X::AbstractMatrix{T};
 where T<:Real 
 ```
 
-Re-reference ``X`` to the *common average reference* (CAR), tht is, set the mean of the rows of ``X`` to zero.
+Re-reference ``X`` to the *common average reference* (CAR), that is, set the mean of the rows of ``X`` to zero.
 
 **Arguments**
 - `X`: the ``T×N`` EEG recording, where ``T`` and ``N`` denotes the number of samples and channels (sensors), respectively

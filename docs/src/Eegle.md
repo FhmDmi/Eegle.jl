@@ -85,10 +85,13 @@ you have access to all functions exported by all **Eegle** modules and by all re
 
 ## Resources
 
-### Very useful for Eegle
+### Very useful to Eegle
 
 |  Resource | Scope |
 |:-----------------------|:-----------------------|
+| [Leadfields.jl](https://github.com/Marco-Congedo/Leadfields.jl) | Leadfields for EEG inverse solutions |
+| [Xloreta](https://github.com/Marco-Congedo/Xloreta.jl) | sLORETA and eLORETA EEG distributed inverse solutions |
+| [Gedai](https://github.com/Marco-Congedo/Gedai) | automatic artifact correction for EEG |
 | [EEGPlot](https://github.com/Marco-Congedo/EEGPlot.jl) | static and interactive plots for EEG and ERP data |
 | [UnfoldMakie](https://github.com/unfoldtoolbox/UnfoldMakie.jl/tree/main) | Topographic and several other plots for EEG and ERP data |
 

@@ -309,6 +309,11 @@ as listed here below.
 
 **Return** an [`EEG`](@ref) data structure.
 
+!!! note "Artifact correction"
+    If you perform artifact correction of the EEG recording using [Gedai](https://github.com/Marco-Congedo/Gedai) after reading
+    the data with this function, keep in mind that the `trials` stored in the `EEG` structure will have not been
+    subjected to artifact correction. You can, however, extract trials any time using function [`Eegle.ERPs.trials`](@ref).
+
 **See Also** [`readASCII`](@ref), [`readgTec`](@ref), [`Eegle.ERPs.mark2stim`](@ref), [`Eegle.ERPs.stim2mark`](@ref)
 
 **Examples**
