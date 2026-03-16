@@ -1,4 +1,4 @@
-# 📖 Eegle Documentation
+# Eegle Documentation
 
 ![Header 1](assets/header1.png)
 

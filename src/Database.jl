@@ -652,7 +652,7 @@ end
 
 """
 ```julia
-function selectDB(<corpusDir    :: String,> 
+function selectDB([corpusDir    :: String,] 
                   paradigm      :: Symbol;
                   classes       :: Union{Vector{String}, Nothing} = paradigm == :P300 ? ["target", "nontarget"] : nothing,
                   inclusion     :: Union{Tuple, Nothing} = nothing,
@@ -672,7 +672,7 @@ wherein the `InfoDB.files` field lists the included sessions only.
     If a folder with the same name of the paradigm (for example: "MI") is found in `corpusDir`, the search starts therein
     and not in `corpusDir`. This way you can use the same `corpusDir` for all paradigms.
 
-    If you have downloaded the [FII BCI corpus](@ref "FII BCI Corpus Overview") using the provided GUI — see [`downloadDB`](@ref) —, you can simply
+    If you want to use the [FII BCI corpus](@ref "FII BCI Corpus Overview") and you have downloaded it using the provided GUI — see [`downloadDB`](@ref) —, you can simply
     omit this argument; **Eegle** will automatically search within the FII BCI Corpus directory.
 
 - `paradigm`: the BCI paradigm to be used. Supported paradigms at this time are `:P300` and `:MI`.
@@ -684,7 +684,6 @@ wherein the `InfoDB.files` field lists the included sessions only.
 
 !!! note "Class labels for MI" 
     In the FII BCI corpus, available **MI** class labels are: *left_hand*, *right_hand*, *feet*, *rest*, *both_hands*, and *tongue*.
-    Available **P300** class labels are always the same two: *target* and *nontarget*.
 
 - `summarize`: if true (default), a summary table of the selected databases is printed in the REPL.
 
@@ -693,8 +692,8 @@ wherein the `InfoDB.files` field lists the included sessions only.
 
 - `verbose` : if true, print some feedback (in addition to the summary table).
 
-- `inclusion`: tuple of custom filter conditions for advanced session filtering based on metadata fields present in [YAML files](@ref "NY Metadata (YAML)").
-    Each filter is a tuple with form `(field_path, predicate_function)`.
+- `inclusion`: tuple of custom filter conditions for advanced session filtering based on metadata fields present in the [metadata files](@ref "NY Metadata (YAML)").
+   This argument is effective only when working with the FII BCI corpus. Each filter is a tuple with form `(field_path, predicate_function)`.
 
 Shortcuts are available for some fields:
 
@@ -958,6 +957,7 @@ function selectDB(paradigm      :: Symbol;
     end
 end
 
+# Helper function to compute weights for statistics in Benchmark studies
 function _weightsDB(subject, n)
     usub = unique(subject)
     sess = [count(==(s), subject) for s in usub]

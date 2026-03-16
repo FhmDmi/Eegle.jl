@@ -309,6 +309,11 @@ as listed here below.
 
 **Return** an [`EEG`](@ref) data structure.
 
+!!! note "Artifact correction"
+    If you perform artifact correction of the EEG recording using [Gedai](https://github.com/Marco-Congedo/Gedai) after reading
+    the data with this function, keep in mind that the `trials` stored in the `EEG` structure will have not been
+    subjected to artifact correction. You can, however, extract trials any time using function [`Eegle.ERPs.trials`](@ref).
+
 **See Also** [`readASCII`](@ref), [`readgTec`](@ref), [`Eegle.ERPs.mark2stim`](@ref), [`Eegle.ERPs.stim2mark`](@ref)
 
 **Examples**
@@ -562,7 +567,11 @@ samples and channels, respectively.
 
 **Examples**
 
-xxx
+# collect all .hdf5 in directory `filesDir`
+files=getFilesInDir(filesDir; ext=(".hdf5",))
+
+# read first file and return the EEG data matrix
+X = readgTec(files[1]; dataType=Float64, skipFirstSamples=skipsamples, chRange=1:ne)
 """
 function readgTec(fileName::AbstractString;
                     dataType::Type=Float32,
@@ -766,7 +775,15 @@ Write a vector of strings into an ASCII text file.
 
 **Examples**
 
-xxx
+# write a matrix of reals as an ASCII file
+writeASCII(randn(3, 3), "temp.txt")
+
+# write a matrix of strings as an ASCII file
+writeASCII(string.(randn(3, 3)), "temp.txt")
+
+# write a vector of strings as an ASCII file
+writeASCII(string.(randn(3)), "temp.txt")
+
 """
 function writeASCII(X::Matrix{T}, fileName::String;
     samplesRange::UnitRange = 1:size(X, 1),
