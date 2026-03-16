@@ -448,6 +448,12 @@ function _getAllPerfValues(perf_dict::Dict)
                  for v in values(perf_dict)]...)
 end
 
+# make string case insensitive
+struct CIVec; data::Vector{String}; end
+Base.length(v::CIVec)           = length(v.data)
+Base.iterate(v::CIVec, s...)    = iterate(v.data, s...)
+Base.in(x::String, v::CIVec)   = any(s -> lowercase(s) == lowercase(x), v.data)
+
 #=
 _filter(files::Vector{String}, 
         inclusion::Union{Tuple, Nothing};
@@ -630,6 +636,7 @@ function _filter(files::Vector{String},
         @inbounds for (filter_idx, (field_path, predicate)) in enumerate(inclusion)
             try
                 value = _getNestedValue(yaml_data, field_path)
+                value isa Vector{String} && (value = CIVec(value)) # strings are case insensitive
                 session_valid, status_msg = predicate(value) ? 
                     (filter_idx == length(inclusion) ? (true, "Passed all $(length(inclusion)) filter(s)") : (true, "")) :
                     (false, "Filter #$filter_idx failed: '$field_path' = $value")
@@ -694,6 +701,7 @@ wherein the `InfoDB.files` field lists the included sessions only.
 
 - `inclusion`: tuple of custom filter conditions for advanced session filtering based on metadata fields present in the [metadata files](@ref "NY Metadata (YAML)").
    This argument is effective only when working with the FII BCI corpus. Each filter is a tuple with form `(field_path, predicate_function)`.
+   String fields are matched case-insensitively (e.g. "Fz", "FZ" and "fz" are all equivalent).
 
 Shortcuts are available for some fields:
 
@@ -784,9 +792,14 @@ function selectDB(corpusDir     :: String,
                   inclusion     :: Union{Tuple, Nothing} = nothing,
                   summarize     :: Bool = true,
                   verbose       :: Bool = false)
-    
     paradigm ∉ (:MI, :P300, :ERP) && error("Eegle.Database, function `selectDB`: Unsupported paradigm. Use :MI, :P300 or :ERP")
     
+    # Auto-correct flat tuple format: ("field", pred) → (("field", pred),)
+    if !isnothing(inclusion) && !isempty(inclusion) && inclusion[1] isa String
+        @warn "Eegle.Database, function `selectDB`: `inclusion` was passed as a flat tuple — automatically wrapped. Add a trailing comma to avoid this: ((...),)"
+        inclusion = (inclusion,)
+    end
+
     # Check if there's a paradigm subfolder and move to it if it exists
     paradigmDir = joinpath(corpusDir, string(paradigm))
     isdir(paradigmDir) && (corpusDir = paradigmDir)
@@ -803,6 +816,7 @@ function selectDB(corpusDir     :: String,
 
     selectedDB = InfoDB[]
     all_cLabels = Set{String}()
+    n_class_match = 0
     # Database-level filtering information collection structure
     db_filtering_info = Vector{Tuple{String, Vector{Tuple{String, String, Bool}}}}()
    
@@ -823,6 +837,8 @@ function selectDB(corpusDir     :: String,
         if !isnothing(classes)
             all(required_class ∈ lowercase.(info.cLabels) for required_class ∈ norm_classes) || continue
         end
+
+        n_class_match += 1
 
         # Apply custom filters if provided
         if !isnothing(inclusion)
@@ -853,9 +869,14 @@ function selectDB(corpusDir     :: String,
         push!(selectedDB, info)
     end
 
-    isempty(selectedDB) && error("Eegle.Database, function `selectDB`: No $(paradigm) database " *
-        "contains all selected classes: $(join(classes, ", "))" *
-        (!isempty(all_cLabels) ? ".\nAll available classes: " * join(sort(collect(all_cLabels)), ", ") : ""))
+    if isempty(selectedDB)
+        if !isnothing(inclusion) && n_class_match > 0
+            error("Eegle.Database, function `selectDB`: $n_class_match $(paradigm) database(s) matched paradigm/classes criteria but no session passed the `inclusion` filters.")
+        else
+            error("Eegle.Database, function `selectDB`: No $(paradigm) database contains all selected classes: $(join(classes, ", "))" *
+                (!isempty(all_cLabels) ? ".\nAll available classes: " * join(sort(collect(all_cLabels)), ", ") : ""))
+        end
+    end
 
     # Show filtering results
     if !isempty(db_filtering_info)
