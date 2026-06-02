@@ -8,7 +8,7 @@
 
 # Eegle (EEG general library) 
 
-This is a pure-[**julia**](https://julialang.org/) 90%-human package for human EEG (Electroencephalography) data analysis and classification.
+This is a pure-[**julia**](https://julialang.org/) 95%-human package for human EEG (Electroencephalography) data analysis and classification.
 
 It is the fundamental brick allowing the integration of several packages dedicated to human EEG.
 
@@ -51,7 +51,7 @@ A large collection of [tutorials](https://marco-congedo.github.io/Eegle.jl/stabl
 ---
 ## 🌱 Contribute
 
-Please contact the authors if you are interested in contributing.
+Please read the [guidelines](https://marco-congedo.github.io/Eegle.jl/stable/Eegle/#How-to-Contribute) and contact the authors if you are interested in contributing.
 
 ---
 | 📖 **Documentation**  | 
