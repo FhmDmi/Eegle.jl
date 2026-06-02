@@ -775,6 +775,7 @@ Write a vector of strings into an ASCII text file.
 
 **Examples**
 
+```julia
 # write a matrix of reals as an ASCII file
 writeASCII(randn(3, 3), "temp.txt")
 
@@ -783,6 +784,7 @@ writeASCII(string.(randn(3, 3)), "temp.txt")
 
 # write a vector of strings as an ASCII file
 writeASCII(string.(randn(3)), "temp.txt")
+```
 
 """
 function writeASCII(X::Matrix{T}, fileName::String;

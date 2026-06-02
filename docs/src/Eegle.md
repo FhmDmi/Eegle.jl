@@ -92,6 +92,7 @@ you have access to all functions exported by all **Eegle** modules and by all re
 | [Leadfields.jl](https://github.com/Marco-Congedo/Leadfields.jl) | Leadfields for EEG inverse solutions |
 | [Xloreta](https://github.com/Marco-Congedo/Xloreta.jl) | sLORETA and eLORETA EEG distributed inverse solutions |
 | [Gedai](https://github.com/Marco-Congedo/Gedai) | automatic artifact correction for EEG |
+| [PeakFrequency](https://github.com/Lucreziadimarino/PeakFrequency.jl) | peak frequency and aperiodic component removal |
 | [EEGPlot](https://github.com/Marco-Congedo/EEGPlot.jl) | static and interactive plots for EEG and ERP data |
 | [UnfoldMakie](https://github.com/unfoldtoolbox/UnfoldMakie.jl/tree/main) | Topographic and several other plots for EEG and ERP data |
 
