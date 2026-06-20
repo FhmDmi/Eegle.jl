@@ -85,7 +85,7 @@ you have access to all functions exported by all **Eegle** modules and by all re
 
 ## Resources
 
-### Very useful to Eegle
+### Very useful
 
 |  Resource | Scope |
 |:-----------------------|:-----------------------|
@@ -93,7 +93,13 @@ you have access to all functions exported by all **Eegle** modules and by all re
 | [Xloreta](https://github.com/Marco-Congedo/Xloreta.jl) | sLORETA and eLORETA EEG distributed inverse solutions |
 | [Gedai](https://github.com/Marco-Congedo/Gedai) | automatic artifact correction for EEG |
 | [PeakFrequency](https://github.com/Lucreziadimarino/PeakFrequency.jl) | peak frequency and aperiodic component removal |
+
+### Visualization
+
+|  Resource | Scope |
+|:-----------------------|:-----------------------|
 | [EEGPlot](https://github.com/Marco-Congedo/EEGPlot.jl) | static and interactive plots for EEG and ERP data |
+| [CortexPlot](https://github.com/Marco-Congedo/CortexPlot.jl) | interactive 2D and 3D plots for EEG inverse solutions|
 | [UnfoldMakie](https://github.com/unfoldtoolbox/UnfoldMakie.jl/tree/main) | Topographic and several other plots for EEG and ERP data |
 
 ### Related to Eegle
